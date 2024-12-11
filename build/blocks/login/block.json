@@ -1,0 +1,28 @@
+{
+  "$schema": "https://schemas.wp.org/trunk/block.json",
+  "apiVersion": 3,
+  "name": "fav/login",
+  "version": "0.1.0",
+  "title": "Fav Login",
+  "description": "",
+  "category": "widgets",
+  "icon": "cart",
+  "editorScript": "file:./index.js",
+  "render": "file:./render.php",
+  "viewScript": "file:./view.js",
+  "textdomain": "favored",
+  "styles": [],
+  "attributes": {},
+  "supports": {
+    "align": false,
+    "anchor": false,
+    "alignContent": false,
+    "color": {
+      "text": false,
+      "background": true,
+      "link": false
+    },
+    "alignText": false,
+    "fullHeight": false
+  }
+}
