@@ -7,35 +7,63 @@ import { Pagination } from '../../common/pagination';
 
 export default function MemberList({ nonce }) {
   const { data, isLoading, error, refetch } = useQuery({
-    queryKey: ['members'], queryFn: async () => {
+    queryKey: ['members', querystring],
+    queryFn: async () => {
+      // console.log({ query: new URLSearchParams(querystring).toString() });
       try {
         const result = await apiFetch({
-          // path: '/fav/v1/members',
-          path: pageLink,
+          path: `${pageLink}?${new URLSearchParams(querystring).toString()}`,
           headers: {
             'X-WP-Nonce': nonce,
-          }
+          },
         });
-        // console.log({ result })
-
+        // console.log({ result });
         return result;
       } catch (err) {
-        console.error("failed to fetch members, err: ", e.message)
+        console.error("failed to fetch members, err: ", err.message);
       }
     }
   });
 
-  const [currPage, setCurrPage] = useState(1);
-  const pageLink = `/fav/v1/members?page=${currPage}&page_size=20`
-  const hasNextPage = +data?.page?.total_pages !== currPage
-  const hasPrevPage = currPage > 1
-  useEffect(() => { refetch() }, [currPage])
+  // const [currPage, setCurrPage] = useState(1);
+  const [querystring, setQuerystring] = useState({
+    page: 1,
+    page_size: 20,
+    search: '',
+  });
+
+  // const pageLink = `/fav/v1/members?page=${currPage}&page_size=20`
+  const pageLink = `/fav/v1/members`
+  const hasNextPage = +data?.page?.total_pages !== querystring.page
+  const hasPrevPage = querystring.page > 1
+
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      refetch();
+    }, 500); // debounce delay
+
+    return () => {
+      clearTimeout(handler); // Cleanup the timeout on unmount or on new input
+    };
+  }, [querystring, refetch]);
+
+  const handleInputChange = (e) => {
+    setQuerystring((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+  };
 
   return (
     <div>
-      <div className="mb-2">
-        <h1 className="wp-heading-inline">Member List</h1>
-        <Link to="/edit" className="page-title-action">Add New Member</Link>
+      <div className="mb-2 flex gap-2">
+        <h1 className="wp-heading-inline my-auto pt-0">Member List</h1>
+        <Link to="/edit" className="page-title-action mt-auto">Add New Member</Link>
+        <div className="my-auto h-6">
+          <input
+            type="text"
+            placeholder="search"
+            name="search"
+            onChange={handleInputChange}
+          />
+        </div>
         <hr className="wp-header-end" />
       </div>
       <table className="wp-list-table widefat fixed striped posts">
@@ -169,7 +197,7 @@ export default function MemberList({ nonce }) {
         </tfoot>
       </table>
 
-      <Pagination {...{ setCurrPage, hasPrevPage, hasNextPage, data }} />
+      <Pagination {...{ setQuerystring, hasPrevPage, hasNextPage, data }} />
     </div>
   );
 }
