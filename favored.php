@@ -21,7 +21,7 @@
  * Author URI:        https://favcrm.io
  * License:           GPL-2.0+
  * License URI:       http://www.gnu.org/licenses/gpl-2.0.txt
- * Text Domain:       favored
+ * Text Domain:       favcrm-for-woocommerce
  * Domain Path:       /languages
  * Requires PHP: 7.1
  * WC requires at least: 5.0
