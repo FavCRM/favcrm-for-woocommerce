@@ -579,6 +579,7 @@ class Favored_Admin {
 	}
 
 	public function register_api_keys( $consumer_key, $consumer_secret ) {
+
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 		$secret = cmb2_get_option( 'favored_options', 'secret' );
 		$mode = cmb2_get_option( 'favored_options', 'mode' );

@@ -79,7 +79,7 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-favored.php';
  */
 function run_favored() {
 
-	require plugin_dir_path( __FILE__ ) . 'cmb2/init.php';
+	require_once plugin_dir_path( __FILE__ ) . 'includes/cmb2/init.php';
 
 	$plugin = new Favored();
 	$plugin->run();
