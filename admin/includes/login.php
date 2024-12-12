@@ -7,5 +7,5 @@ if ( ! current_user_can( 'manage_options' ) ) {
 ?>
 
 <div class="wrap">
-    <div id="favored-admin-login" data-nonce="<?php echo wp_create_nonce( 'wp_rest' ) ?>"></div>
+    <div id="favored-admin-login" data-nonce="<?php echo esc_html( wp_create_nonce( 'wp_rest' ) ) ?>"></div>
 </div>

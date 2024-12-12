@@ -12,7 +12,7 @@ $key = 'favored_options';
 <div class="wrap">
    <form novalidate="novalidate" method="post" action="options.php">
       <?php wp_nonce_field( 'favored_options_verify' ); ?>
-      <div id="cmb2-options-page-<?php echo $key; ?>" class="wrap cmb2-options-page <?php echo $key; ?>">
+      <div id="cmb2-options-page-<?php echo esc_html( $key ); ?>" class="wrap cmb2-options-page <?php echo esc_html( $key ); ?>">
          <?php cmb2_get_metabox( 'fav_bug_report_option_metabox', $key, 'options-page' )->show_form(); ?>
       </div>
       <?php submit_button( 'Send Report' ); ?>

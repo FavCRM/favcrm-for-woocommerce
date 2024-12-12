@@ -37,8 +37,8 @@ class Favored_Activator
   public static function activate()
   {
     // check if no account-login page, then create it
-    if (!get_page_by_path('account-login')) {
-      error_log(print_r('NO login page ', true));
+    if ( ! get_page_by_path( 'account-login' ) ) {
+
       // Create login page object
       $login_page = array(
         'post_title'    => wp_strip_all_tags('Account Login'),
@@ -50,14 +50,10 @@ class Favored_Activator
 
       // Insert the post into the database
       $post_id = wp_insert_post($login_page);
-      error_log(print_r('created login page id' . $post_id, true));
-    } else {
-      error_log(print_r('has login page ', true));
     }
 
     // check if no account-register page, then create it
-    if (!get_page_by_path('account-register')) {
-      error_log(print_r('NO register page ', true));
+    if ( ! get_page_by_path( 'account-register' ) ) {
       // Create register page object
       $register_page = array(
         'post_title'    => wp_strip_all_tags('Account Register'),
@@ -68,10 +64,7 @@ class Favored_Activator
       );
 
       // Insert the post into the database
-      $post_id = wp_insert_post($register_page);
-      error_log(print_r('created register page id' . $post_id, true));
-    } else {
-      error_log(print_r('has register page ', true));
+      $post_id = wp_insert_post( $register_page );
     }
   }
 }

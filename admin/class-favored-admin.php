@@ -81,6 +81,9 @@ class Favored_Admin {
 			array( 'favcrm_page_fav-crm-login', 'fav-crm-login-script', '../build/admin/login/index.js' ),
 			array( 'favcrm_page_fav-crm-settings', 'fav-crm-settings-script', '../build/admin/settings/index.js' ),
 		);
+
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
+		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
 	}
 
 	/**
@@ -438,23 +441,24 @@ class Favored_Admin {
 
 	public function maybe_process() {
 
-		if ( empty( $_POST ) ) {
-			return;
-		}
+		if ( ! isset( $_POST['favored_options_verify'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['favored_options_verify'] ) ) ) ) {
+            return;
+        }
 
 		$url = wp_get_referer();
+		$data = $_POST;
 
 		if ( strpos( $url, 'fav-crm-credential' ) === true) {
-			$this->maybe_save_credential();
+			$this->maybe_save_credential( $data );
 		} else if ( strpos( $url, 'fav-crm-system-log' ) === true) {
 			$this->maybe_send_diagnostic_log();
 		} else if ( strpos( $url, 'fav-crm-bug-report' ) === true) {
-			$this->maybe_send_bug_report();
+			$this->maybe_send_bug_report( $data );
 		}
 
 	}
 
-	public function maybe_save_credential() {
+	public function maybe_save_credential( $data ) {
 
 		$key = 'favored_options';
 		$metabox_id = 'fav_credential_option_metabox';
@@ -466,11 +470,12 @@ class Favored_Admin {
 			$hookup = new CMB2_hookup( $cmb );
 
 			if ( $hookup->can_save( 'options-page' ) ) {
-				$cmb->save_fields( $key, 'options-page', $_POST );
+				$cmb->save_fields( $key, 'options-page', $data );
 			}
 		}
 
-		exit( wp_redirect( admin_url( 'admin.php?page=fav-crm-credential' ) ) );
+		wp_redirect( admin_url( 'admin.php?page=fav-crm-credential' ) );
+		exit();
 
 	}
 
@@ -489,39 +494,27 @@ class Favored_Admin {
 		$message .= 'WordPress version: ' . get_bloginfo( 'version' ) . '<br>';
 		$message .= 'Plugin version: ' . FAVORED_VERSION . '<br>';
 		$message .= 'WooCommerce version: ' . WC()->version . '<br>';
-		$message .= 'Server software: ' . $_SERVER['SERVER_SOFTWARE'] . '<br>';
-		$message .= 'Server IP: ' . $_SERVER['SERVER_ADDR'] . '<br>';
-		$message .= 'Server name: ' . $_SERVER['SERVER_NAME'] . '<br>';
-		$message .= 'Server port: ' . $_SERVER['SERVER_PORT'] . '<br>';
-		$message .= 'Server protocol: ' . $_SERVER['SERVER_PROTOCOL'] . '<br>';
-		$message .= 'Server request method: ' . $_SERVER['REQUEST_METHOD'] . '<br>';
-		$message .= 'Server request time: ' . $_SERVER['REQUEST_TIME'] . '<br>';
-		$message .= 'Server request time float: ' . $_SERVER['REQUEST_TIME_FLOAT'] . '<br>';
-		$message .= 'Server query string: ' . $_SERVER['QUERY_STRING'] . '<br>';
-		$message .= 'Server document root: ' . $_SERVER['DOCUMENT_ROOT'] . '<br>';
-		$message .= 'Server HTTP host: ' . $_SERVER['HTTP_HOST'] . '<br>';
-		$message .= 'Server HTTP user agent: ' . $_SERVER['HTTP_USER_AGENT'] . '<br>';
-
 
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 		$attachments = array( $pluginlog );
 
 		wp_mail( $to, $subject, $message, $headers, $attachments );
 
-		exit( wp_redirect( admin_url( 'admin.php?page=fav-crm-system-log&result=1' ) ) );
+		wp_redirect( admin_url( 'admin.php?page=fav-crm-system-log&result=1' ) );
+		exit();
 
 	}
 
-	public function maybe_send_bug_report() {
+	public function maybe_send_bug_report( $data ) {
 
 		$pluginlog = plugin_dir_path(__FILE__) . './debug.log';
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
 		$to = 'info@favcrm.io';
-		$subject = '[Bug Report] ' . $_POST['issue'];
+		$subject = '[Bug Report] ' . $data['issue'];
 
-		$message = $_POST['description'] . '<br>';
+		$message = $data['description'] . '<br>';
 		$message .= '-----------------------------------------' . '<br>';
 		$message .= 'Merchant ID: ' . $merchant_id . '<br>';
 		$message .= 'Site URL: ' . get_site_url() . '<br>';
@@ -529,22 +522,10 @@ class Favored_Admin {
 		$message .= 'WordPress version: ' . get_bloginfo( 'version' ) . '<br>';
 		$message .= 'Plugin version: ' . FAVORED_VERSION . '<br>';
 		$message .= 'WooCommerce version: ' . WC()->version . '<br>';
-		$message .= 'Server software: ' . $_SERVER['SERVER_SOFTWARE'] . '<br>';
-		$message .= 'Server IP: ' . $_SERVER['SERVER_ADDR'] . '<br>';
-		$message .= 'Server name: ' . $_SERVER['SERVER_NAME'] . '<br>';
-		$message .= 'Server port: ' . $_SERVER['SERVER_PORT'] . '<br>';
-		$message .= 'Server protocol: ' . $_SERVER['SERVER_PROTOCOL'] . '<br>';
-		$message .= 'Server request method: ' . $_SERVER['REQUEST_METHOD'] . '<br>';
-		$message .= 'Server request time: ' . $_SERVER['REQUEST_TIME'] . '<br>';
-		$message .= 'Server request time float: ' . $_SERVER['REQUEST_TIME_FLOAT'] . '<br>';
-		$message .= 'Server query string: ' . $_SERVER['QUERY_STRING'] . '<br>';
-		$message .= 'Server document root: ' . $_SERVER['DOCUMENT_ROOT'] . '<br>';
-		$message .= 'Server HTTP host: ' . $_SERVER['HTTP_HOST'] . '<br>';
-		$message .= 'Server HTTP user agent: ' . $_SERVER['HTTP_USER_AGENT'] . '<br>';
 
 		$attachments = array();
 
-		foreach( $_POST['attachments'] as $attachment ) {
+		foreach( $data['attachments'] as $attachment ) {
 			$attachments[] = str_replace( 'http://localhost:8082', WP_CONTENT_DIR, $attachment );
 		}
 
@@ -553,7 +534,8 @@ class Favored_Admin {
 		$headers = array('Content-Type: text/html; charset=UTF-8');
 		wp_mail( $to, $subject, $message, $headers, $attachments );
 
-		exit( wp_redirect( admin_url( 'admin.php?page=fav-crm-bug-report&result=1' ) ) );
+		wp_redirect( admin_url( 'admin.php?page=fav-crm-bug-report&result=1' ) );
+		exit();
 
 	}
 
@@ -564,13 +546,13 @@ class Favored_Admin {
 		if ( isset( $_GET['result'] ) && $screen->id === 'favcrm_page_fav-crm-system-log' ) {
 			?>
 			<div class="notice notice-success is-dismissible">
-				<p><?php _e( 'Diagnostic logs have been sent successfully.', 'favored' ); ?></p>
+				<p><?php esc_html_e( 'Diagnostic logs have been sent successfully.', 'favored' ); ?></p>
 			</div>
 			<?php
 		} else if ( isset( $_GET['result'] ) && $screen->id === 'favcrm_page_fav-crm-bug-report' ) {
 			?>
 			<div class="notice notice-success is-dismissible">
-				<p><?php _e( 'Bug report has been sent successfully.', 'favored' ); ?></p>
+				<p><?php esc_html_e( 'Bug report has been sent successfully.', 'favored' ); ?></p>
 			</div>
 			<?php
 		}
@@ -591,7 +573,7 @@ class Favored_Admin {
 			'consumer_secret' => $consumer_secret,
 			'truncated_key'   => substr( $consumer_key, -7 ),
 			'last_access'     => current_time( 'mysql' ),
-		) );
+		) ); // db call ok; no-cache ok
 
 		return [ $consumer_key, $consumer_secret ];
 	}
@@ -621,7 +603,7 @@ class Favored_Admin {
 				'X-Secret' => $secret,
 				'Content-Type' => 'application/json',
 			),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 			)
 		);
@@ -645,7 +627,7 @@ class Favored_Admin {
 				SELECT consumer_key, consumer_secret, permissions
 				FROM {$wpdb->prefix}woocommerce_api_keys
 				WHERE description = %s
-			", "Favored"), ARRAY_A);
+			", "Favored"), ARRAY_A); // db call ok; no-cache ok
 
 		if ( empty( $key ) ) {
 			[ $consumer_key, $consumer_secret ] = $this->generate_api_key();
@@ -710,12 +692,12 @@ class Favored_Admin {
 			'phone' => $billing['phone'],
 			'amount' => $order_data['total'],
 			'order_id' => $order_data['order_id'],
-			'data' => json_encode( $order_data ),
+			'data' => wp_json_encode( $order_data ),
 			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
 		);
 
 		$this->write_log( 'Sending data to Favored CRM for order #' . $order_data['order_id'] );
-		$this->write_log( json_encode( $body ) );
+		$this->write_log( wp_json_encode( $body ) );
 
 		$url = $this->get_base_url() . '/member/external-platform/spendings/';
 
@@ -726,7 +708,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 			)
 		);
@@ -766,7 +748,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 			)
 		);
@@ -821,7 +803,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 			)
 		);
@@ -845,7 +827,13 @@ class Favored_Admin {
 
 		$message = '[' . $date . '] ' . $message . PHP_EOL;
 
-		error_log( $message, 3, $pluginlog );
+		$filesystem = new WP_Filesystem_Direct( true );
+
+		if ( ! $filesystem->is_writable( $pluginlog ) ) {
+			$filesystem->put_contents( $pluginlog, '', 0 );
+		}
+
+		$filesystem->put_contents( $pluginlog, $message, FILE_APPEND );
 
 	}
 
@@ -948,7 +936,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -957,8 +945,6 @@ class Favored_Admin {
 
 		try {
 			$result = json_decode( wp_remote_retrieve_body( $response ), true );
-
-			// file_put_contents( 'php://stdout', print_r( $result, TRUE ) );
 
 			if ( isset( $result['errorCode'] ) ) {
 				return array(
@@ -991,7 +977,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1019,7 +1005,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1060,7 +1046,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1110,7 +1096,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1131,7 +1117,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1196,7 +1182,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1217,7 +1203,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1246,7 +1232,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1267,7 +1253,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1310,7 +1296,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1362,7 +1348,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1383,7 +1369,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1413,7 +1399,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1434,7 +1420,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1477,7 +1463,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1568,7 +1554,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1589,7 +1575,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1619,7 +1605,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 
@@ -1640,7 +1626,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1683,7 +1669,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1744,7 +1730,6 @@ class Favored_Admin {
 		];
 
 		$files = $request->get_file_params();
-		// file_put_contents( 'php://stdout','file: '. $files['image']['tmp_name']. ' - ' .$files['image']['type'].' - '.$files['image']['name']. PHP_EOL);
 
 		$header = $this->build_headers();
 		unset($header['Content-Type']);
@@ -1764,13 +1749,16 @@ class Favored_Admin {
 
 		// Upload the file
 		if ( array_key_exists("image", $files) ) {
+			$filesystem = new WP_Filesystem_Direct( true );
+
+			$content = $filesystem->get_contents( $files['image']['tmp_name'] );
+
 			$payload .= '--' . $boundary;
 			$payload .= "\r\n";
 			$payload .= 'Content-Disposition: form-data; name="' . 'image' .
 				'"; filename="' . basename( $files['image']['name'] ) . '"' . "\r\n";
-			//        $payload .= 'Content-Type: image/jpeg' . "\r\n";
 			$payload .= "\r\n";
-			$payload .= file_get_contents( $files['image']['tmp_name'] );
+			$payload .= $content;
 			$payload .= "\r\n";
 		}
 		$payload .= '--' . $boundary . '--';
@@ -1804,7 +1792,7 @@ class Favored_Admin {
 
 			$success = true;
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1827,7 +1815,6 @@ class Favored_Admin {
 		];
 
 		$files = $request->get_file_params();
-		// file_put_contents( 'php://stdout','file: '. $files['image']['tmp_name']. ' - ' .$files['image']['type'].' - '.$files['image']['name']. PHP_EOL);
 
 		$header = $this->build_headers();
 		unset($header['Content-Type']);
@@ -1847,13 +1834,17 @@ class Favored_Admin {
 
 		// Upload the file
 		if ( array_key_exists("image", $files) ) {
+			$filesystem = new WP_Filesystem_Direct( true );
+
+			$content = $filesystem->get_contents( $files['image']['tmp_name'] );
+
 			$payload .= '--' . $boundary;
 			$payload .= "\r\n";
 			$payload .= 'Content-Disposition: form-data; name="' . 'image' .
 				'"; filename="' . basename( $files['image']['name'] ) . '"' . "\r\n";
 			//        $payload .= 'Content-Type: image/jpeg' . "\r\n";
 			$payload .= "\r\n";
-			$payload .= file_get_contents( $files['image']['tmp_name'] );
+			$payload .= $content;
 			$payload .= "\r\n";
 		}
 		$payload .= '--' . $boundary . '--';
@@ -1886,7 +1877,7 @@ class Favored_Admin {
 
 			$success = true;
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1928,7 +1919,7 @@ class Favored_Admin {
 			$success = true;
 
 		} catch(Exception $e) {
-			file_put_contents( 'php://stdout', print_r( $e->getMessage(), TRUE ) );
+			echo esc_html( $e->getMessage() );
 		}
 
 		return array(
@@ -1990,7 +1981,7 @@ class Favored_Admin {
 			'httpversion' => '1.0',
 			'blocking' => true,
 			'headers' => $this->build_headers(),
-			'body' => json_encode( $body ),
+			'body' => wp_json_encode( $body ),
 			'cookies' => array()
 		) );
 

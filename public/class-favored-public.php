@@ -334,7 +334,7 @@ class Favored_Public {
 
 	public function init_floating_icon() {
 
-		echo do_blocks( '<!-- wp:fav/floating-icon /-->' );
+		echo esc_html( do_blocks( '<!-- wp:fav/floating-icon /-->' ) );
 
 	}
 
@@ -544,7 +544,7 @@ class Favored_Public {
 				'X-Secret' => $secret,
 				'Content-Type' => 'application/json',
 			),
-			'body' => json_encode( array(
+			'body' => wp_json_encode( array(
 				'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
 				'gift_offer_id' => $payload['gift_offer_id'],
 			) ),
@@ -680,7 +680,7 @@ class Favored_Public {
 				'X-Secret' => $secret,
 				'Content-Type' => 'application/json',
 			),
-			'body' => json_encode( array(
+			'body' => wp_json_encode( array(
 				'name' => $payload['name'],
 				'phone' => $payload['phone'],
 				'email' => $payload['email'],
@@ -735,12 +735,13 @@ class Favored_Public {
 					$cart->add_fee( __( 'Cash Rewards', 'favored' ), -$discount );
 				} else {
 					wc_clear_notices();
-					wc_add_notice( __('You do not have enough cash rewards to apply this discount.'), 'error');
+					wc_add_notice( __('You do not have enough cash rewards to apply this discount.', 'favored'), 'error');
 				}
 
 			} else {
 				wc_clear_notices();
-				wc_add_notice( sprintf( __('You must spend more than %s to use your loyalty discount.'), wc_price( $discount ) ), 'error');
+				// translators: %s: discount amount
+				wc_add_notice( sprintf( __('You must spend more than %s to use your loyalty discount.', 'favored'), wc_price( $discount ) ), 'error');
 			}
 		}
 	}
