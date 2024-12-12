@@ -116,7 +116,7 @@ export default function Dashboard({ nonce }) {
   return (
     <div className="max-w-[1280px]">
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce', 'favored')}</h1>
+        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce', 'favcrm-for-woocommerce')}</h1>
         <hr className="wp-header-end" />
       </div>
       <div>

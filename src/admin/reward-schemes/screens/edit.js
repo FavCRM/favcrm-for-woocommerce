@@ -87,7 +87,7 @@ export default function RewardSchemeForm({ nonce }) {
     (!rewardSchemeLoading) &&
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Reward Scheme`, 'favored')}</h1>
+        <h1 className="wp-heading-inline">{__(`${action} Reward Scheme`, 'favcrm-for-woocommerce')}</h1>
         <hr className="wp-header-end" />
         {
           !!rewardSchemeId &&
@@ -120,7 +120,7 @@ export default function RewardSchemeForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="Name">
-                    {__('Name', 'favored')}
+                    {__('Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -128,7 +128,7 @@ export default function RewardSchemeForm({ nonce }) {
                     id="name"
                     type="text"
                     className="regular-text"
-                    {...register('name', { required: __('Tier name is required', 'favored') })}
+                    {...register('name', { required: __('Tier name is required', 'favcrm-for-woocommerce') })}
                   />
                   {<div className="mt-1 error-message text-red-500 font-normal">{errors.name?.message}</div>}
                 </td>
@@ -136,7 +136,7 @@ export default function RewardSchemeForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="amount">
-                    {__('Amount', 'favored')}
+                    {__('Amount', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -145,7 +145,7 @@ export default function RewardSchemeForm({ nonce }) {
                     type="text"
                     className="regular-text"
                     {...register('amount', {
-                      required: __('Amount is required', 'favored'),
+                      required: __('Amount is required', 'favcrm-for-woocommerce'),
                       validate: {
                         isNumber: v => parseInt(v) || "Please enter nubmer",
                         validRange: v => (v >= 0) || "Amount should be >= 0",
@@ -158,7 +158,7 @@ export default function RewardSchemeForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="points">
-                    {__('Points', 'favored')}
+                    {__('Points', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -167,7 +167,7 @@ export default function RewardSchemeForm({ nonce }) {
                     type="text"
                     className="regular-text"
                     {...register('points', {
-                      required: __('Points is required', 'favored'),
+                      required: __('Points is required', 'favcrm-for-woocommerce'),
                       validate: {
                         isNumber: v => parseInt(v) || "Please enter nubmer",
                         validRange: v => (v >= 0) || "Points should be>= 0",
@@ -180,7 +180,7 @@ export default function RewardSchemeForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="stamps">
-                    {__('Stamps', 'favored')}
+                    {__('Stamps', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -201,7 +201,7 @@ export default function RewardSchemeForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="description">
-                    {__('Description', 'favored')}
+                    {__('Description', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -217,7 +217,7 @@ export default function RewardSchemeForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="isDefault">
-                    {__('Default', 'favored')}
+                    {__('Default', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -239,7 +239,7 @@ export default function RewardSchemeForm({ nonce }) {
                 <td>
                   {
                     error && (
-                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favored')}</div>
+                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favcrm-for-woocommerce')}</div>
                     )
                   }
                   <div className="flex gap-2">
@@ -255,7 +255,7 @@ export default function RewardSchemeForm({ nonce }) {
                             color="text-black"
                             size="size-4"
                           />
-                          : __(!rewardSchemeId ? 'Add' : 'Save', 'favored')
+                          : __(!rewardSchemeId ? 'Add' : 'Save', 'favcrm-for-woocommerce')
                       }
                     </button>
                     <button
@@ -263,7 +263,7 @@ export default function RewardSchemeForm({ nonce }) {
                       type="button"
                       onClick={() => navigate(-1)}
                     >
-                      {__(!rewardSchemeId ? 'Back' : 'Cancel', 'favored')}
+                      {__(!rewardSchemeId ? 'Back' : 'Cancel', 'favcrm-for-woocommerce')}
                     </button>
                   </div>
                 </td>

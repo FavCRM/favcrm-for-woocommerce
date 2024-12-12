@@ -134,7 +134,7 @@ export default function GiftOfferForm({ nonce }) {
     (!giftOfferLoading && !tiersLoading) &&
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Gift Offer`, 'favored')}</h1>
+        <h1 className="wp-heading-inline">{__(`${action} Gift Offer`, 'favcrm-for-woocommerce')}</h1>
         <hr className="wp-header-end" />
         {
           !!giftOfferId &&
@@ -167,7 +167,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="Name">
-                    {__('Name', 'favored')}
+                    {__('Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -175,7 +175,7 @@ export default function GiftOfferForm({ nonce }) {
                     id="name"
                     type="text"
                     className="regular-text"
-                    {...register('name', { required: __('Gift offer name is required', 'favored') })}
+                    {...register('name', { required: __('Gift offer name is required', 'favcrm-for-woocommerce') })}
                   />
                   {<div className="mt-1 error-message text-red-500 font-normal">{errors.name?.message}</div>}
                 </td>
@@ -183,7 +183,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="description">
-                    {__('Description', 'favored')}
+                    {__('Description', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -199,7 +199,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="membership_tier_id">
-                    {__('Membership Tier', 'favored')}
+                    {__('Membership Tier', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -225,7 +225,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="points">
-                    {__('Points', 'favored')}
+                    {__('Points', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -234,7 +234,7 @@ export default function GiftOfferForm({ nonce }) {
                     type="number"
                     className="regular-text"
                     {...register('points', {
-                      required: __('Points is required', 'favored'),
+                      required: __('Points is required', 'favcrm-for-woocommerce'),
                       valueAsNumber: true,
                     })}
                   />
@@ -244,7 +244,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="stamps">
-                    {__('Stamps', 'favored')}
+                    {__('Stamps', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -253,7 +253,7 @@ export default function GiftOfferForm({ nonce }) {
                     type="number"
                     className="regular-text"
                     {...register('stamps', {
-                      required: __('Stamps is required', 'favored'),
+                      required: __('Stamps is required', 'favcrm-for-woocommerce'),
                       valueAsNumber: true,
                     })}
                   />
@@ -263,7 +263,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="status">
-                    {__('Status', 'favored')}
+                    {__('Status', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -285,7 +285,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="is_redeemable">
-                    {__('Allow Member to redeem', 'favored')}
+                    {__('Allow Member to redeem', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -307,7 +307,7 @@ export default function GiftOfferForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="image">
-                    {__('Image (1000x1000)', 'favored')}
+                    {__('Image (1000x1000)', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -384,7 +384,7 @@ export default function GiftOfferForm({ nonce }) {
                 <td>
                   {
                     error && (
-                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favored')}</div>
+                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favcrm-for-woocommerce')}</div>
                     )
                   }
                   <div className="flex gap-2">
@@ -400,7 +400,7 @@ export default function GiftOfferForm({ nonce }) {
                             color="text-black"
                             size="size-4"
                           />
-                          : __(!giftOfferId ? 'Add' : 'Save', 'favored')
+                          : __(!giftOfferId ? 'Add' : 'Save', 'favcrm-for-woocommerce')
                       }
                     </button>
                     <button
@@ -408,7 +408,7 @@ export default function GiftOfferForm({ nonce }) {
                       type="button"
                       onClick={() => navigate(-1)}
                     >
-                      {__(!giftOfferId ? 'Back' : 'Cancel', 'favored')}
+                      {__(!giftOfferId ? 'Back' : 'Cancel', 'favcrm-for-woocommerce')}
                     </button>
                   </div>
                 </td>

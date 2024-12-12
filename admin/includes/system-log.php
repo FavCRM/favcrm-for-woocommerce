@@ -1,13 +1,13 @@
 <?php
 
 if ( ! current_user_can( 'manage_options' ) ) {
-   wp_die( esc_html__( 'You do not have sufficient capabilities to access this page.', 'favored' ) );
+   wp_die( esc_html__( 'You do not have sufficient capabilities to access this page.', 'favcrm-for-woocommerce' ) );
 }
 
 $filesystem = new WP_Filesystem_Direct( true );
 
 if ( ! $filesystem->exists( plugin_dir_path( __FILE__ ) . '../debug.log' ) ) {
-    wp_die( esc_html__( 'The log file does not exist.', 'favored' ) );
+    wp_die( esc_html__( 'The log file does not exist.', 'favcrm-for-woocommerce' ) );
 }
 
 $pluginlog = plugin_dir_path(__FILE__) . '../debug.log';
@@ -30,6 +30,6 @@ $lines = array_reverse( $lines );
             }
             ?>
         </textarea>
-        <?php submit_button( esc_html__( 'Send Diagnostic Logs ', 'favored' ) ); ?>
+        <?php submit_button( esc_html__( 'Send Diagnostic Logs ', 'favcrm-for-woocommerce' ) ); ?>
     </form>
 </div>

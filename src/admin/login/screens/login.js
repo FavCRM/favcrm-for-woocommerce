@@ -49,7 +49,7 @@ export default function Login({ nonce }) {
   return (
     <div>
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Signin', 'favored')}</h1>
+        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Signin', 'favcrm-for-woocommerce')}</h1>
         <hr className="wp-header-end" />
       </div>
       <div>
@@ -59,7 +59,7 @@ export default function Login({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="email">
-                    {__('Email', 'favored')}
+                    {__('Email', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -67,7 +67,7 @@ export default function Login({ nonce }) {
                     id="email"
                     type="text"
                     className="regular-text"
-                    {...register('email', { required: __('Required', 'favored')})}
+                    {...register('email', { required: __('Required', 'favcrm-for-woocommerce')})}
                   />
                   {
                     errors.email && (
@@ -79,7 +79,7 @@ export default function Login({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="password">
-                    {__('Password', 'favored')}
+                    {__('Password', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -87,7 +87,7 @@ export default function Login({ nonce }) {
                     id="password"
                     type="password"
                     className="regular-text"
-                    {...register('password', { required: __('Required', 'favored')})}
+                    {...register('password', { required: __('Required', 'favcrm-for-woocommerce')})}
                   />
                   {
                     errors.password && (
@@ -102,7 +102,7 @@ export default function Login({ nonce }) {
                 <td>
                   {
                     error && (
-                      <div className="error-message text-red-500 font-normal mb-4">{__(error, 'favored')}</div>
+                      <div className="error-message text-red-500 font-normal mb-4">{__(error, 'favcrm-for-woocommerce')}</div>
                     )
                   }
                   <button
@@ -117,7 +117,7 @@ export default function Login({ nonce }) {
                             color="text-black"
                             size="size-4"
                           />
-                        : __('Submit', 'favored')
+                        : __('Submit', 'favcrm-for-woocommerce')
                     }
                   </button>
                 </td>
@@ -126,12 +126,12 @@ export default function Login({ nonce }) {
           </table>
         </form>
         <div className="flex gap-x-4 items-center mt-12">
-          <div>{__('Not yet have an account?', 'favored')}</div>
+          <div>{__('Not yet have an account?', 'favcrm-for-woocommerce')}</div>
           <a
             href="/wp-admin/admin.php?page=fav-crm-register"
             className="button"
           >
-            {__('Sign Up', 'favored')}
+            {__('Sign Up', 'favcrm-for-woocommerce')}
           </a>
         </div>
       </div>

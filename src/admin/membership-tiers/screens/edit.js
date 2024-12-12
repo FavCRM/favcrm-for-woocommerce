@@ -119,7 +119,7 @@ export default function MembershipTierForm({ nonce }) {
     (!membertierLoading) &&
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Membership Tier`, 'favored')}</h1>
+        <h1 className="wp-heading-inline">{__(`${action} Membership Tier`, 'favcrm-for-woocommerce')}</h1>
         <hr className="wp-header-end" />
         {
           !!membershipTierId &&
@@ -152,7 +152,7 @@ export default function MembershipTierForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="Name">
-                    {__('Name', 'favored')}
+                    {__('Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -160,7 +160,7 @@ export default function MembershipTierForm({ nonce }) {
                     id="name"
                     type="text"
                     className="regular-text"
-                    {...register('name', { required: __('Tier name is required', 'favored') })}
+                    {...register('name', { required: __('Tier name is required', 'favcrm-for-woocommerce') })}
                   />
                   {<div className="mt-1 error-message text-red-500 font-normal">{errors.name?.message}</div>}
                 </td>
@@ -168,7 +168,7 @@ export default function MembershipTierForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="spendingCount">
-                    {__('Spending Count', 'favored')}
+                    {__('Spending Count', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -177,7 +177,7 @@ export default function MembershipTierForm({ nonce }) {
                     type="text"
                     className="regular-text"
                     {...register('spendingCount', {
-                      required: __('Spending Count is required', 'favored'),
+                      required: __('Spending Count is required', 'favcrm-for-woocommerce'),
                       validate: {
                         isNumber: v => parseInt(v) || "Please enter nubmer",
                         validRange: v => (v >= 0) || "Spending Count should be >= 0",
@@ -190,7 +190,7 @@ export default function MembershipTierForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="totalSpendingAmount">
-                    {__('Total Spending Amount', 'favored')}
+                    {__('Total Spending Amount', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -199,7 +199,7 @@ export default function MembershipTierForm({ nonce }) {
                     type="text"
                     className="regular-text"
                     {...register('totalSpendingAmount', {
-                      required: __('Total Spending Amount is required', 'favored'),
+                      required: __('Total Spending Amount is required', 'favcrm-for-woocommerce'),
                       validate: {
                         isNumber: v => parseInt(v) || "Please enter nubmer",
                         validRange: v => (v >= 0) || "Total Spending Amount should be>= 0",
@@ -212,7 +212,7 @@ export default function MembershipTierForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="description">
-                    {__('Description', 'favored')}
+                    {__('Description', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -228,7 +228,7 @@ export default function MembershipTierForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="multiplier">
-                    {__('Multiplier', 'favored')}
+                    {__('Multiplier', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -249,7 +249,7 @@ export default function MembershipTierForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="discount">
-                    {__('Discount (%)', 'favored')}
+                    {__('Discount (%)', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -276,7 +276,7 @@ export default function MembershipTierForm({ nonce }) {
                 <td>
                   {
                     error && (
-                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favored')}</div>
+                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favcrm-for-woocommerce')}</div>
                     )
                   }
                   <div className="flex gap-2">
@@ -292,7 +292,7 @@ export default function MembershipTierForm({ nonce }) {
                             color="text-black"
                             size="size-4"
                           />
-                          : __(!membershipTierId ? 'Add' : 'Save', 'favored')
+                          : __(!membershipTierId ? 'Add' : 'Save', 'favcrm-for-woocommerce')
                       }
                     </button>
                     <button
@@ -300,7 +300,7 @@ export default function MembershipTierForm({ nonce }) {
                       type="button"
                       onClick={() => navigate(-1)}
                     >
-                      {__(!membershipTierId ? 'Back' : 'Cancel', 'favored')}
+                      {__(!membershipTierId ? 'Back' : 'Cancel', 'favcrm-for-woocommerce')}
                     </button>
                   </div>
                 </td>

@@ -115,7 +115,7 @@ export default function MemberForm({ nonce }) {
   return (
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Member`, 'favored')}</h1>
+        <h1 className="wp-heading-inline">{__(`${action} Member`, 'favcrm-for-woocommerce')}</h1>
         <hr className="wp-header-end" />
         {
           memberId && (
@@ -151,7 +151,7 @@ export default function MemberForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="email">
-                    {__('Email', 'favored')}
+                    {__('Email', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -160,7 +160,7 @@ export default function MemberForm({ nonce }) {
                     type="text"
                     className="regular-text"
                     {...register('email', {
-                      required: __('Please enter email address', 'favored'),
+                      required: __('Please enter email address', 'favcrm-for-woocommerce'),
                       pattern: {
                         value: /^[\w\-\.]+@([\w-]+\.)+[\w-]{2,}$/,
                         message: "Please enter a valid email",
@@ -173,7 +173,7 @@ export default function MemberForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="Name">
-                    {__('Name', 'favored')}
+                    {__('Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -181,7 +181,7 @@ export default function MemberForm({ nonce }) {
                     id="name"
                     type="text"
                     className="regular-text"
-                    {...register('name', { required: __('Please enter your full name', 'favored') })}
+                    {...register('name', { required: __('Please enter your full name', 'favcrm-for-woocommerce') })}
                   />
                   {<div className="mt-1 error-message text-red-500 font-normal">{errors.name?.message}</div>}
                 </td>
@@ -189,7 +189,7 @@ export default function MemberForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="phone">
-                    {__('Phone', 'favored')}
+                    {__('Phone', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -219,7 +219,7 @@ export default function MemberForm({ nonce }) {
                         <input
                           type="tel"
                           className="w-full border px-4 py-2 rounded"
-                          {...register('phone', { required: __('Please enter phone number', 'favored') })}
+                          {...register('phone', { required: __('Please enter phone number', 'favcrm-for-woocommerce') })}
                         />
                       </div>
                     </div>
@@ -234,7 +234,7 @@ export default function MemberForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="membershipTier">
-                    {__('Membership Tier', 'favored')}
+                    {__('Membership Tier', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -260,7 +260,7 @@ export default function MemberForm({ nonce }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="Birth Month and Day">
-                    {__('Birth Month and Day', 'favored')}
+                    {__('Birth Month and Day', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -291,7 +291,7 @@ export default function MemberForm({ nonce }) {
                   {
                     (errors.day || errors.month) && (
                       <div className="mt-1 error-message text-red-500 font-normal">
-                        {__('Please select birth month and day', 'favored')}
+                        {__('Please select birth month and day', 'favcrm-for-woocommerce')}
                       </div>
                     )
                   }
@@ -299,7 +299,7 @@ export default function MemberForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label htmlFor="Referral Phone"> {__('Referral Phone', 'favored')} </label>
+                  <label htmlFor="Referral Phone"> {__('Referral Phone', 'favcrm-for-woocommerce')} </label>
                 </th>
                 <td>
                   <input
@@ -307,7 +307,7 @@ export default function MemberForm({ nonce }) {
                     type="text"
                     className="regular-text"
                     {...register('referralMember', {
-                      // required: __('Required', 'favored'),
+                      // required: __('Required', 'favcrm-for-woocommerce'),
                       // value: member.referralMember?.phone,
                       // onChange: (e) => {
                       //   const { name, value } = e.target
@@ -363,7 +363,7 @@ export default function MemberForm({ nonce }) {
                 <td>
                   {
                     error && (
-                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favored')}</div>
+                      <div className="error-message text-red-500 font-normal mb-4">error: {__(error, 'favcrm-for-woocommerce')}</div>
                     )
                   }
                   <div className="flex gap-2">
@@ -379,7 +379,7 @@ export default function MemberForm({ nonce }) {
                             color="text-black"
                             size="size-4"
                           />
-                          : __(!memberId ? 'Add' : 'Save', 'favored')
+                          : __(!memberId ? 'Add' : 'Save', 'favcrm-for-woocommerce')
                       }
                     </button>
                     <button
@@ -387,7 +387,7 @@ export default function MemberForm({ nonce }) {
                       type="button"
                       onClick={() => navigate(-1)}
                     >
-                      {__(!memberId ? 'Back' : 'Cancel', 'favored')}
+                      {__(!memberId ? 'Back' : 'Cancel', 'favcrm-for-woocommerce')}
                     </button>
                   </div>
                 </td>

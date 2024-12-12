@@ -35,7 +35,7 @@ class Favored_i18n {
 	public function load_plugin_textdomain() {
 
 		load_plugin_textdomain(
-			'favored',
+			'favcrm-for-woocommerce',
 			false,
 			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
 		);
@@ -46,7 +46,7 @@ class Favored_i18n {
 
 		wp_set_script_translations(
 			'fav-crm-billing-script',
-			'favored',
+			'favcrm-for-woocommerce',
 			plugin_dir_path( __FILE__ ) . '../languages/',
 		);
 
@@ -63,7 +63,7 @@ class Favored_i18n {
 		foreach ( $scripts as $script ) {
 			wp_set_script_translations(
 				$script,
-				'favored',
+				'favcrm-for-woocommerce',
 				plugin_dir_path( __FILE__ ) . '../languages/',
 			);
 		}

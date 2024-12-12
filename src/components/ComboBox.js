@@ -35,7 +35,7 @@ export function ComboBox({ options, onChange, defaultValue, className, variant =
           {
             value
               ? options.find((option) => option.value === value)?.selectedLabel
-              : __('Select', 'favored')
+              : __('Select', 'favcrm-for-woocommerce')
           }
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
@@ -46,7 +46,7 @@ export function ComboBox({ options, onChange, defaultValue, className, variant =
             return (value?.toLowerCase().includes(query?.toLowerCase()) || keywords?.[0]?.toLowerCase().includes(query?.toLowerCase())) ? 1 : 0;
           }}
         >
-          <CommandInput className="text-black" placeholder={__(searchInputPlaceholder, 'favored')} />
+          <CommandInput className="text-black" placeholder={__(searchInputPlaceholder, 'favcrm-for-woocommerce')} />
           <CommandList>
             <CommandEmpty>Not found.</CommandEmpty>
             <CommandGroup>

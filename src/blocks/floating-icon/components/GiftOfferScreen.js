@@ -30,14 +30,14 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
 
     if (result == 'INSUFFICIENT_POINTS_OR_STAMPS') {
       toast({
-        title: __('Redeem failed', 'favored'),
-        description: __('Insufficient points or stamps', 'favored'),
+        title: __('Redeem failed', 'favcrm-for-woocommerce'),
+        description: __('Insufficient points or stamps', 'favcrm-for-woocommerce'),
         status: 'error',
         variant: 'destructive'
       });
     } else if (!!result['id']) {
       toast({
-        title: __('Redeem success', 'favored'),
+        title: __('Redeem success', 'favcrm-for-woocommerce'),
         status: 'success',
         variant: 'success'
       });
@@ -51,7 +51,7 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
       <header className="bg-gray-700 text-white px-4 py-6 sm:!rounded-t-2xl flex justify-between">
         <div className="flex gap-x-2">
           <ChevronLeft className="cursor-pointer" onClick={() => setScreen('welcome')} />
-          <div>{site.title} {__('Member Zone', 'favored')}</div>
+          <div>{site.title} {__('Member Zone', 'favcrm-for-woocommerce')}</div>
         </div>
         <div>
           <X className="cursor-pointer hover:stroke-[#EEE] duration-300" onClick={() => setScreen('welcome')} />
@@ -59,7 +59,7 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
       </header>
       <main className="p-4">
         <div>
-          <h3 className="text-sm text-gray-500 mb-4">{__('Gift Rewards', 'favored')}</h3>
+          <h3 className="text-sm text-gray-500 mb-4">{__('Gift Rewards', 'favcrm-for-woocommerce')}</h3>
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
@@ -71,14 +71,14 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
                       {
                         !!offer.points && (
                           <div>
-                            {sprintf(__('%s Points', 'favored'), offer.points)}
+                            {sprintf(__('%s Points', 'favcrm-for-woocommerce'), offer.points)}
                           </div>
                         )
                       }
                       {
                         !!offer.stamps && (
                           <div>
-                            {sprintf(__('%s Stamps', 'favored'), offer.stamps)}
+                            {sprintf(__('%s Stamps', 'favcrm-for-woocommerce'), offer.stamps)}
                           </div>
                         )
                       }
@@ -91,7 +91,7 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
                           className="text-sm px-4 py-1 bg-green-500 hover:bg-green-700 text-white rounded cursor-pointer"
                           onClick={() => handleRedeem(offer.id)}
                         >
-                          {__('Redeem', 'favored')}
+                          {__('Redeem', 'favcrm-for-woocommerce')}
                         </div>
                       </div>
                     )

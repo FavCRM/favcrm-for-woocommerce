@@ -19,7 +19,7 @@ export default function RewardSchemeScreen({ site, setScreen }) {
       <header className="bg-gray-700 text-white px-4 py-6 sm:!rounded-t-2xl flex justify-between">
         <div className="flex gap-x-2">
           <ChevronLeft className="cursor-pointer" onClick={() => setScreen('welcome')} />
-          <div>{site.title} {__('Member Zone', 'favored')}</div>
+          <div>{site.title} {__('Member Zone', 'favcrm-for-woocommerce')}</div>
         </div>
         <div>
           <X className="cursor-pointer hover:stroke-[#EEE] duration-300" onClick={() => setScreen('welcome')} />
@@ -27,7 +27,7 @@ export default function RewardSchemeScreen({ site, setScreen }) {
       </header>
       <main className="p-4">
         <div>
-          <h3 className="text-sm text-gray-500 mb-4">{__('Reward Scheme', 'favored')}</h3>
+          <h3 className="text-sm text-gray-500 mb-4">{__('Reward Scheme', 'favcrm-for-woocommerce')}</h3>
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
@@ -36,21 +36,21 @@ export default function RewardSchemeScreen({ site, setScreen }) {
                   <div>{scheme.name}</div>
                   <div className="text-gray-500 text-sm flex gap-x-2">
                     <div>
-                      {sprintf(__('Every $%s spent and earn', 'favored'), parseFloat(scheme.amount))}
+                      {sprintf(__('Every $%s spent and earn', 'favcrm-for-woocommerce'), parseFloat(scheme.amount))}
                     </div>
                     {
                       !!scheme.points && (
-                        <div>{sprintf(__('%s Points', 'favored'), parseFloat(scheme.points))}</div>
+                        <div>{sprintf(__('%s Points', 'favcrm-for-woocommerce'), parseFloat(scheme.points))}</div>
                       )
                     }
                     {
                       !!scheme.points && !!scheme.stamps && (
-                        <div>{__('and', 'favored')}</div>
+                        <div>{__('and', 'favcrm-for-woocommerce')}</div>
                       )
                     }
                     {
                       !!scheme.stamps && (
-                        <div>{sprintf(__('%s Stamps', 'favored'), parseFloat(scheme.stamps))}</div>
+                        <div>{sprintf(__('%s Stamps', 'favcrm-for-woocommerce'), parseFloat(scheme.stamps))}</div>
                       )
                     }
                   </div>

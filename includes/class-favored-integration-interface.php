@@ -60,7 +60,7 @@ class Favored_Plugin_Integration implements IntegrationInterface {
 
 		wp_set_script_translations(
 			'wc-blocks-integration',
-			'favored',
+			'favcrm-for-woocommerce',
 			plugin_dir_path( dirname( __FILE__ ) ) . '/languages'
 		);
 

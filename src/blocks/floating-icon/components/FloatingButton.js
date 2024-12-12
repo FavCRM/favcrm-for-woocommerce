@@ -13,7 +13,7 @@ export default function FloatingButton({ show, setShow }) {
           : (
             <>
               <Gift />
-              <div>{__('Member Zone', 'favored')}</div>
+              <div>{__('Member Zone', 'favcrm-for-woocommerce')}</div>
             </>
           )
       }

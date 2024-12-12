@@ -46,7 +46,7 @@ export default function Block({ nonce }) {
 
     if (result.registered === false) {
       if (result.message == 'DUPLICATED_PHONE' || result.message == 'FAILED_TO_CREATE_FAV_USER') {
-        setError(__('This email has been registered', 'favored'))
+        setError(__('This email has been registered', 'favcrm-for-woocommerce'))
       }
 
       setIsLoading(false)
@@ -61,15 +61,15 @@ export default function Block({ nonce }) {
 
   return (
     <div className="min-h-[500px] pb-64">
-      <h1 className="mb-6">{__('Member Register', 'favored')}</h1>
+      <h1 className="mb-6">{__('Member Register', 'favcrm-for-woocommerce')}</h1>
       <div className="mb-8">
         <div className="flex flex-col mb-4">
-          <label className="text-sm text-gray-500 mb-1">{__('Member name', 'favored')}</label>
+          <label className="text-sm text-gray-500 mb-1">{__('Member name', 'favcrm-for-woocommerce')}</label>
           <input
             type="text"
             className="w-[300px] border px-4 py-2 rounded"
             { ...register('name', {
-              required: __('Please enter your name', 'favored'),
+              required: __('Please enter your name', 'favcrm-for-woocommerce'),
             }) }
           />
           {
@@ -77,7 +77,7 @@ export default function Block({ nonce }) {
           }
         </div>
         <div className="flex flex-col mb-4">
-          <label className="text-sm text-gray-500 mb-1">{__('Phone', 'favored')}</label>
+          <label className="text-sm text-gray-500 mb-1">{__('Phone', 'favcrm-for-woocommerce')}</label>
           <div className="flex gap-2 w-[300px]">
             <Controller
               control={control}
@@ -104,7 +104,7 @@ export default function Block({ nonce }) {
                 type="tel"
                 className="w-full border px-4 py-2 rounded"
                 { ...register('phone', {
-                  required: __('Please enter your phone number', 'favored'),
+                  required: __('Please enter your phone number', 'favcrm-for-woocommerce'),
                 }) }
               />
             </div>
@@ -114,16 +114,16 @@ export default function Block({ nonce }) {
           }
         </div>
         <div className="flex flex-col mb-4">
-          <label className="text-sm text-gray-500 mb-1">{__('Email', 'favored')}</label>
+          <label className="text-sm text-gray-500 mb-1">{__('Email', 'favcrm-for-woocommerce')}</label>
 
           <input
             type="email"
             className="block w-[300px] border px-4 py-2 rounded"
             { ...register('email', {
-              required: __('Please enter your email', 'favored'),
+              required: __('Please enter your email', 'favcrm-for-woocommerce'),
               pattern: {
                 value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                message: __('Invalid email address', 'favored'),
+                message: __('Invalid email address', 'favcrm-for-woocommerce'),
               }
             }) }
           />
@@ -132,12 +132,12 @@ export default function Block({ nonce }) {
           }
         </div>
         <div className="flex flex-col mb-4">
-          <label className="text-sm text-gray-500 mb-1">{__('Password', 'favored')}</label>
+          <label className="text-sm text-gray-500 mb-1">{__('Password', 'favcrm-for-woocommerce')}</label>
           <input
             type="password"
             className="w-[300px] border px-4 py-2 rounded"
             { ...register('password', {
-              required: __('Please enter your password', 'favored'),
+              required: __('Please enter your password', 'favcrm-for-woocommerce'),
             }) }
           />
           {
@@ -145,7 +145,7 @@ export default function Block({ nonce }) {
           }
         </div>
         <div className="flex flex-col mb-4">
-          <label className="text-sm text-gray-500 mb-1">{__('Referral phone (optional)', 'favored')}</label>
+          <label className="text-sm text-gray-500 mb-1">{__('Referral phone (optional)', 'favcrm-for-woocommerce')}</label>
           <input
             type="tel"
             className="w-[300px] border px-4 py-2 rounded"
@@ -167,7 +167,7 @@ export default function Block({ nonce }) {
                   value={undefined}
                   checked={field.value}
                 />
-                <label htmlFor="agreeToReceivePromotion" className="text-sm">{__('I agree to receive news and promotion notification', 'favored')}</label>
+                <label htmlFor="agreeToReceivePromotion" className="text-sm">{__('I agree to receive news and promotion notification', 'favcrm-for-woocommerce')}</label>
               </>
             )}
           />
@@ -176,7 +176,7 @@ export default function Block({ nonce }) {
           <Controller
             control={control}
             name="termsOfServices"
-            rules={{ required: __('Please agree to the terms of services', 'favored') }}
+            rules={{ required: __('Please agree to the terms of services', 'favcrm-for-woocommerce') }}
             render={({ field }) => (
               <>
                 <input
@@ -187,7 +187,7 @@ export default function Block({ nonce }) {
                   value={undefined}
                   checked={field.value}
                 />
-                <label htmlFor="termsOfServices" className="text-sm">{__('I read and agree to the terms of service', 'favored')}</label>
+                <label htmlFor="termsOfServices" className="text-sm">{__('I read and agree to the terms of service', 'favcrm-for-woocommerce')}</label>
                 {
                   errors?.termsOfServices && <p className="mt-1 text-sm text-red-400">{errors?.termsOfServices.message}</p>
                 }
@@ -209,12 +209,12 @@ export default function Block({ nonce }) {
             {
               isLoading
                 ? <LoadingSpinner isLoading={isLoading} color="text-white" size="h-4 w-4" />
-                : __('Register', 'favored')
+                : __('Register', 'favcrm-for-woocommerce')
             }
           </button>
         </div>
       </div>
-      <div className="text-sm">{__('Already have an account?', 'favored')} <a href="/account-login" className="text-gray-500 underline">{__('Login', 'favored')}</a></div>
+      <div className="text-sm">{__('Already have an account?', 'favcrm-for-woocommerce')} <a href="/account-login" className="text-gray-500 underline">{__('Login', 'favcrm-for-woocommerce')}</a></div>
     </div>
   )
 }

@@ -53,8 +53,8 @@ export default function Register({ nonce }) {
   return (
     <div>
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Registration', 'favored')}</h1>
-        <h2 className="mt-0 text-gray-500 font-normal">{__('Create new account and get started', 'favored')}</h2>
+        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Registration', 'favcrm-for-woocommerce')}</h1>
+        <h2 className="mt-0 text-gray-500 font-normal">{__('Create new account and get started', 'favcrm-for-woocommerce')}</h2>
         <hr className="wp-header-end" />
       </div>
       <div>
@@ -64,7 +64,7 @@ export default function Register({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="companyName">
-                    {__('Company Name', 'favored')}
+                    {__('Company Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -72,7 +72,7 @@ export default function Register({ nonce }) {
                     id="companyName"
                     type="text"
                     className="regular-text"
-                    {...register('companyName', { required: __('Required', 'favored')})}
+                    {...register('companyName', { required: __('Required', 'favcrm-for-woocommerce')})}
                   />
                   {
                     errors.companyName && (
@@ -84,7 +84,7 @@ export default function Register({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="phone">
-                    {__('Phone', 'favored')}
+                    {__('Phone', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -92,7 +92,7 @@ export default function Register({ nonce }) {
                     id="phone"
                     type="text"
                     className="regular-text"
-                    {...register('phone', { required: __('Required', 'favored')})}
+                    {...register('phone', { required: __('Required', 'favcrm-for-woocommerce')})}
                   />
                   {
                     errors.phone && (
@@ -104,7 +104,7 @@ export default function Register({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="email">
-                    {__('Email', 'favored')}
+                    {__('Email', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -112,7 +112,7 @@ export default function Register({ nonce }) {
                     id="email"
                     type="text"
                     className="regular-text"
-                    {...register('email', { required: __('Required', 'favored')})}
+                    {...register('email', { required: __('Required', 'favcrm-for-woocommerce')})}
                   />
                   {
                     errors.email && (
@@ -124,7 +124,7 @@ export default function Register({ nonce }) {
               <tr>
                 <th scope="row">
                   <label for="contactPerson">
-                    {__('Contact Person', 'favored')}
+                    {__('Contact Person', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -132,7 +132,7 @@ export default function Register({ nonce }) {
                     id="contactPerson"
                     type="text"
                     className="regular-text"
-                    {...register('contactPerson', { required: __('Required', 'favored')})}
+                    {...register('contactPerson', { required: __('Required', 'favcrm-for-woocommerce')})}
                   />
                   {
                     errors.contactPerson && (
@@ -153,7 +153,7 @@ export default function Register({ nonce }) {
                         id="agreeToTermsAndConditions"
                         name="agreeToTermsAndConditions"
                         type="checkbox"
-                        {...register('agreeToTermsAndConditions', { required: __('Please check the terms of service', 'favored')})}
+                        {...register('agreeToTermsAndConditions', { required: __('Please check the terms of service', 'favcrm-for-woocommerce')})}
                       />
                       I've read and agree to the terms of service
                     </label>
@@ -171,7 +171,7 @@ export default function Register({ nonce }) {
                 <td>
                   {
                     error && (
-                      <div className="error-message text-red-500 font-normal mb-4">{__(error, 'favored')}</div>
+                      <div className="error-message text-red-500 font-normal mb-4">{__(error, 'favcrm-for-woocommerce')}</div>
                     )
                   }
                   <button
@@ -186,7 +186,7 @@ export default function Register({ nonce }) {
                             color="text-black"
                             size="size-4"
                           />
-                        : __('Submit', 'favored')
+                        : __('Submit', 'favcrm-for-woocommerce')
                     }
                   </button>
                 </td>
@@ -195,12 +195,12 @@ export default function Register({ nonce }) {
           </table>
         </form>
         <div className="flex gap-x-4 items-center mt-12">
-          <div>{__('Already registered?', 'favored')}</div>
+          <div>{__('Already registered?', 'favcrm-for-woocommerce')}</div>
           <a
             href="/wp-admin/admin.php?page=fav-crm-login"
             className="button"
           >
-            {__('Login', 'favored')}
+            {__('Login', 'favcrm-for-woocommerce')}
           </a>
         </div>
       </div>

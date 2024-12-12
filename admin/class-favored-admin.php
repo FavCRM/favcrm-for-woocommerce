@@ -359,21 +359,21 @@ class Favored_Admin {
 		add_menu_page( 'FavCRM', 'FavCRM', 'manage_options', 'fav-crm', array( &$this, 'render_dashboard_page' ), 'dashicons-star-filled', 81 );
 
 		if ( $is_logged_in ) {
-			add_submenu_page( 'fav-crm', __('Members', 'favored'), __('Members', 'favored'), 'manage_options', 'fav-crm-members', array( &$this, 'render_members_list_page' ) );
-			add_submenu_page( 'fav-crm', __('Reward Transactions', 'favored'), __('Reward Transactions', 'favored'), 'manage_options', 'fav-crm-reward-transactions', array( &$this, 'render_reward_transactions_list_page' ) );
-			add_submenu_page( 'fav-crm', __('Membership Tiers', 'favored'), __('Membership Tiers', 'favored'), 'manage_options', 'fav-crm-membership-tiers', array( &$this, 'render_membership_tiers_list_page' ) );
-			add_submenu_page( 'fav-crm', __('Reward Schemes', 'favored'), __('Reward Schemes', 'favored'), 'manage_options', 'fav-crm-reward-schemes', array( &$this, 'render_reward_schemes_list_page' ) );
-			add_submenu_page( 'fav-crm', __('Gift Offers', 'favored'), __('Gift Offers', 'favored'), 'manage_options', 'fav-crm-gift-offers', array( &$this, 'render_gift_offers_list_page' ) );
-			add_submenu_page( 'fav-crm', __('Billing', 'favored'), __('Billing', 'favored'), 'manage_options', 'fav-crm-billing', array( &$this, 'render_billing_page' ) );
-			add_submenu_page( 'fav-crm', __('Settings', 'favored'), __('Settings', 'favored'), 'manage_options', 'fav-crm-settings', array( &$this, 'render_settings_page' ) );
-			add_submenu_page( 'fav-crm', __('System Log', 'favored'), __('System Log', 'favored'), 'manage_options', 'fav-crm-system-log', array( &$this, 'render_system_log_page' ) );
+			add_submenu_page( 'fav-crm', __('Members', 'favcrm-for-woocommerce'), __('Members', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-members', array( &$this, 'render_members_list_page' ) );
+			add_submenu_page( 'fav-crm', __('Reward Transactions', 'favcrm-for-woocommerce'), __('Reward Transactions', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-reward-transactions', array( &$this, 'render_reward_transactions_list_page' ) );
+			add_submenu_page( 'fav-crm', __('Membership Tiers', 'favcrm-for-woocommerce'), __('Membership Tiers', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-membership-tiers', array( &$this, 'render_membership_tiers_list_page' ) );
+			add_submenu_page( 'fav-crm', __('Reward Schemes', 'favcrm-for-woocommerce'), __('Reward Schemes', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-reward-schemes', array( &$this, 'render_reward_schemes_list_page' ) );
+			add_submenu_page( 'fav-crm', __('Gift Offers', 'favcrm-for-woocommerce'), __('Gift Offers', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-gift-offers', array( &$this, 'render_gift_offers_list_page' ) );
+			add_submenu_page( 'fav-crm', __('Billing', 'favcrm-for-woocommerce'), __('Billing', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-billing', array( &$this, 'render_billing_page' ) );
+			add_submenu_page( 'fav-crm', __('Settings', 'favcrm-for-woocommerce'), __('Settings', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-settings', array( &$this, 'render_settings_page' ) );
+			add_submenu_page( 'fav-crm', __('System Log', 'favcrm-for-woocommerce'), __('System Log', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-system-log', array( &$this, 'render_system_log_page' ) );
 		} else {
-			add_submenu_page( 'fav-crm', __('Register', 'favored'), __('Register', 'favored'), 'manage_options', 'fav-crm-register', array( &$this, 'render_register_page' ) );
-			add_submenu_page( 'fav-crm', __('Login', 'favored'), __('Login', 'favored'), 'manage_options', 'fav-crm-login', array( &$this, 'render_login_page' ) );
+			add_submenu_page( 'fav-crm', __('Register', 'favcrm-for-woocommerce'), __('Register', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-register', array( &$this, 'render_register_page' ) );
+			add_submenu_page( 'fav-crm', __('Login', 'favcrm-for-woocommerce'), __('Login', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-login', array( &$this, 'render_login_page' ) );
 		}
 
-		add_submenu_page( 'fav-crm', __('Bug Report', 'favored'), __('Bug Report', 'favored'), 'manage_options', 'fav-crm-bug-report', array( &$this, 'render_bug_report_page' ) );
-		add_submenu_page( null, __('Credential', 'favored'), __('Credential', 'favored'), 'manage_options', 'fav-crm-credential', array( &$this, 'render_credential_page' ) );
+		add_submenu_page( 'fav-crm', __('Bug Report', 'favcrm-for-woocommerce'), __('Bug Report', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-bug-report', array( &$this, 'render_bug_report_page' ) );
+		add_submenu_page( null, __('Credential', 'favcrm-for-woocommerce'), __('Credential', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-credential', array( &$this, 'render_credential_page' ) );
 
 	}
 
@@ -393,19 +393,19 @@ class Favored_Admin {
 
 		$credential_options->add_field( array(
 			'id'      => 'merchant_id',
-			'name'    => esc_html__( 'Merchant ID', 'favored' ),
+			'name'    => esc_html__( 'Merchant ID', 'favcrm-for-woocommerce' ),
 			'type'    => 'text',
 		) );
 
 		$credential_options->add_field( array(
 			'id'      => 'secret',
-			'name'    => esc_html__( 'Secret', 'favored' ),
+			'name'    => esc_html__( 'Secret', 'favcrm-for-woocommerce' ),
 			'type'    => 'text',
 		) );
 
 		$credential_options->add_field( array(
 			'id'	  => 'mode',
-			'name'	  => esc_html__( 'Mode', 'favored' ),
+			'name'	  => esc_html__( 'Mode', 'favcrm-for-woocommerce' ),
 			'type'	  => 'radio',
 			'options' => array(
 				'test' => 'Test',
@@ -421,19 +421,19 @@ class Favored_Admin {
 
 		$bug_report_options->add_field( array(
 			'id'      => 'issue',
-			'name'    => esc_html__( 'Issue', 'favored' ),
+			'name'    => esc_html__( 'Issue', 'favcrm-for-woocommerce' ),
 			'type'    => 'text',
 		) );
 
 		$bug_report_options->add_field( array(
 			'id'      => 'description',
-			'name'    => esc_html__( 'Description', 'favored' ),
+			'name'    => esc_html__( 'Description', 'favcrm-for-woocommerce' ),
 			'type'    => 'textarea',
 		) );
 
 		$bug_report_options->add_field( array(
 			'id'      => 'attachments',
-			'name'    => esc_html__( 'Attachments', 'favored' ),
+			'name'    => esc_html__( 'Attachments', 'favcrm-for-woocommerce' ),
 			'type'    => 'file_list',
 			'preview_size' => array( 50, 50 )
 		) );
@@ -546,13 +546,13 @@ class Favored_Admin {
 		if ( isset( $_GET['result'] ) && $screen->id === 'favcrm_page_fav-crm-system-log' ) {
 			?>
 			<div class="notice notice-success is-dismissible">
-				<p><?php esc_html_e( 'Diagnostic logs have been sent successfully.', 'favored' ); ?></p>
+				<p><?php esc_html_e( 'Diagnostic logs have been sent successfully.', 'favcrm-for-woocommerce' ); ?></p>
 			</div>
 			<?php
 		} else if ( isset( $_GET['result'] ) && $screen->id === 'favcrm_page_fav-crm-bug-report' ) {
 			?>
 			<div class="notice notice-success is-dismissible">
-				<p><?php esc_html_e( 'Bug report has been sent successfully.', 'favored' ); ?></p>
+				<p><?php esc_html_e( 'Bug report has been sent successfully.', 'favcrm-for-woocommerce' ); ?></p>
 			</div>
 			<?php
 		}
@@ -567,7 +567,7 @@ class Favored_Admin {
 
 		$wpdb->insert( $wpdb->prefix . 'woocommerce_api_keys', array(
 			'user_id'         => get_current_user_id(),
-			'description'     => 'Favored',
+			'description'     => 'favcrm-for-woocommerce',
 			'permissions'     => $permissions,
 			'consumer_key'    => wc_api_hash( $consumer_key ),
 			'consumer_secret' => $consumer_secret,

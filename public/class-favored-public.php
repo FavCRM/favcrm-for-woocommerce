@@ -334,7 +334,7 @@ class Favored_Public {
 
 	public function init_floating_icon() {
 
-		echo esc_html( do_blocks( '<!-- wp:fav/floating-icon /-->' ) );
+		echo wp_kses_post( do_blocks( '<!-- wp:fav/floating-icon /-->' ) );
 
 	}
 
@@ -601,12 +601,12 @@ class Favored_Public {
 		if ( is_wp_error( $user_signon ) ){
 			$response = array(
 				'loggedin' => false,
-				'message' => __('Wrong username or password.', 'favored')
+				'message' => __('Wrong username or password.', 'favcrm-for-woocommerce')
 			);
 		} else {
 			$response = array(
 				'loggedin' => true,
-				'message' => __('Login successful, redirecting...', 'favored')
+				'message' => __('Login successful, redirecting...', 'favcrm-for-woocommerce')
 			);
 		}
 
@@ -707,7 +707,7 @@ class Favored_Public {
 
 		return array(
 			'loggedout' => true,
-			'message' => __('Logout successful, redirecting...', 'favored')
+			'message' => __('Logout successful, redirecting...', 'favcrm-for-woocommerce')
 		);
 
 	}
@@ -732,16 +732,16 @@ class Favored_Public {
 				$cash_rewards = $member->cashRewards;
 
 				if ( $cash_rewards >= $discount ) {
-					$cart->add_fee( __( 'Cash Rewards', 'favored' ), -$discount );
+					$cart->add_fee( __( 'Cash Rewards', 'favcrm-for-woocommerce' ), -$discount );
 				} else {
 					wc_clear_notices();
-					wc_add_notice( __('You do not have enough cash rewards to apply this discount.', 'favored'), 'error');
+					wc_add_notice( __('You do not have enough cash rewards to apply this discount.', 'favcrm-for-woocommerce'), 'error');
 				}
 
 			} else {
 				wc_clear_notices();
 				// translators: %s: discount amount
-				wc_add_notice( sprintf( __('You must spend more than %s to use your loyalty discount.', 'favored'), wc_price( $discount ) ), 'error');
+				wc_add_notice( sprintf( __('You must spend more than %s to use your loyalty discount.', 'favcrm-for-woocommerce'), wc_price( $discount ) ), 'error');
 			}
 		}
 	}
@@ -767,7 +767,7 @@ class Favored_Public {
 		$discount = $membershipTier->discount / 100 * $subtotal;
 
 		if ( $discount > 0 ) {
-			$cart->add_fee( $membershipTier->name . ' ' . __( 'Member Discount', 'favored' ) . ' (' . $membershipTier->discount . '%)', -$discount );
+			$cart->add_fee( $membershipTier->name . ' ' . __( 'Member Discount', 'favcrm-for-woocommerce' ) . ' (' . $membershipTier->discount . '%)', -$discount );
 		}
 	}
 }

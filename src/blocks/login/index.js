@@ -17,7 +17,7 @@ registerBlockType(metadata, {
       <Fragment>
         <div { ...blockProps }>
           <div>
-            <h1>{__('Member Login', 'favored')}</h1>
+            <h1>{__('Member Login', 'favcrm-for-woocommerce')}</h1>
           </div>
         </div>
       </Fragment>

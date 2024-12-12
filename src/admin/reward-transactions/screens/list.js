@@ -34,24 +34,24 @@ export default function RewardTransactionList({ nonce }) {
   return (
     <div>
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('Reward Transaction List', 'favored')}</h1>
-        {/* <Link to="/add" className="page-title-action">{__('Add New Reward Transaction', 'favored')}</Link> */}
+        <h1 className="wp-heading-inline">{__('Reward Transaction List', 'favcrm-for-woocommerce')}</h1>
+        {/* <Link to="/add" className="page-title-action">{__('Add New Reward Transaction', 'favcrm-for-woocommerce')}</Link> */}
         <hr className="wp-header-end" />
       </div>
       <table className="wp-list-table widefat fixed striped posts">
         <thead>
           <tr>
             <td id="cb" className="manage-column column-cb check-column">
-              <label className="screen-reader-text" htmlFor="cb-select-all-1">{__('Select All', 'favored')}</label>
+              <label className="screen-reader-text" htmlFor="cb-select-all-1">{__('Select All', 'favcrm-for-woocommerce')}</label>
               <input id="cb-select-all-1" type="checkbox" />
             </td>
             <th scope="col" id="title" className="manage-column column-title column-primary sortable desc">
               <span>ID</span>
             </th>
-            <th scope="col" id="member" className="manage-column column-name">{__('Member', 'favored')}</th>
-            <th scope="col" id="transactionType" className="manage-column column-amount">{__('Transaction Type', 'favored')}</th>
-            <th scope="col" id="transactionObject" className="manage-column column-amount">{__('Transaction Object', 'favored')}</th>
-            <th scope="col" id="Change" className="manage-column column-amount">{__('Change', 'favored')}</th>
+            <th scope="col" id="member" className="manage-column column-name">{__('Member', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" id="transactionType" className="manage-column column-amount">{__('Transaction Type', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" id="transactionObject" className="manage-column column-amount">{__('Transaction Object', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" id="Change" className="manage-column column-amount">{__('Change', 'favcrm-for-woocommerce')}</th>
             <th scope="col" id="date" className="manage-column column-date sortable asc">
               <a href="javascript:void(0)">
                 <span>Created At</span><span className="sorting-indicator"></span>
@@ -124,19 +124,19 @@ export default function RewardTransactionList({ nonce }) {
         <tfoot>
           <tr>
             <td className="manage-column column-cb check-column">
-              <label className="screen-reader-text" htmlFor="cb-select-all-2">{__('Select All', 'favored')}</label>
+              <label className="screen-reader-text" htmlFor="cb-select-all-2">{__('Select All', 'favcrm-for-woocommerce')}</label>
               <input id="cb-select-all-2" type="checkbox" />
             </td>
             <th scope="col" className="manage-column column-title column-primary sortable desc">
               <span>ID</span>
             </th>
-            <th scope="col" className="manage-column column-member">{__('Member', 'favored')}</th>
-            <th scope="col" className="manage-column column-transaction-type">{__('Transaction Type', 'favored')}</th>
-            <th scope="col" className="manage-column column-transaction-object">{__('Transaction Object', 'favored')}</th>
-            <th scope="col" className="manage-column column-change">{__('Change', 'favored')}</th>
+            <th scope="col" className="manage-column column-member">{__('Member', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" className="manage-column column-transaction-type">{__('Transaction Type', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" className="manage-column column-transaction-object">{__('Transaction Object', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" className="manage-column column-change">{__('Change', 'favcrm-for-woocommerce')}</th>
             <th scope="col" className="manage-column column-date sortable asc">
               <a href="javascript:void(0)">
-                <span>{__('Date', 'favored')}</span>
+                <span>{__('Date', 'favcrm-for-woocommerce')}</span>
                 <span className="sorting-indicator"></span>
               </a>
             </th>

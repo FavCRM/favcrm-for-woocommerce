@@ -73,17 +73,17 @@ export default function Billing({ nonce }) {
     }
 
     if (item.id === subscriptionData?.plan) {
-      return __('Current Plan', 'favored');
+      return __('Current Plan', 'favcrm-for-woocommerce');
     } else {
-      return __('Change Plan', 'favored');
+      return __('Change Plan', 'favcrm-for-woocommerce');
     }
   }
 
   return (
     <div>
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('Billing', 'favored')}</h1>
-        <h2 className="mt-0 text-gray-500 font-normal">{__('Manage billing and your subscription plan.', 'favored')}</h2>
+        <h1 className="wp-heading-inline">{__('Billing', 'favcrm-for-woocommerce')}</h1>
+        <h2 className="mt-0 text-gray-500 font-normal">{__('Manage billing and your subscription plan.', 'favcrm-for-woocommerce')}</h2>
         <hr className="wp-header-end" />
       </div>
       <div className="grid md:grid-cols-3 gap-6">

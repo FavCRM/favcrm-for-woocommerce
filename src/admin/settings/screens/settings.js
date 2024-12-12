@@ -76,7 +76,7 @@ function SettingsContent({ nonce, settings }) {
   return (
     <div>
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Settings', 'favored')}</h1>
+        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Settings', 'favcrm-for-woocommerce')}</h1>
         <hr className="wp-header-end" />
       </div>
       <div>
@@ -86,7 +86,7 @@ function SettingsContent({ nonce, settings }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="pointsToCashConversionRate">
-                    {__('Points to Cash Conversion Rate', 'favored')}
+                    {__('Points to Cash Conversion Rate', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
                 <td>
@@ -94,7 +94,7 @@ function SettingsContent({ nonce, settings }) {
                     id="pointsToCashConversionRate"
                     type="text"
                     className="regular-text mb-1"
-                    {...register('pointsToCashConversionRate', { required: __('Required', 'favored')})}
+                    {...register('pointsToCashConversionRate', { required: __('Required', 'favcrm-for-woocommerce')})}
                   />
                   <div>Note: Enter 0 to disable</div>
                   {
@@ -110,7 +110,7 @@ function SettingsContent({ nonce, settings }) {
                 <td>
                   {
                     error && (
-                      <div className="error-message text-red-500 font-normal mb-4">{__(error, 'favored')}</div>
+                      <div className="error-message text-red-500 font-normal mb-4">{__(error, 'favcrm-for-woocommerce')}</div>
                     )
                   }
                   <button
@@ -125,7 +125,7 @@ function SettingsContent({ nonce, settings }) {
                             color="text-black"
                             size="size-4"
                           />
-                        : __('Save', 'favored')
+                        : __('Save', 'favcrm-for-woocommerce')
                     }
                   </button>
                 </td>

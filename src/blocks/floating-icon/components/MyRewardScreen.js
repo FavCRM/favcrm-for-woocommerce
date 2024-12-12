@@ -19,7 +19,7 @@ export default function MyRewardScreen({ site, setScreen }) {
       <header className="bg-gray-700 text-white px-4 py-6 sm:!rounded-t-2xl flex justify-between">
         <div className="flex gap-x-2">
           <ChevronLeft className="cursor-pointer" onClick={() => setScreen('welcome')} />
-          <div>{site.title} {__('Member Zone', 'favored')}</div>
+          <div>{site.title} {__('Member Zone', 'favcrm-for-woocommerce')}</div>
         </div>
         <div>
           <X className="cursor-pointer hover:stroke-[#EEE] duration-300" onClick={() => setScreen('welcome')} />

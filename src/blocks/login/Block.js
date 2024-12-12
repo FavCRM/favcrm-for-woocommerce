@@ -38,10 +38,10 @@ export default function Block({ nonce }) {
 
   return (
     <div class="h-[500px]">
-      <h1 class="mb-6">{__('Member Login', 'favored')}</h1>
+      <h1 class="mb-6">{__('Member Login', 'favcrm-for-woocommerce')}</h1>
       <div class="mb-8">
         <div class="flex flex-col mb-4">
-          <label class="text-sm text-gray-500 mb-1">{__('Email', 'favored')}</label>
+          <label class="text-sm text-gray-500 mb-1">{__('Email', 'favcrm-for-woocommerce')}</label>
           <input
             type="text"
             class="w-[300px] border px-4 py-2 rounded"
@@ -49,7 +49,7 @@ export default function Block({ nonce }) {
           />
         </div>
         <div class="flex flex-col mb-4">
-          <label class="text-sm text-gray-500 mb-1">{__('Password', 'favored')}</label>
+          <label class="text-sm text-gray-500 mb-1">{__('Password', 'favcrm-for-woocommerce')}</label>
           <input
             type="password"
             class="w-[300px] border px-4 py-2 rounded"
@@ -64,12 +64,12 @@ export default function Block({ nonce }) {
             {
               isLoading
                 ? <LoadingSpinner isLoading={isLoading} color="text-white" size="h-4 w-4" />
-                : __('Login', 'favored')
+                : __('Login', 'favcrm-for-woocommerce')
             }
           </button>
         </div>
       </div>
-      <div class="text-sm">{__('Don\'t have an account?', 'favored')} <a href="/account-register" class="text-gray-500 underline">{__('Register', 'favored')}</a></div>
+      <div class="text-sm">{__('Don\'t have an account?', 'favcrm-for-woocommerce')} <a href="/account-register" class="text-gray-500 underline">{__('Register', 'favcrm-for-woocommerce')}</a></div>
     </div>
   )
 }

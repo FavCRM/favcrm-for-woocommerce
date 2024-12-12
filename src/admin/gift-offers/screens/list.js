@@ -34,25 +34,25 @@ export default function GiftOfferList({ nonce }) {
   return (
     <div>
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('Gift Offer List', 'favored')}</h1>
-        <Link to="/add" className="page-title-action">{__('Add New Gift Offer', 'favored')}</Link>
+        <h1 className="wp-heading-inline">{__('Gift Offer List', 'favcrm-for-woocommerce')}</h1>
+        <Link to="/add" className="page-title-action">{__('Add New Gift Offer', 'favcrm-for-woocommerce')}</Link>
         <hr className="wp-header-end" />
       </div>
       <table className="wp-list-table widefat fixed striped posts">
         <thead>
           <tr>
             <td id="cb" className="manage-column column-cb check-column">
-              <label className="screen-reader-text" htmlFor="cb-select-all-1">{__('Select All', 'favored')}</label>
+              <label className="screen-reader-text" htmlFor="cb-select-all-1">{__('Select All', 'favcrm-for-woocommerce')}</label>
               <input id="cb-select-all-1" type="checkbox" />
             </td>
             <th scope="col" id="title" className="manage-column column-title column-primary sortable desc">
               <span>ID</span>
             </th>
-            <th scope="col" id="author" className="manage-column column-name">{__('Name', 'favored')}</th>
-            <th scope="col" id="tags" className="manage-column column-points">{__('Points', 'favored')}</th>
-            <th scope="col" id="categories" className="manage-column column-start-date">{__('Start Date', 'favored')}</th>
-            <th scope="col" id="categories" className="manage-column column-end-date">{__('End Date', 'favored')}</th>
-            <th scope="col" id="tags" className="manage-column column-status">{__('Status', 'favored')}</th>
+            <th scope="col" id="author" className="manage-column column-name">{__('Name', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" id="tags" className="manage-column column-points">{__('Points', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" id="categories" className="manage-column column-start-date">{__('Start Date', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" id="categories" className="manage-column column-end-date">{__('End Date', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" id="tags" className="manage-column column-status">{__('Status', 'favcrm-for-woocommerce')}</th>
             <th scope="col" id="date" className="manage-column column-date sortable asc">
               <a href="javascript:void(0)">
                 <span>Created At</span><span className="sorting-indicator"></span>
@@ -139,20 +139,20 @@ export default function GiftOfferList({ nonce }) {
         <tfoot>
           <tr>
             <td className="manage-column column-cb check-column">
-              <label className="screen-reader-text" htmlFor="cb-select-all-2">{__('Select All', 'favored')}</label>
+              <label className="screen-reader-text" htmlFor="cb-select-all-2">{__('Select All', 'favcrm-for-woocommerce')}</label>
               <input id="cb-select-all-2" type="checkbox" />
             </td>
             <th scope="col" className="manage-column column-title column-primary sortable desc">
               <span>ID</span>
             </th>
-            <th scope="col" className="manage-column column-author">{__('Name', 'favored')}</th>
-            <th scope="col" className="manage-column column-points">{__('Points', 'favored')}</th>
-            <th scope="col" className="manage-column column-start-date">{__('Start Date', 'favored')}</th>
-            <th scope="col" className="manage-column column-end-date">{__('End Date', 'favored')}</th>
-            <th scope="col" className="manage-column column-status">{__('Status', 'favored')}</th>
+            <th scope="col" className="manage-column column-author">{__('Name', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" className="manage-column column-points">{__('Points', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" className="manage-column column-start-date">{__('Start Date', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" className="manage-column column-end-date">{__('End Date', 'favcrm-for-woocommerce')}</th>
+            <th scope="col" className="manage-column column-status">{__('Status', 'favcrm-for-woocommerce')}</th>
             <th scope="col" className="manage-column column-date sortable asc">
               <a href="javascript:void(0)">
-                <span>{__('Date', 'favored')}</span>
+                <span>{__('Date', 'favcrm-for-woocommerce')}</span>
                 <span className="sorting-indicator"></span>
               </a>
             </th>

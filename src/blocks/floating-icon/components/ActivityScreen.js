@@ -19,7 +19,7 @@ export default function ActivityScreen({ site, setScreen }) {
       <header className="bg-gray-700 text-white px-4 py-6 sm:!rounded-t-2xl flex justify-between">
         <div className="flex gap-x-2">
           <ChevronLeft className="cursor-pointer" onClick={() => setScreen('welcome')} />
-          <div>{site.title} {__('Member Zone', 'favored')}</div>
+          <div>{site.title} {__('Member Zone', 'favcrm-for-woocommerce')}</div>
         </div>
         <div>
           <X className="cursor-pointer hover:stroke-[#EEE] duration-300" onClick={() => setScreen('welcome')} />
@@ -27,7 +27,7 @@ export default function ActivityScreen({ site, setScreen }) {
       </header>
       <main className="p-4">
         <div>
-          <h3 className="text-sm text-gray-500 mb-4">{__('Reward Activities', 'favored')}</h3>
+          <h3 className="text-sm text-gray-500 mb-4">{__('Reward Activities', 'favcrm-for-woocommerce')}</h3>
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
@@ -37,12 +37,12 @@ export default function ActivityScreen({ site, setScreen }) {
                   <div className="text-gray-500 text-sm flex gap-x-4">
                     {
                       !!activity.points && (
-                        <div>{sprintf(__('%s Points', 'favored'), activity.points)}</div>
+                        <div>{sprintf(__('%s Points', 'favcrm-for-woocommerce'), activity.points)}</div>
                       )
                     }
                     {
                       !!activity.stamps && (
-                        <div>{sprintf(__('%s Stamps', 'favored'), activity.stamps)}</div>
+                        <div>{sprintf(__('%s Stamps', 'favcrm-for-woocommerce'), activity.stamps)}</div>
                       )
                     }
                   </div>

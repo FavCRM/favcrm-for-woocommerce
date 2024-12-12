@@ -56,7 +56,7 @@ function UseCredit({ extensions, cart }) {
       <div className="p-[0_16px] mb-2 w-full">
         <div>
           <div>
-            <div className="mb-3">{sprintf(__('Your card reward balance is %s', 'favored'), extensions?.fav?.cashRewards ?? 0)}</div>
+            <div className="mb-3">{sprintf(__('Your card reward balance is %s', 'favcrm-for-woocommerce'), extensions?.fav?.cashRewards ?? 0)}</div>
             {
               showCancel && (
                 <div>
@@ -64,7 +64,7 @@ function UseCredit({ extensions, cart }) {
                     className="underline underline-offset-1 text-sm cursor-pointer text-gray-700"
                     onClick={handleReset}
                   >
-                    <span className="wc-block-components-button__text">{__('Reset', 'favored')}</span>
+                    <span className="wc-block-components-button__text">{__('Reset', 'favcrm-for-woocommerce')}</span>
                   </div>
                 </div>
               )
@@ -82,13 +82,13 @@ function UseCredit({ extensions, cart }) {
                       type="number"
                       autoCapitalize="off"
                       autoComplete="off"
-                      aria-label={__('Credit input', 'favored')}
+                      aria-label={__('Credit input', 'favcrm-for-woocommerce')}
                       aria-invalid="false"
                       value={credits}
                       onChange={handleCreditsChange}
                       max={extensions?.fav?.cashRewards ?? 0}
                     />
-                    <label htmlFor="credit-input">{__('Credit input', 'favored')}</label>
+                    <label htmlFor="credit-input">{__('Credit input', 'favcrm-for-woocommerce')}</label>
                   </div>
                   <button
                     type="button"
@@ -100,7 +100,7 @@ function UseCredit({ extensions, cart }) {
                     {
                       isLoading
                         ? <LoadingSpinner isLoading={true} size="size-6" color="text-white" />
-                        : <span className="wc-block-components-button__text">{__('Apply', 'favored')}</span>
+                        : <span className="wc-block-components-button__text">{__('Apply', 'favcrm-for-woocommerce')}</span>
                     }
                   </button>
                 </div>
