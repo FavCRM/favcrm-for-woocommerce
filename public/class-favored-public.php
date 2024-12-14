@@ -504,7 +504,7 @@ class Favored_Public {
 
 	public function fetch_settings() {
 
-		return $this->http_get( '/v3.0/member/company/settings/' );
+		return $this->http_get( '/v3/member/company/settings/' );
 
 	}
 
@@ -667,7 +667,7 @@ class Favored_Public {
 		$mode = cmb2_get_option( 'favored_options', 'mode' );
 
 		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/v3.0/member/company/members/';
+		$url = $base_url . '/v3/member/company/members/';
 
 		$response = wp_remote_post( $url, array(
 			'method' => 'POST',

@@ -740,7 +740,7 @@ class Favored_Admin {
 
 		$this->write_log( 'Sending data to Favored CRM for order #' . $order_id );
 
-		$url = $this->get_base_url() . '/v3.0/member/company/void-order/';
+		$url = $this->get_base_url() . '/v3/member/company/void-order/';
 
 		$response = wp_remote_post( $url, array(
 			'method' => 'POST',
@@ -795,7 +795,7 @@ class Favored_Admin {
 
 		$this->write_log( 'Sending data to Favored CRM for order #' . $order_id );
 
-		$url = $this->get_base_url() . '/v3.0/member/company/cash-rewards/';
+		$url = $this->get_base_url() . '/v3/member/company/cash-rewards/';
 
 		$response = wp_remote_post( $url, array(
 			'method' => 'POST',
@@ -926,7 +926,7 @@ class Favored_Admin {
 	public function company_login( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company-login/';
+		$url = $base_url . '/v3/member/company-login/';
 
 		$body = $request->get_json_params();
 
@@ -991,7 +991,7 @@ class Favored_Admin {
 	public function company_signup( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/companies/';
+		$url = $base_url . '/v3/member/companies/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1059,7 +1059,7 @@ class Favored_Admin {
 	public function fetch_dashboard( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/dashboard/';
+		$url = $base_url . '/v3/member/company/dashboard/';
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1072,7 +1072,7 @@ class Favored_Admin {
 	public function fetch_settings( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/settings/';
+		$url = $base_url . '/v3/member/company/settings/';
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1086,7 +1086,7 @@ class Favored_Admin {
 	public function update_settings( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/settings/';
+		$url = $base_url . '/v3/member/company/settings/';
 
 		$body = $request->get_json_params();
 
@@ -1133,7 +1133,7 @@ class Favored_Admin {
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/members/?page=' . $page . '&page_size=' . $page_size;
+		$url = $base_url . '/v3/member/company/members/?page=' . $page . '&page_size=' . $page_size;
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1154,7 +1154,7 @@ class Favored_Admin {
 
 		$uuid = $request['uuid'];
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/members/'.$uuid.'/';
+		$url = $base_url . '/v3/member/company/members/'.$uuid.'/';
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1168,7 +1168,7 @@ class Favored_Admin {
 	public function add_members( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/members/';
+		$url = $base_url . '/v3/member/company/members/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1218,7 +1218,7 @@ class Favored_Admin {
 
 		$base_url = $this->get_base_url();
 		$uuid = $request['uuid'];
-		$url = $base_url . '/v3.0/member/company/members/'.$uuid.'/';
+		$url = $base_url . '/v3/member/company/members/'.$uuid.'/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1268,7 +1268,7 @@ class Favored_Admin {
 
 		$base_url = $this->get_base_url();
 		$uuid = $request['uuid'];
-		$url = $base_url . '/v3.0/member/company/members/'.$uuid.'/';
+		$url = $base_url . '/v3/member/company/members/'.$uuid.'/';
 
 		$response = wp_remote_post( $url, array(
 			'method' => 'DELETE',
@@ -1313,7 +1313,7 @@ class Favored_Admin {
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/membership-tiers/?page=' . $page . '&page_size=' . $page_size;
+		$url = $base_url . '/v3/member/company/membership-tiers/?page=' . $page . '&page_size=' . $page_size;
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1334,7 +1334,7 @@ class Favored_Admin {
 	public function add_membership_tiers( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/membership-tiers/';
+		$url = $base_url . '/v3/member/company/membership-tiers/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1385,7 +1385,7 @@ class Favored_Admin {
 		$base_url = $this->get_base_url();
 		$id = $request['id'];
 
-		$url = $base_url . '/v3.0/member/company/membership-tiers/'.$id.'/';
+		$url = $base_url . '/v3/member/company/membership-tiers/'.$id.'/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1435,7 +1435,7 @@ class Favored_Admin {
 
 		$base_url = $this->get_base_url();
 		$id = $request['id'];
-		$url = $base_url . '/v3.0/member/company/membership-tiers/'.$id.'/';
+		$url = $base_url . '/v3/member/company/membership-tiers/'.$id.'/';
 
 		$response = wp_remote_post( $url, array(
 			'method' => 'DELETE',
@@ -1480,7 +1480,7 @@ class Favored_Admin {
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/reward-transactions/?page=' . $page . '&page_size=' . $page_size;
+		$url = $base_url . '/v3/member/company/reward-transactions/?page=' . $page . '&page_size=' . $page_size;
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1504,7 +1504,7 @@ class Favored_Admin {
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/reward-schemes/?page=' . $page . '&page_size=' . $page_size;
+		$url = $base_url . '/v3/member/company/reward-schemes/?page=' . $page . '&page_size=' . $page_size;
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1526,7 +1526,7 @@ class Favored_Admin {
 
 		$id = $request['id'];
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/reward-schemes/'.$id.'/';
+		$url = $base_url . '/v3/member/company/reward-schemes/'.$id.'/';
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1540,7 +1540,7 @@ class Favored_Admin {
 	public function add_reward_schemes( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/reward-schemes/';
+		$url = $base_url . '/v3/member/company/reward-schemes/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1591,7 +1591,7 @@ class Favored_Admin {
 		$base_url = $this->get_base_url();
 		$id = $request['id'];
 
-		$url = $base_url . '/v3.0/member/company/reward-schemes/'.$id.'/';
+		$url = $base_url . '/v3/member/company/reward-schemes/'.$id.'/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1641,7 +1641,7 @@ class Favored_Admin {
 
 		$base_url = $this->get_base_url();
 		$id = $request['id'];
-		$url = $base_url . '/v3.0/member/company/reward-schemes/'.$id.'/';
+		$url = $base_url . '/v3/member/company/reward-schemes/'.$id.'/';
 
 		$response = wp_remote_post( $url, array(
 			'method' => 'DELETE',
@@ -1686,7 +1686,7 @@ class Favored_Admin {
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/gift-offers/?page=' . $page . '&page_size=' . $page_size;
+		$url = $base_url . '/v3/member/company/gift-offers/?page=' . $page . '&page_size=' . $page_size;
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1708,7 +1708,7 @@ class Favored_Admin {
 		$id = $request['id'];
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/gift-offers/'.$id.'/';
+		$url = $base_url . '/v3/member/company/gift-offers/'.$id.'/';
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1722,7 +1722,7 @@ class Favored_Admin {
 	public function add_gift_offers( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/gift-offers/';
+		$url = $base_url . '/v3/member/company/gift-offers/';
 
 		$body = $request->get_body_params();
 		$body = [
@@ -1807,7 +1807,7 @@ class Favored_Admin {
 		$base_url = $this->get_base_url();
 
 		$id = $request['id'];
-		$url = $base_url . '/v3.0/member/company/gift-offers/'.$id.'/';
+		$url = $base_url . '/v3/member/company/gift-offers/'.$id.'/';
 
 		$body = $request->get_body_params();
 		$body = [
@@ -1891,7 +1891,7 @@ class Favored_Admin {
 
 		$base_url = $this->get_base_url();
 		$id = $request['id'];
-		$url = $base_url . '/v3.0/member/company/gift-offers/'.$id.'/';
+		$url = $base_url . '/v3/member/company/gift-offers/'.$id.'/';
 
 		$response = wp_remote_post( $url, array(
 			'method' => 'DELETE',
@@ -1933,7 +1933,7 @@ class Favored_Admin {
 	public function fetch_subscription( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/subscription/get/';
+		$url = $base_url . '/v3/subscription/get/';
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1947,7 +1947,7 @@ class Favored_Admin {
 	public function fetch_subscription_plans( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/subscription/plans/';
+		$url = $base_url . '/v3/subscription/plans/';
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
@@ -1964,7 +1964,7 @@ class Favored_Admin {
 	public function change_subscription_plan( $request ) {
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/subscription/checkout/';
+		$url = $base_url . '/v3/subscription/checkout/';
 
 		$payload = $request->get_json_params();
 
