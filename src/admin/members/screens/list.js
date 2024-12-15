@@ -25,14 +25,12 @@ export default function MemberList({ nonce }) {
     }
   });
 
-  // const [currPage, setCurrPage] = useState(1);
   const [querystring, setQuerystring] = useState({
     page: 1,
     page_size: 20,
     search: '',
   });
 
-  // const pageLink = `/fav/v1/members?page=${currPage}&page_size=20`
   const pageLink = `/fav/v1/members`
   const hasNextPage = +data?.page?.total_pages !== querystring.page
   const hasPrevPage = querystring.page > 1
@@ -62,6 +60,11 @@ export default function MemberList({ nonce }) {
             placeholder="search"
             name="search"
             onChange={handleInputChange}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter') {
+                refetch(); // Fetch immediately on Enter key press
+              }
+            }}
           />
         </div>
         <hr className="wp-header-end" />
