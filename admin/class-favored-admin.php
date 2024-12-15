@@ -1134,7 +1134,7 @@ class Favored_Admin {
 		$search = $request->get_param( 'search' ) ?? '';
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3.0/member/company/members/?page=' . $page . '&page_size=' . $page_size . '&search=' . $search;
+		$url = $base_url . '/v3/member/company/members/?page=' . $page . '&page_size=' . $page_size . '&search=' . $search;
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),

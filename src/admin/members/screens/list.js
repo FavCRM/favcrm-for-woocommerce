@@ -54,11 +54,15 @@ export default function MemberList({ nonce }) {
       <div className="mb-2 flex gap-2">
         <h1 className="wp-heading-inline my-auto pt-0">Member List</h1>
         <Link to="/edit" className="page-title-action mt-auto">Add New Member</Link>
-        <div className="my-auto h-6">
+        <div className="relative my-auto h-6">
+          <label htmlFor="Search" className="sr-only">Search</label>
+
           <input
             type="text"
-            placeholder="search"
+            id="Search"
             name="search"
+            placeholder="Search for..."
+            className="w-full rounded-md border-gray-200 py-2.5 pe-10 shadow-sm sm:text-sm"
             onChange={handleInputChange}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
@@ -66,7 +70,27 @@ export default function MemberList({ nonce }) {
               }
             }}
           />
+
+          <span className="flex absolute inset-y-0 end-0 w-10 h-8 place-content-center">
+            <div className="m-auto text-gray-600 hover:text-gray-700">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth="1.5"
+                stroke="currentColor"
+                className="size-4"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"
+                />
+              </svg>
+            </div>
+          </span>
         </div>
+
         <hr className="wp-header-end" />
       </div>
       <table className="wp-list-table widefat fixed striped posts">
