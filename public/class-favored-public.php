@@ -102,21 +102,21 @@ class Favored_Public {
 			'permission_callback' => '__return_true',
 		) );
 
-		register_rest_route( 'fav/v1', '/member', array(
+		register_rest_route( 'fav/v1', '/my-member-profile', array(
 			'methods' => 'GET',
-			'callback' => array( $this, 'get_member' ),
+			'callback' => array( $this, 'get_my_member_profile' ),
 			'permission_callback' => '__return_true',
 		) );
 
-		register_rest_route( 'fav/v1', '/reward-schemes', array(
+		register_rest_route( 'fav/v1', '/my-reward-schemes', array(
 			'methods' => 'GET',
-			'callback' => array( $this, 'get_reward_schemes' ),
+			'callback' => array( $this, 'get_my_reward_schemes' ),
 			'permission_callback' => '__return_true',
 		) );
 
-		register_rest_route( 'fav/v1', '/gift-offers', array(
+		register_rest_route( 'fav/v1', '/my-gift-offers', array(
 			'methods' => 'GET',
-			'callback' => array( $this, 'get_gift_offers' ),
+			'callback' => array( $this, 'get_my_gift_offers' ),
 			'permission_callback' => '__return_true',
 		) );
 
@@ -183,12 +183,12 @@ class Favored_Public {
 				'endpoint'        => CartSchema::IDENTIFIER,
 				'namespace'       => 'fav',
 				'data_callback'   => function() {
-					$member = $this->get_member();
+					$member = $this->get_my_member_profile();
 
 					$cash_rewards = 0;
 
-					if ( property_exists( $member, 'cashRewards' ) ) {
-						$cash_rewards = $member->cashRewards;
+					if ( array_key_exists( 'cashRewards', $member ) ) {
+						$cash_rewards = $member['cashRewards'];
 					}
 
 					return array(
@@ -338,173 +338,68 @@ class Favored_Public {
 
 	}
 
-	public function get_member() {
+	public function get_my_member_profile() {
 
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'error', 'Authentication required', array( 'status' => 401 ) );
+		}
 
 		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/member/external-platform/members/' . $fav_id . '/';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'GET',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-		) );
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-
-		if ( $response_code != 200 ) {
-			return new WP_Error( 'error', 'Failed to fetch member', array( 'status' => $response_code ) );
+		if ( ! $fav_id ) {
+			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
 		}
 
-		$body = wp_remote_retrieve_body( $response );
-
-		return json_decode( $body );
+		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/' );
 
 	}
 
-	public function get_reward_schemes() {
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
+	public function get_my_reward_schemes() {
 
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/member/external-platform/reward-schemes/';
-
-		$response = wp_remote_post( $url, array(
-			'method' => 'GET',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-		) );
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-
-		if ( $response_code != 200 ) {
-			return new WP_Error( 'error', 'Failed to fetch reward schemes', array( 'status' => $response_code ) );
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'error', 'Authentication required', array( 'status' => 401 ) );
 		}
 
-		$body = wp_remote_retrieve_body( $response );
+		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
 
-		return json_decode( $body );
+		if ( ! $fav_id ) {
+			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
+		}
+
+		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/reward-schemes/', true );
+
 	}
 
-	public function get_gift_offers() {
+	public function get_my_gift_offers() {
 
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
-
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/member/external-platform/gift-offers/';
-
-		$response = wp_remote_post( $url, array(
-			'method' => 'GET',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-		) );
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-
-		if ( $response_code != 200 ) {
-			return new WP_Error( 'error', 'Failed to fetch gift offers', array( 'status' => $response_code ) );
+		if ( ! is_user_logged_in() ) {
+			return new WP_Error( 'error', 'Authentication required', array( 'status' => 401 ) );
 		}
 
-		$body = wp_remote_retrieve_body( $response );
+		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
 
-		return json_decode( $body );
+		if ( ! $fav_id ) {
+			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
+		}
 
+		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/gift-offers/', true );
 	}
 
 	public function get_activities() {
 
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
+		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
 
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/member/external-platform/activities/';
-
-		$response = wp_remote_post( $url, array(
-			'method' => 'GET',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-		) );
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-
-		if ( $response_code != 200 ) {
-			return new WP_Error( 'error', 'Failed to fetch activities', array( 'status' => $response_code ) );
+		if ( ! $fav_id ) {
+			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
 		}
 
-		$body = wp_remote_retrieve_body( $response );
-
-		return json_decode( $body );
-
-	}
-
-	public function build_headers() {
-
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-
-		return array(
-			'X-Merchant-ID' => $merchant_id,
-			'X-Secret' => $secret,
-			'Content-Type' => 'application/json',
-		);
-
-	}
-
-	public function http_get( $url ) {
-
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
-
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . $url;
-
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-			'timeout' => 30,
-		) );
-
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/reward-transactions/', true );
 
 	}
 
 	public function fetch_settings() {
 
-		return $this->http_get( '/v3/member/company/settings/' );
+		return HttpHelper::get( '/v3/member/company/settings/' );
 
 	}
 
@@ -520,8 +415,11 @@ class Favored_Public {
 	}
 
 	public function create_reward_redemption( $request ) {
+
 		if ( !is_user_logged_in() ) {
+
 			wp_send_json_error( 'Authentication required', 401 );
+
 		}
 
 		$payload = $request->get_json_params();
@@ -557,38 +455,21 @@ class Favored_Public {
 	}
 
 	public function get_my_rewards( $request ) {
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
 
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/member/external-platform/members/' . get_user_meta( get_current_user_id(), 'fav_id', true ) . '/rewards/';
+		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'GET',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-		) );
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-
-		if ( $response_code != 200 ) {
-			return new WP_Error( 'error', 'Failed to fetch reward redemptions', array( 'status' => $response_code ) );
+		if ( ! $fav_id ) {
+			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
 		}
 
-		$body = wp_remote_retrieve_body( $response );
+		$url = $base_url . '/member/external-platform/members/' . $fav_id . '/rewards/';
 
-		return json_decode( $body );
+		return HttpHelper::get( $url, true );
+
 	}
 
 	public function ajax_login( $request ) {
+
 		$payload = $request->get_json_params();
 
 		$info = array();
@@ -728,8 +609,8 @@ class Favored_Public {
 
 			} else if ( $subtotal >= $discount ) {
 
-				$member = $this->get_member();
-				$cash_rewards = $member->cashRewards;
+				$member = $this->get_my_member_profile();
+				$cash_rewards = $member['cashRewards'];
 
 				if ( $cash_rewards >= $discount ) {
 					$cart->add_fee( __( 'Cash Rewards', 'favcrm-for-woocommerce' ), -$discount );
@@ -752,22 +633,22 @@ class Favored_Public {
 			return;
 		}
 
-		$member = $this->get_member();
+		$member = $this->get_my_member_profile();
 
-		if ( ! property_exists( $member, 'membershipTier' ) ) {
+		if ( $member === null || ! array_key_exists( 'membershipTier', $member ) ) {
 			return;
 		}
 
 		$discount = 0;
 
-		$membershipTier = $member->membershipTier;
+		$membershipTier = $member['membershipTier'];
 
 		$subtotal = (float) WC()->cart->subtotal;
 
-		$discount = $membershipTier->discount / 100 * $subtotal;
+		$discount = $membershipTier['discount'] / 100 * $subtotal;
 
 		if ( $discount > 0 ) {
-			$cart->add_fee( $membershipTier->name . ' ' . __( 'Member Discount', 'favcrm-for-woocommerce' ) . ' (' . $membershipTier->discount . '%)', -$discount );
+			$cart->add_fee( $membershipTier['name'] . ' ' . __( 'Member Discount', 'favcrm-for-woocommerce' ) . ' (' . $membershipTier['discount'] . '%)', -$discount );
 		}
 	}
 }

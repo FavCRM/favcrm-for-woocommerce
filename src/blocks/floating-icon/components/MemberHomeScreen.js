@@ -44,7 +44,7 @@ export default function MemberHomeScreen({ site, setShow, setScreen, member }) {
           >
             <div className="flex items-center">
               <Gift className="mr-2 stroke-[#999]" />
-              <div>{__('Redeem Gift Rewards', 'favcrm-for-woocommerce')}</div>
+              <div>{__('Gift Rewards', 'favcrm-for-woocommerce')}</div>
             </div>
             <ChevronRight className="stroke-[#999]" />
           </div>

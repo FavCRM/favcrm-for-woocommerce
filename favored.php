@@ -16,7 +16,7 @@
  * Plugin Name:       FavCRM for WooCommerce
  * Requires Plugins:  woocommerce
  * Description:       Member Management System
- * Version:           1.0.2
+ * Version:           1.0.3
  * Author:            FavCRM
  * Author URI:        https://favcrm.io
  * License:           GPL-2.0+
@@ -67,6 +67,8 @@ register_deactivation_hook( __FILE__, 'deactivate_favored' );
  */
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-favored.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-http-helper.php';
+require_once plugin_dir_path( __FILE__ ) . 'includes/cmb2/init.php';
 
 /**
  * Begins execution of the plugin.
@@ -78,8 +80,6 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-favored.php';
  * @since    1.0.0
  */
 function run_favored() {
-
-	require_once plugin_dir_path( __FILE__ ) . 'includes/cmb2/init.php';
 
 	$plugin = new Favored();
 	$plugin->run();

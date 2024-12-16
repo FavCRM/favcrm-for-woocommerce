@@ -6,9 +6,9 @@ import { __, sprintf } from '@wordpress/i18n'
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 export default function RewardSchemeScreen({ site, setScreen }) {
-  const query = useQuery({ queryKey: ['rewardSchemes'], queryFn: async () => {
+  const query = useQuery({ queryKey: ['myRewardSchemes'], queryFn: async () => {
     const response = await apiFetch({
-      path: '/fav/v1/reward-schemes'
+      path: '/fav/v1/my-reward-schemes'
     });
 
     return response;
@@ -31,13 +31,13 @@ export default function RewardSchemeScreen({ site, setScreen }) {
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
-              query.data?.map(scheme => (
+              query.data?.items?.map(scheme => (
                 <div key={scheme.id} className="bg-white rounded-md w-full px-4 py-4">
                   <div>{scheme.name}</div>
+                  <div className="text-gray-500 text-sm">
+                    {sprintf(__('Every $%s spent and earn', 'favcrm-for-woocommerce'), parseFloat(scheme.amount))}
+                  </div>
                   <div className="text-gray-500 text-sm flex gap-x-2">
-                    <div>
-                      {sprintf(__('Every $%s spent and earn', 'favcrm-for-woocommerce'), parseFloat(scheme.amount))}
-                    </div>
                     {
                       !!scheme.points && (
                         <div>{sprintf(__('%s Points', 'favcrm-for-woocommerce'), parseFloat(scheme.points))}</div>
@@ -45,7 +45,7 @@ export default function RewardSchemeScreen({ site, setScreen }) {
                     }
                     {
                       !!scheme.points && !!scheme.stamps && (
-                        <div>{__('and', 'favcrm-for-woocommerce')}</div>
+                        <div>&</div>
                       )
                     }
                     {

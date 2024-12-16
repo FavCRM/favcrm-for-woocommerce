@@ -31,9 +31,9 @@ export default function ActivityScreen({ site, setScreen }) {
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
-              query.data?.map(activity => (
+              query.data?.items.map(activity => (
                 <div key={activity.id} className="bg-white rounded-md w-full px-4 py-4">
-                  <div>{activity.name}</div>
+                  <div>{activity.transactionType}</div>
                   <div className="text-gray-500 text-sm flex gap-x-4">
                     {
                       !!activity.points && (

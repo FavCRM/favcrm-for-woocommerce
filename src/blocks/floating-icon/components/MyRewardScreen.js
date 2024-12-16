@@ -27,11 +27,11 @@ export default function MyRewardScreen({ site, setScreen }) {
       </header>
       <main className="p-4">
         <div>
-          <h3 className="text-sm text-gray-500 mb-4">我的禮品奬賞</h3>
+          <h3 className="text-sm text-gray-500 mb-4">{__('My Rewards', 'favcrm-for-woocommerce')}</h3>
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
-              query.data?.map(rewardRedemption => (
+              query.data?.items.map(rewardRedemption => (
                 <div key={rewardRedemption.id} className="bg-white rounded-md w-full px-4 py-4 flex">
                   <div className="flex-1">
                     <div>{rewardRedemption.giftOffer.name}</div>
@@ -41,7 +41,7 @@ export default function MyRewardScreen({ site, setScreen }) {
                     {
                       rewardRedemption.expiryDate && (
                         <div className="text-gray-500 text-sm">
-                          有效期至 {rewardRedemption.expiryDate}
+                          {__('Valid Until', 'favcrm-for-woocommerce')} {rewardRedemption.expiryDate}
                         </div>
                       )
                     }

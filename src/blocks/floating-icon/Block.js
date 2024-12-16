@@ -37,7 +37,7 @@ export default function Block({ nonce, isUserLoggedOn }) {
 
   const fetchMember = async () => {
     const response = await fetch(
-      '/wp-json/fav/v1/member', {
+      '/wp-json/fav/v1/my-member-profile', {
         headers: {
           'X-WP-Nonce': nonce
         }

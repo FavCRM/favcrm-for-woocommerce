@@ -8,9 +8,9 @@ import { useToast } from './toast';
 
 export default function GiftOfferScreen({ site, setScreen, member }) {
   const { toast } = useToast();
-  const query = useQuery({ queryKey: ['giftOffers'], queryFn: async () => {
+  const query = useQuery({ queryKey: ['myGiftOffers'], queryFn: async () => {
     const response = await apiFetch({
-      path: '/fav/v1/gift-offers'
+      path: '/fav/v1/my-gift-offers'
     });
 
     return response;
@@ -63,7 +63,7 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
-              query.data?.map(offer => (
+              query.data?.items.map(offer => (
                 <div key={offer.id} className="bg-white rounded-md w-full px-4 py-4 flex">
                   <div className="flex-1">
                     <div>{offer.name}</div>
