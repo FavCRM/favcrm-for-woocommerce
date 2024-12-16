@@ -5,7 +5,7 @@ import WelcomeScreen from './components/WelcomeScreen';
 import RewardSchemeScreen from './components/RewardSchemeScreen';
 import GiftOfferScreen from './components/GiftOfferScreen';
 import MemberHomeScreen from './components/MemberHomeScreen';
-import ActivityScreen from './components/ActivityScreen';
+import MyActivityScreen from './components/MyActivityScreen';
 import MyRewardScreen from './components/MyRewardScreen';
 
 export default function Block({ nonce, isUserLoggedOn }) {
@@ -57,7 +57,7 @@ export default function Block({ nonce, isUserLoggedOn }) {
       case 'reward-scheme':
         return <RewardSchemeScreen site={site} setShow={setShow} setScreen={setScreen} />;
       case 'activity':
-        return <ActivityScreen site={site} setShow={setShow} setScreen={setScreen} />;
+        return <MyActivityScreen site={site} setShow={setShow} setScreen={setScreen} />;
       case 'welcome':
       default:
         return isUserLoggedOn

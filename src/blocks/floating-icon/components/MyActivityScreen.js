@@ -8,7 +8,7 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 export default function ActivityScreen({ site, setScreen }) {
   const query = useQuery({ queryKey: ['activities'], queryFn: async () => {
     const response = await apiFetch({
-      path: '/fav/v1/activities'
+      path: '/fav/v1/my-activities'
     });
 
     return response;
@@ -37,12 +37,12 @@ export default function ActivityScreen({ site, setScreen }) {
                   <div className="text-gray-500 text-sm flex gap-x-4">
                     {
                       !!activity.points && (
-                        <div>{sprintf(__('%s Points', 'favcrm-for-woocommerce'), activity.points)}</div>
+                        <div>{sprintf(__('%s Points', 'favcrm-for-woocommerce'), new Intl.NumberFormat('en-US').format(activity.points))}</div>
                       )
                     }
                     {
                       !!activity.stamps && (
-                        <div>{sprintf(__('%s Stamps', 'favcrm-for-woocommerce'), activity.stamps)}</div>
+                        <div>{sprintf(__('%s Stamps', 'favcrm-for-woocommerce'), new Intl.NumberFormat('en-US').format(activity.stamps))}</div>
                       )
                     }
                   </div>

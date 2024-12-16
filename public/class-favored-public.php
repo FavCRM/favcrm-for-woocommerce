@@ -120,9 +120,9 @@ class Favored_Public {
 			'permission_callback' => '__return_true',
 		) );
 
-		register_rest_route( 'fav/v1', '/activities', array(
+		register_rest_route( 'fav/v1', '/my-activities', array(
 			'methods' => 'GET',
-			'callback' => array( $this, 'get_activities' ),
+			'callback' => array( $this, 'get_my_activities' ),
 			'permission_callback' => '__return_true',
 		) );
 
@@ -212,6 +212,7 @@ class Favored_Public {
 	}
 
 	public function create_order_payment_intent( $request ) {
+
 		if ( !is_user_logged_in() ) {
 			wp_send_json_error( 'Authentication required', 401 );
 		}
@@ -247,9 +248,11 @@ class Favored_Public {
 			'publishable_key' => $publishable_key,
 			'payment_intent' => $payment_intent,
 		);
+
 	}
 
 	public function update_order( $request ) {
+
 		if ( !is_user_logged_in() ) {
 			wp_send_json_error( 'Authentication required', 401 );
 		}
@@ -304,6 +307,7 @@ class Favored_Public {
 			'order' => $order_data,
 			'status' => $payment_intent['status'],
 		);
+
 	}
 
 	public function register_blocks(): void {
@@ -385,7 +389,7 @@ class Favored_Public {
 		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/gift-offers/', true );
 	}
 
-	public function get_activities() {
+	public function get_my_activities() {
 
 		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
 
