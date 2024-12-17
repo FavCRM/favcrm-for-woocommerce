@@ -56,7 +56,6 @@ export default function MemberList({ nonce }) {
         <Link to="/edit" className="page-title-action mt-auto">Add New Member</Link>
         <div className="relative my-auto h-6">
           <label htmlFor="Search" className="sr-only">Search</label>
-
           <input
             type="text"
             id="Search"
@@ -66,12 +65,15 @@ export default function MemberList({ nonce }) {
             onChange={handleInputChange}
             onKeyDown={(e) => {
               if (e.key === 'Enter') {
-                refetch(); // Fetch immediately on Enter key press
+                refetch();
               }
             }}
           />
 
-          <span className="flex absolute inset-y-0 end-0 w-10 h-8 place-content-center">
+          <span
+            className="flex absolute inset-y-0 end-0 w-10 h-8 place-content-center cursor-pointer"
+            onClick={() => refetch()}
+          >
             <div className="m-auto text-gray-600 hover:text-gray-700">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
