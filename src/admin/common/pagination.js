@@ -1,6 +1,6 @@
 const Pagination = (props) => {
 
-  const { setCurrPage, hasPrevPage, hasNextPage, data, bulkAction = false } = props
+  const { setQuerystring, setCurrPage, hasPrevPage, hasNextPage, data, bulkAction = false } = props
 
   return <>
     <div className="tablenav bottom">
@@ -21,17 +21,17 @@ const Pagination = (props) => {
       </div>
       <div className="tablenav-pages"><span className="displaying-num">{data?.page?.page_size} items</span>
         <span className="pagination-links"><span className={`tablenav-pages-navspan button ${hasPrevPage ? '' : 'disabled'}`}
-          onClick={() => hasPrevPage && setCurrPage(() => 1)}
+          onClick={() => hasPrevPage && !!setCurrPage ? setCurrPage(() => 1) : setQuerystring(query => ({ ...query, page: 1 }))}
         >«</span>
           <span className={`tablenav-pages-navspan button ${hasPrevPage ? '' : 'disabled'}`}
-            onClick={() => hasPrevPage && setCurrPage((currPage) => currPage - 1)}
+            onClick={() => hasPrevPage && !!setCurrPage ? setCurrPage((currPage) => currPage - 1) : setQuerystring(query => ({ ...query, page: query.page - 1 }))}
           >‹</span>
           <span className="screen-reader-text">Current Page</span><span id="table-paging" className="paging-input"><span className="tablenav-paging-text">{data?.page?.current_page} of <span className="total-pages">{data?.page?.total_pages}</span></span></span>
           <span className={`tablenav-pages-navspan button ${hasNextPage ? '' : 'disabled'}`}
-            onClick={() => hasNextPage && setCurrPage((currPage) => currPage + 1)}
+            onClick={() => hasNextPage && !!setCurrPage ? setCurrPage((currPage) => currPage + 1) : setQuerystring(query => ({ ...query, page: query.page + 1 }))}
           > › </span>
           <span className={`tablenav-pages-navspan button ${hasNextPage ? '' : 'disabled'}`}
-            onClick={() => hasNextPage && setCurrPage(() => +data?.page?.total_pages)}
+            onClick={() => hasNextPage && !!setCurrPage ? setCurrPage(() => +data?.page?.total_pages) : setQuerystring(query => ({ ...query, page: +data?.page?.total_pages }))}
           >»</span></span></div>
       <br className="clear" />
     </div>
