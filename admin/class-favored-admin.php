@@ -1128,13 +1128,15 @@ class Favored_Admin {
 	}
 
 	public function fetch_members( $request ) {
-
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 		$search = $request->get_param( 'search' ) ?? '';
 
 		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/members/?page=' . $page . '&page_size=' . $page_size . '&search=' . $search;
+		$url = $base_url . '/v3/member/company/members/?page=' . $page . '&page_size=' . $page_size;
+    if (!empty($search)) {
+		  $url = $url . '&search=' . $search;
+    }
 
 		$response = wp_remote_get( $url, array(
 			'headers' => $this->build_headers(),
