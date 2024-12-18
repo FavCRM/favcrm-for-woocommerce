@@ -360,33 +360,18 @@ class Favored_Public {
 
 	public function get_my_reward_schemes() {
 
-		if ( ! is_user_logged_in() ) {
-			return new WP_Error( 'error', 'Authentication required', array( 'status' => 401 ) );
-		}
+		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
-		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
-
-		if ( ! $fav_id ) {
-			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
-		}
-
-		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/reward-schemes/', true );
+		return HttpHelper::get( '/v3/member/outlets/' . $merchant_id . '/reward-schemes/', true );
 
 	}
 
 	public function get_my_gift_offers() {
 
-		if ( ! is_user_logged_in() ) {
-			return new WP_Error( 'error', 'Authentication required', array( 'status' => 401 ) );
-		}
+		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
-		$fav_id = get_user_meta( get_current_user_id(), 'fav_id', true );
+		return HttpHelper::get( '/v3/member/outlets/' . $merchant_id . '/gift-offers/', true );
 
-		if ( ! $fav_id ) {
-			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
-		}
-
-		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/gift-offers/', true );
 	}
 
 	public function get_my_activities() {

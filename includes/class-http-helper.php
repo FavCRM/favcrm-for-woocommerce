@@ -15,15 +15,19 @@ class HttpHelper {
 
 	}
 
-    static public function get( $url, $many = false ) {
+    static public function get( $url, $many = false, $headers = array() ) {
 
         $mode = cmb2_get_option( 'favored_options', 'mode' );
 
         $base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
         $url = $base_url . $url;
 
+        if ( empty( $headers ) ) {
+            $headers = self::build_headers();
+        }
+
         $response = wp_remote_get( $url, array(
-            'headers' => self::build_headers(),
+            'headers' => $headers,
             'timeout' => 30,
         ) );
 

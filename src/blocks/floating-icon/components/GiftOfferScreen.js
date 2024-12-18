@@ -63,7 +63,7 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
-              query.data?.items.map(offer => (
+              query.data?.items?.map(offer => (
                 <div key={offer.id} className="bg-white rounded-md w-full px-4 py-4 flex">
                   <div className="flex-1">
                     <div>{offer.name}</div>
