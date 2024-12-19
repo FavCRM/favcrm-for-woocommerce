@@ -66,7 +66,7 @@ export default function Block({ nonce, isUserLoggedOn }) {
     }
   }
 
-  if (!site) {
+  if (!site || !site.settings) {
     return null
   }
 
