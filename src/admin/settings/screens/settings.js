@@ -7,17 +7,24 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const { __ } = wp.i18n;
 
-export default function Settings({ nonce }) {
-  const { data, isLoading, error } = useQuery({ queryKey: ['settings'], queryFn: async () => {
-    const result = await apiFetch({
-      path: '/fav/v1/settings',
-      headers: {
-        'X-WP-Nonce': nonce,
-      }
-    });
+const permissions = [
+  "Read",
+  "Write",
+]
 
-    return result;
-  }});
+export default function Settings({ nonce }) {
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['settings'], queryFn: async () => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings',
+        headers: {
+          'X-WP-Nonce': nonce,
+        }
+      });
+
+      return result;
+    }
+  });
 
   if (!data || isLoading) {
     return (
@@ -40,6 +47,11 @@ export default function Settings({ nonce }) {
 }
 
 function SettingsContent({ nonce, settings }) {
+  const [roles, setRoles] = useState({
+    "Administrator": ["Read", "Write"],
+    "Shop Manager": ["Read"],
+  });
+
   const [error, setError] = useState('');
   const {
     register,
@@ -115,7 +127,7 @@ function SettingsContent({ nonce, settings }) {
                     id="pointsToCashConversionRate"
                     type="text"
                     className="regular-text mb-1"
-                    {...register('pointsToCashConversionRate', { required: __('Required', 'favcrm-for-woocommerce')})}
+                    {...register('pointsToCashConversionRate', { required: __('Required', 'favcrm-for-woocommerce') })}
                   />
                   <div>Note: Enter 0 to disable</div>
                   {
@@ -142,10 +154,10 @@ function SettingsContent({ nonce, settings }) {
                     {
                       isMutating
                         ? <LoadingSpinner
-                            isLoading={isMutating}
-                            color="text-black"
-                            size="size-4"
-                          />
+                          isLoading={isMutating}
+                          color="text-black"
+                          size="size-4"
+                        />
                         : __('Save', 'favcrm-for-woocommerce')
                     }
                   </button>
@@ -153,6 +165,55 @@ function SettingsContent({ nonce, settings }) {
               </tr>
             </tbody>
           </table>
+          <br />
+          <section className='w-1/3'>
+            <h1>Access Control</h1>
+            <div className="grid grid-cols-3">
+              <div className='w-full p-4'></div> {permissions.map((perm, i) => (<div key={i} className='text-center font-bold p-4'>{perm}</div>))}
+              {Object.keys(roles).map((role, i) => {
+                return (
+                  <React.Fragment key={i}>
+                    <div key={i} className='h-8 font-bold text-end p-4'>{role}</div>
+                    {permissions.map((perm, i) => (
+                      <div key={i} className='text-center p-4'>
+                        <input
+                          type="checkbox"
+                          name={perm}
+                          checked={roles[role].find(thisPerm => thisPerm === perm)}
+                          onChange={(e) => {
+                            const { checked, name } = e.target
+                            if (checked) {
+                              setRoles(roles => ({ ...roles, [role]: [...roles[role], name] }))
+                            } else {
+                              setRoles(roles => ({
+                                ...roles, [role]: roles[role].filter((exisitingPermission) => {
+                                  return exisitingPermission !== name
+                                })
+                              }))
+                            }
+                          }}
+                        />
+                      </div>
+                    ))}
+                  </React.Fragment>
+                )
+              })}
+              <div></div>
+              <div>
+                <button
+                  className="button button-primary w-fit mx-auto"
+                  type="button"
+                  disabled={isMutating}
+                >
+                  {
+                    __('Set Permission', 'favcrm-for-woocommerce')
+                  }
+                </button>
+              </div>
+              <div></div>
+            </div>
+          </section>
+          <br />
         </form>
       </div>
     </div>
