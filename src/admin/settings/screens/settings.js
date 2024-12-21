@@ -26,7 +26,20 @@ export default function Settings({ nonce }) {
     }
   });
 
-  if (!data || isLoading) {
+  const { data: aclData, isLoading: isAclLoading, error: aclError } = useQuery({
+    queryKey: ['access-control'], queryFn: async () => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        headers: {
+          'X-WP-Nonce': nonce,
+        }
+      });
+
+      return result;
+    }
+  });
+
+  if (!data || isLoading || !aclData || isAclLoading) {
     return (
       <div className="flex">
         <LoadingSpinner
@@ -42,15 +55,13 @@ export default function Settings({ nonce }) {
     <SettingsContent
       nonce={nonce}
       settings={data}
+      aclData={aclData}
     />
   )
 }
 
-function SettingsContent({ nonce, settings }) {
-  const [roles, setRoles] = useState({
-    "Administrator": ["Read", "Write"],
-    "Shop Manager": ["Read"],
-  });
+function SettingsContent({ nonce, settings, aclData }) {
+  const [roles, setRoles] = useState(aclData);
 
   const [error, setError] = useState('');
   const {
@@ -60,6 +71,7 @@ function SettingsContent({ nonce, settings }) {
   } = useForm({
     defaultValues: settings,
   });
+
   const { mutate, isPending: isMutating } = useMutation({
     mutationFn: async (data) => {
       const result = await apiFetch({
@@ -96,6 +108,31 @@ function SettingsContent({ nonce, settings }) {
 
     console.log(result)
     location.href = '/wp-admin/admin.php?page=favcrm-for-register';
+  }
+
+  const { mutate: aclMutate, isPending: isAclMutating } = useMutation({
+    mutationFn: async (data) => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        method: 'POST',
+        headers: {
+          'X-WP-Nonce': nonce,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      return result;
+    },
+    onSuccess: (data) => {
+      if (data?.errorCode) {
+        setError(data.error);
+      }
+    }
+  });
+
+  const onAclFinish = () => {
+    aclMutate(roles);
   }
 
   return (
@@ -165,7 +202,12 @@ function SettingsContent({ nonce, settings }) {
               </tr>
             </tbody>
           </table>
-          <br />
+        </form>
+        <br />
+        <form onSubmit={(e) => {
+          e.preventDefault()
+          onAclFinish()
+        }}>
           <section className='w-1/3'>
             <h1>Access Control</h1>
             <div className="grid grid-cols-3">
@@ -202,8 +244,8 @@ function SettingsContent({ nonce, settings }) {
               <div>
                 <button
                   className="button button-primary w-fit mx-auto"
-                  type="button"
-                  disabled={isMutating}
+                  type="submit"
+                  disabled={isAclMutating}
                 >
                   {
                     __('Set Permission', 'favcrm-for-woocommerce')
@@ -213,7 +255,6 @@ function SettingsContent({ nonce, settings }) {
               <div></div>
             </div>
           </section>
-          <br />
         </form>
       </div>
     </div>
