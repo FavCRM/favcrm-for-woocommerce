@@ -1010,33 +1010,28 @@ class Favored_Admin {
 		);
 	}
 
-	public function fetch_access_control( $request ) {
-    $favored_access_control = get_option( 'favored_access_control' );
+	public function fetch_access_control() {
+    $favored_access_control = get_option('favored_access_control');
 
     if ( ! $favored_access_control ) {
       $favored_access_control = array(
         'Administrator' => array(),
-        'Shop Manager' => array(),
+        'Shop manager' => array(),
       );
-    }
-
-		foreach ( $favored_access_control as $name => $value ) {
-      file_put_contents( 'php://stdout', 'name: '. $name.' value: '.$value );
     }
 
     $retrieveBody = json_encode( $favored_access_control );
 		return json_decode( $retrieveBody, true );
 	}
 
-	public function update_access_control( $request ) {
+	public function update_access_control($request) {
 		$body = $request->get_json_params();
-    file_put_contents( 'php://stdout', 'body'. json_encode($body) );
 
 		$success = false;
 		$error = '';
 
 		try {
-			update_option( 'favored_access_control', $body );
+			update_option('favored_access_control', $body);
 			$success = true;
 		} catch(Exception $e) {
 			echo esc_html( $e->getMessage() );

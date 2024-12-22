@@ -131,10 +131,6 @@ function SettingsContent({ nonce, settings, aclData }) {
     }
   });
 
-  const onAclFinish = () => {
-    aclMutate(roles);
-  }
-
   return (
     <div>
       <div className="mb-2">
@@ -206,7 +202,7 @@ function SettingsContent({ nonce, settings, aclData }) {
         <br />
         <form onSubmit={(e) => {
           e.preventDefault()
-          onAclFinish()
+          aclMutate(roles)
         }}>
           <section className='w-1/3'>
             <h1>Access Control</h1>
@@ -247,9 +243,7 @@ function SettingsContent({ nonce, settings, aclData }) {
                   type="submit"
                   disabled={isAclMutating}
                 >
-                  {
-                    __('Set Permission', 'favcrm-for-woocommerce')
-                  }
+                  {__('Set Permission', 'favcrm-for-woocommerce')}
                 </button>
               </div>
               <div></div>
