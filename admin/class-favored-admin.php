@@ -1043,7 +1043,41 @@ class Favored_Admin {
 		);
 	}
 
+  /**
+   * Checks if a value exists in an array
+   * @param string $role_name <p>
+   * The role name to check against user's roles.
+   * </p>
+   * <p>
+   * Current existing role_name has "Administrator"
+   * and "Shop manager".
+   * </p>
+   * @param string $permission <p>
+   * The permission to be checked whether in 
+   * array of $favored_access_control[$role_name] or not.
+   * Current existing permission has "Read" and "Write".
+   * </p>
+   * @return bool true if user's roles match $role_name & $permission is in $favored_access_control[$role_name],
+   */
+  function user_role_has_permission($role_name, $permission) {
+    $current_user_id = get_current_user_id();
+    $user_meta = get_userdata($current_user_id);
+    $user_roles = $user_meta->roles;
+    $favored_access_control = get_option('favored_access_control');
+    
+    return in_array(strtolower($role_name), $user_roles) && in_array($permission, $favored_access_control[ucfirst($role_name)]);
+  }
+
 	public function fetch_members( $request ) {
+    // $admin_can_read = $this->user_role_has_permission("Administrator", "Read");
+    // $shop_manager_can_read = $this->user_role_has_permission("Shop manager", "Read");
+    // if (!$admin_can_read && !$shop_manager_can_read){
+    //   return new WP_REST_Response(array(
+    //     'error' => "You don't have sufficient permission",
+    //     'errorCode' => 403,
+    //   ), 403);
+    // }
+
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 		$search = $request->get_param( 'search' ) ?? '';
