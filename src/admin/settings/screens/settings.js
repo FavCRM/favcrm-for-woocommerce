@@ -199,7 +199,7 @@ function SettingsContent({ nonce, settings, aclData }) {
             </tbody>
           </table>
         </form>
-        <br />
+        <div className='w-full h-1 border border-l-0 border-r-0 border-t-0 border-b-1 border-slate-300 border-solid'></div>
         <form onSubmit={(e) => {
           e.preventDefault()
           aclMutate(roles)
@@ -207,22 +207,27 @@ function SettingsContent({ nonce, settings, aclData }) {
           <section className='w-1/3'>
             <h1>Access Control</h1>
             <div className="grid grid-cols-3">
-              <div className='w-full p-4'></div> {permissions.map((perm, i) => (<div key={i} className='text-center font-bold p-4'>{perm}</div>))}
+              <div className='border border-solid border-slate-300 border-t-0 border-l-0'>&nbsp;</div>
+              {
+                permissions.map((perm, i) => (
+                  <div key={i} className='text-center font-bold p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{perm}</div>
+                ))
+              }
               {Object.keys(roles).map((role, i) => {
                 return (
                   <React.Fragment key={i}>
-                    <div key={i} className='h-8 font-bold text-end p-4'>{role}</div>
+                    <div key={i} className='h-8 font-bold text-end p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{role}</div>
                     {permissions.map((perm, i) => (
-                      <div key={i} className='text-center p-4'>
+                      <div key={i} className='text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>
                         <input
                           type="checkbox"
                           name={perm}
                           checked={roles[role].find(thisPerm => thisPerm === perm)}
                           onChange={(e) => {
                             const { checked, name } = e.target
-                            if (checked) {
+                            if (checked) { // add checked permission
                               setRoles(roles => ({ ...roles, [role]: [...roles[role], name] }))
-                            } else {
+                            } else { // remove permission
                               setRoles(roles => ({
                                 ...roles, [role]: roles[role].filter((exisitingPermission) => {
                                   return exisitingPermission !== name
