@@ -39,6 +39,27 @@ export default function Settings({ nonce }) {
     }
   });
 
+  const { mutate: aclMutate, isPending: isAclMutating } = useMutation({
+    mutationFn: async (data) => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        method: 'POST',
+        headers: {
+          'X-WP-Nonce': nonce,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      return result;
+    },
+    onSuccess: (data) => {
+      if (data?.errorCode) {
+        setError(data.error);
+      }
+    }
+  });
+
   if (!data || isLoading || !aclData || isAclLoading) {
     return (
       <div className="flex">
@@ -55,14 +76,18 @@ export default function Settings({ nonce }) {
     <SettingsContent
       nonce={nonce}
       settings={data}
-      aclData={aclData}
-    />
+    >
+      <AclForm
+        aclData={aclData}
+        permissions={permissions}
+        mutate={aclMutate}
+        isMutating={isAclMutating}
+      />
+    </SettingsContent>
   )
 }
 
-function SettingsContent({ nonce, settings, aclData }) {
-  const [roles, setRoles] = useState(aclData);
-
+function SettingsContent({ children, nonce, settings }) {
   const [error, setError] = useState('');
   const {
     register,
@@ -199,63 +224,81 @@ function SettingsContent({ nonce, settings, aclData }) {
             </tbody>
           </table>
         </form>
+
         <div className='w-full h-1 border border-l-0 border-r-0 border-t-0 border-b-1 border-slate-300 border-solid'></div>
-        <form onSubmit={(e) => {
-          e.preventDefault()
-          aclMutate(roles)
-        }}>
-          <section className='w-1/3'>
-            <h1>Access Control</h1>
-            <div className="grid grid-cols-3">
-              <div className='border border-solid border-slate-300 border-t-0 border-l-0'>&nbsp;</div>
-              {
-                permissions.map((perm, i) => (
-                  <div key={i} className='text-center font-bold p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{perm}</div>
-                ))
-              }
-              {Object.keys(roles).map((role, i) => {
-                return (
-                  <React.Fragment key={i}>
-                    <div key={i} className='h-8 font-bold text-end p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{role}</div>
-                    {permissions.map((perm, i) => (
-                      <div key={i} className='text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>
-                        <input
-                          type="checkbox"
-                          name={perm}
-                          checked={roles[role].find(thisPerm => thisPerm === perm)}
-                          onChange={(e) => {
-                            const { checked, name } = e.target
-                            if (checked) { // add checked permission
-                              setRoles(roles => ({ ...roles, [role]: [...roles[role], name] }))
-                            } else { // remove permission
-                              setRoles(roles => ({
-                                ...roles, [role]: roles[role].filter((exisitingPermission) => {
-                                  return exisitingPermission !== name
-                                })
-                              }))
-                            }
-                          }}
-                        />
-                      </div>
-                    ))}
-                  </React.Fragment>
-                )
-              })}
-              <div></div>
-              <div>
-                <button
-                  className="button button-primary w-fit mx-auto"
-                  type="submit"
-                  disabled={isAclMutating}
-                >
-                  {__('Set Permission', 'favcrm-for-woocommerce')}
-                </button>
-              </div>
-              <div></div>
-            </div>
-          </section>
-        </form>
+
+        {children}
       </div>
     </div>
+  )
+}
+
+function AclForm({ aclData, permissions, mutate, isMutating }) {
+  const [roles, setRoles] = useState(aclData);
+
+  return (
+    <form onSubmit={(e) => {
+      e.preventDefault()
+      mutate(roles)
+    }}>
+      <section className='w-1/3'>
+        <h1>Access Control</h1>
+        <div className="grid grid-cols-3">
+          <div className='border border-solid border-slate-300 border-t-0 border-l-0'>&nbsp;</div>
+          {
+            permissions.map((perm, i) => (
+              <div key={i} className='text-center font-bold p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{perm}</div>
+            ))
+          }
+          {Object.keys(roles).map((role, i) => {
+            return (
+              <React.Fragment key={i}>
+                <div key={i} className='h-8 font-bold text-end p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{role}</div>
+                {permissions.map((perm, i) => (
+                  <div key={i} className='text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>
+                    <input
+                      type="checkbox"
+                      name={perm}
+                      checked={roles[role].find(thisPerm => thisPerm === perm)}
+                      onChange={(e) => {
+                        const { checked, name } = e.target
+                        if (checked) { // add checked permission
+                          setRoles(roles => ({ ...roles, [role]: [...roles[role], name] }))
+                        } else { // remove permission
+                          setRoles(roles => ({
+                            ...roles, [role]: roles[role].filter((exisitingPermission) => {
+                              return exisitingPermission !== name
+                            })
+                          }))
+                        }
+                      }}
+                    />
+                  </div>
+                ))}
+              </React.Fragment>
+            )
+          })}
+          <div></div>
+          <div>
+            <button
+              className="button button-primary w-fit mx-auto"
+              type="submit"
+              disabled={isMutating}
+            >
+              {
+                isMutating
+                  ? <LoadingSpinner
+                    isLoading={isMutating}
+                    color="text-black"
+                    size="size-4"
+                  /> :
+                  __('Set Permission', 'favcrm-for-woocommerce')
+              }
+            </button>
+          </div>
+          <div></div>
+        </div>
+      </section>
+    </form>
   )
 }
