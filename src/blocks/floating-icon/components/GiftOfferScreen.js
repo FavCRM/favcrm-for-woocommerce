@@ -59,7 +59,10 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
       </header>
       <main className="p-4">
         <div>
-          <h3 className="text-sm text-gray-500 mb-4">{__('Gift Rewards', 'favcrm-for-woocommerce')}</h3>
+          <div className="text-sm text-gray-500 mb-4">
+            <h3 className="font-bold">{__('Gift Rewards', 'favcrm-for-woocommerce')}</h3>
+            <p className="text-xs">{__('Your Rewards Balance', 'favcrm-for-woocommerce')}: {member.points}</p>
+          </div>
           <LoadingSpinner isLoading={query.isLoading} />
           <div className="grid gap-y-2">
             {
@@ -67,7 +70,7 @@ export default function GiftOfferScreen({ site, setScreen, member }) {
                 <div key={offer.id} className="bg-white rounded-md w-full px-4 py-4 flex">
                   <div className="flex-1">
                     <div>{offer.name}</div>
-                    <div className="text-gray-500 text-sm flex gap-x-4">
+                    <div className="text-gray-500 text-xs flex gap-x-4">
                       {
                         !!offer.points && (
                           <div>
