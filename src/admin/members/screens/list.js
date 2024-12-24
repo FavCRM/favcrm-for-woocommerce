@@ -9,7 +9,6 @@ export default function MemberList({ nonce }) {
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['members', querystring],
     queryFn: async () => {
-      // console.log({ query: new URLSearchParams(querystring).toString() });
       try {
         const result = await apiFetch({
           path: `${pageLink}?${new URLSearchParams(querystring).toString()}`,
@@ -17,7 +16,6 @@ export default function MemberList({ nonce }) {
             'X-WP-Nonce': nonce,
           },
         });
-        // console.log({ result });
         return result;
       } catch (err) {
         console.error("failed to fetch members, err: ", err.message);
@@ -163,19 +161,10 @@ export default function MemberList({ nonce }) {
                   </div>
                 </th>
                 <td className="id column-id page-title" data-colname="ID">
-                  {/* <a className="row-id" href="javascript:void(0)" aria-label={`Member #${row.id} (Edit)`}></a> */}
-                  <strong className="row-id"> <Link to={`/edit/${row.uuid}`} className="">{row.id.toString().padStart(6, '0')}</Link> </strong>
+                  <strong className="row-id"> <Link to={`/edit/${row.uuid}`} className="">{row.code?.toString().padStart(6, '0')}</Link> </strong>
                 </td>
                 <td className="name column-name has-row-actions column-primary" data-colname="Name">
                   <strong> <Link to={`/edit/${row.uuid}`} className="">{row.name}</Link> </strong>
-                  {/*
-                  <div className="row-actions">
-                    <span className="edit"><Link to={`/edit/${row.id}`} className="">Edit</Link> | </span>
-                    <span className="inline hide-if-no-js"><button type="button" className="button-link editinline" aria-label={`Quick edit Member #${row.id} inline`} aria-expanded="false">Quick Edit</button> | </span>
-                    <span className="trash"><a href="javascript:void(0)" className="submitdelete" aria-label={`Move Member #${row.id} to the Trash`}>Trash</a> | </span>
-                    <span className="view"><a href="javascript:void(0)" rel="bookmark" aria-label={`View Member #${row.id}`}>View</a></span>
-                  </div>
-                  */}
                   <button type="button" className="toggle-row"><span className="screen-reader-text">Show more details</span></button>
                 </td>
                 <td className="phone column-phone" data-colname="Phone">

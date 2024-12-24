@@ -39,6 +39,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Rename this for your plugin and update it as you release new versions.
  */
 define( 'FAVORED_VERSION', '1.0.0' );
+define( 'FAVORED_BASE_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
  * The code that runs during plugin activation.
@@ -68,6 +69,7 @@ register_deactivation_hook( __FILE__, 'deactivate_favored' );
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-favored.php';
 require plugin_dir_path( __FILE__ ) . 'includes/class-http-helper.php';
+require plugin_dir_path( __FILE__ ) . 'includes/class-favored-logger.php';
 require_once plugin_dir_path( __FILE__ ) . 'includes/cmb2/init.php';
 
 /**

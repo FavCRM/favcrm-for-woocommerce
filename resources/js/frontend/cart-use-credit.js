@@ -2,6 +2,7 @@ import { registerPlugin } from '@wordpress/plugins';
 import { __, sprintf } from '@wordpress/i18n';
 import { ExperimentalDiscountsMeta } from '@woocommerce/blocks-checkout';
 import { useState } from '@wordpress/element';
+import classNames from 'classnames';
 
 import LoadingSpinner from '../../../src/components/LoadingSpinner';
 
@@ -15,15 +16,21 @@ function UseCredit({ extensions, cart }) {
   const isCreditApplied = cart?.cartFees?.some(fee => fee.key === 'cash-rewards');
   const [showCancel, setShowCancel] = useState(isCreditApplied);
 
+  const isDisabled = extensions?.fav?.isLoggedIn !== true;
+  const cardRewards = Intl.NumberFormat().format(extensions?.fav?.cashRewards ?? 0);
+
+  const maxCredits = Math.min(extensions?.fav?.cashRewards, cart?.cartTotals?.total_price) ?? 0;
+
   const handleCreditsChange = (e) => {
     const value = e.target.value;
+
     if (value > extensions?.fav?.cashRewards) {
       setError('You don\'t have enough credits to redeem');
     } else {
       setError(null);
     }
 
-    setCredits(value);
+    setCredits(Math.min(value, maxCredits));
   }
 
   const handleUseCredits = (credits) => {
@@ -48,7 +55,7 @@ function UseCredit({ extensions, cart }) {
   }
 
   const handleReset = () => {
-    handleUseCredits(0);
+    handleUseCredits(credits * -1);
   }
 
   return (
@@ -56,7 +63,20 @@ function UseCredit({ extensions, cart }) {
       <div className="p-[0_16px] mb-2 w-full">
         <div>
           <div>
-            <div className="mb-3">{sprintf(__('Your card reward balance is %s', 'favcrm-for-woocommerce'), extensions?.fav?.cashRewards ?? 0)}</div>
+            {
+               isDisabled && (
+                <div className="border-t wc-block-components-totals-coupon__form bg-[#EEE] mb-3">
+                  <div className="p-[0_16px] w-full text-[#666] text-sm">
+                    Please login first to use your credits
+                  </div>
+                </div>
+              )
+            }
+            {
+              !isDisabled && (
+                <div className="mb-3">{sprintf(__('Your card reward balance is %s', 'favcrm-for-woocommerce'), cardRewards)}</div>
+              )
+            }
             {
               showCancel && (
                 <div>
@@ -78,7 +98,9 @@ function UseCredit({ extensions, cart }) {
                   <div className="wc-block-components-text-input !mt-0 flex-1 is-active">
                     <input
                       id="credit-input"
-                      className="border rounded-md p-2"
+                      className={classNames('border rounded-md p-2', {
+                        '!bg-[#EEE]': isDisabled,
+                      })}
                       type="number"
                       autoCapitalize="off"
                       autoComplete="off"
@@ -86,13 +108,20 @@ function UseCredit({ extensions, cart }) {
                       aria-invalid="false"
                       value={credits}
                       onChange={handleCreditsChange}
-                      max={extensions?.fav?.cashRewards ?? 0}
+                      min={0}
+                      max={maxCredits}
+                      disabled={isDisabled}
                     />
                     <label htmlFor="credit-input">{__('Credit input', 'favcrm-for-woocommerce')}</label>
                   </div>
                   <button
                     type="button"
-                    className="bg-[#32373c] text-white px-4 py-2 rounded-md"
+                    className={classNames('text-white px-4 py-2 rounded-md', {
+                      'cursor-not-allowed': isDisabled || !credits || error,
+                      'bg-[#32373c]': !isDisabled && credits && !error,
+                      '!bg-gray-400': isDisabled || !credits || error,
+                    })}
+                    disabled={isDisabled || !credits || error}
                     onClick={() => {
                       handleUseCredits(credits)
                     }}

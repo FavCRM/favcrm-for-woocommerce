@@ -7,7 +7,6 @@ import i18nCountries from 'i18n-iso-countries';
 const { __ } = wp.i18n;
 import dayjs from 'dayjs';
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-dayjs.extend(customParseFormat);
 import parsePhoneNumber from 'libphonenumber-js'
 
 import LoadingSpinner from '../../../components/LoadingSpinner';
@@ -15,6 +14,8 @@ import { useFetch } from '../../services/useFetch';
 import { countries } from 'country-codes-flags-phone-codes';
 import { ComboBox } from '../../../components/ComboBox'
 import { getMonths, getDayByMonth } from '../../../utils/monthDay';
+
+dayjs.extend(customParseFormat);
 
 i18nCountries.registerLocale(require('i18n-iso-countries/langs/en.json'));
 i18nCountries.registerLocale(require('i18n-iso-countries/langs/zh.json'));
@@ -48,7 +49,6 @@ export default function MemberForm({ nonce }) {
       }
 
       if (!memberId) {
-        // console.log("add new member", JSON.stringify(reqData))
         return await apiFetch({
           path: '/fav/v1/members',
           method: 'POST',
@@ -60,7 +60,6 @@ export default function MemberForm({ nonce }) {
         });
       }
 
-      // console.log("update member", JSON.stringify(reqData))
       return await apiFetch({
         path: `/fav/v1/members/${memberId}`,
         method: 'PATCH',
@@ -124,10 +123,10 @@ export default function MemberForm({ nonce }) {
                 className="cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800"
                 type="button"
                 onClick={async () => {
-                  if (!confirm(`You are about to delete member ${defaultValues?.name}, click confirm to delete.`))
+                  if (!confirm(`You are about to delete member ${defaultValues?.name}, click confirm to delete.`)) {
                     return
+                  }
 
-                  // console.log("delete member id:", memberId)
                   const deleteResponse = await apiFetch({
                     path: `/fav/v1/members/${memberId}`,
                     method: 'DELETE',
@@ -135,7 +134,6 @@ export default function MemberForm({ nonce }) {
                       'X-WP-Nonce': nonce,
                       'Content-Type': 'application/json',
                     },
-                    // body: JSON.stringify(reqData),
                   });
 
                   window.location.href = '/wp-admin/admin.php?page=fav-crm-members';

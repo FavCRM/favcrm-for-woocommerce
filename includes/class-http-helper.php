@@ -2,6 +2,13 @@
 
 class HttpHelper {
 
+    static private function get_base_url() {
+
+        $mode = cmb2_get_option( 'favored_options', 'mode' );
+        return $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
+
+    }
+
     static public function build_headers() {
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
@@ -19,7 +26,7 @@ class HttpHelper {
 
         $mode = cmb2_get_option( 'favored_options', 'mode' );
 
-        $base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
+        $base_url = self::get_base_url();
         $url = $base_url . $url;
 
         if ( empty( $headers ) ) {
@@ -45,6 +52,31 @@ class HttpHelper {
         }
 
         return $items;
+
+    }
+
+    static public function post( $url, $data, $headers = array() ) {
+
+        $base_url = self::get_base_url();
+        $url = $base_url . $url;
+
+        if ( empty( $headers ) ) {
+            $headers = self::build_headers();
+        }
+
+        $response = wp_remote_post( $url, array(
+			'method' => 'POST',
+			'timeout' => 45,
+			'redirection' => 5,
+			'httpversion' => '1.0',
+			'blocking' => true,
+			'headers' => self::build_headers(),
+			'body' => wp_json_encode( $data ),
+			'cookies' => array()
+			)
+		);
+
+        return $response;
 
     }
 

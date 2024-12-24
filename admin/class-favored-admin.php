@@ -194,6 +194,12 @@ class Favored_Admin {
 			'permission_callback' => 'custom_route_permission_callback',
 		) );
 
+		register_rest_route( 'fav/v1', '/company-logout', array(
+			'methods' => 'POST',
+			'callback' => array( $this, 'company_logout' ),
+			'permission_callback' => 'custom_route_permission_callback',
+		) );
+
 		register_rest_route( 'fav/v1', '/dashboard', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'fetch_dashboard' ),
@@ -441,18 +447,18 @@ class Favored_Admin {
 
 	public function maybe_process() {
 
-		if ( ! isset( $_POST['favored_options_verify'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['favored_options_verify'] ) ) ) ) {
+		if ( ! isset( $_POST['_wpnonce'] ) || ! wp_verify_nonce( sanitize_text_field( wp_unslash( $_POST['_wpnonce'] ) ), 'favored_options_verify' ) ) {
             return;
         }
 
 		$url = wp_get_referer();
 		$data = $_POST;
 
-		if ( strpos( $url, 'fav-crm-credential' ) === true) {
+		if ( strpos( $url, 'fav-crm-credential' ) > 0 ) {
 			$this->maybe_save_credential( $data );
-		} else if ( strpos( $url, 'fav-crm-system-log' ) === true) {
+		} else if ( strpos( $url, 'fav-crm-system-log' ) > 0 ) {
 			$this->maybe_send_diagnostic_log();
-		} else if ( strpos( $url, 'fav-crm-bug-report' ) === true) {
+		} else if ( strpos( $url, 'fav-crm-bug-report' ) > 0 ) {
 			$this->maybe_send_bug_report( $data );
 		}
 
@@ -481,7 +487,7 @@ class Favored_Admin {
 
 	public function maybe_send_diagnostic_log() {
 
-		$pluginlog = plugin_dir_path(__FILE__) . './debug.log';
+		$pluginlog = FAVORED_BASE_PATH . 'debug.log';
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
@@ -507,7 +513,7 @@ class Favored_Admin {
 
 	public function maybe_send_bug_report( $data ) {
 
-		$pluginlog = plugin_dir_path(__FILE__) . './debug.log';
+		$pluginlog = FAVORED_BASE_PATH . 'debug.log';
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
@@ -559,6 +565,7 @@ class Favored_Admin {
 	}
 
 	public function generate_api_key() {
+
 		global $wpdb;
 
 		$consumer_key    = 'ck_' . wc_rand_hash();
@@ -576,9 +583,12 @@ class Favored_Admin {
 		) ); // db call ok; no-cache ok
 
 		return [ $consumer_key, $consumer_secret ];
+
 	}
 
-	public function register_api_keys( $consumer_key, $consumer_secret ) {
+	public function register_api_keys() {
+
+		[ $consumer_key, $consumer_secret ] = $this->generate_api_key();
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 		$secret = cmb2_get_option( 'favored_options', 'secret' );
@@ -613,9 +623,9 @@ class Favored_Admin {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			$this->write_log( "API register error: $error_message" );
+			Logger::write_log( "API register error: $error_message" );
 		} else {
-			$this->write_log( '----- API register completed -----' );
+			Logger::write_log( '----- API register completed -----' );
 			update_option( 'favored_registered', true );
 		}
 	}
@@ -631,13 +641,10 @@ class Favored_Admin {
 			", "Favored"), ARRAY_A); // db call ok; no-cache ok
 
 		if ( empty( $key ) ) {
-			[ $consumer_key, $consumer_secret ] = $this->generate_api_key();
-
-			$this->register_api_keys( $consumer_key, $consumer_secret );
-		} else {
-			$consumer_key    = $key['consumer_key'];
-			$consumer_secret = $key['consumer_secret'];
+			$this->register_api_keys();
 		}
+		var_dump($key);
+		exit();
 
 	}
 
@@ -650,13 +657,13 @@ class Favored_Admin {
 		$order = wc_get_order( $order_id );
 
 		if ( $new_status == 'completed' ) {
-			$this->woocommerce_order_status_changed( $order );
+			$this->update_order_to_fav( $order );
 		} else if ( $new_status == 'cancelled' || $new_status == 'refunded' ) {
 			$this->sync_void_order_to_fav( $order );
 		}
 	}
 
-	public function woocommerce_order_status_changed( $order ) {
+	public function sync_order_to_fav( $order ) {
 
 		$order_data = [];
 
@@ -695,50 +702,65 @@ class Favored_Admin {
 			'order_id' => $order_data['order_id'],
 			'data' => wp_json_encode( $order_data ),
 			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
+			'status' => $order->get_status() == 'completed' ? 'PROCESSED' : 'PENDING',
 		);
 
-		$this->write_log( 'Sending data to Favored CRM for order #' . $order_data['order_id'] );
-		$this->write_log( wp_json_encode( $body ) );
+		Logger::write_log( 'Sending data to Favored CRM for order #' . $order_data['order_id'] );
 
-		$url = $this->get_base_url() . '/member/external-platform/spendings/';
-
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-			)
-		);
+		$response = HttpHelper::post( '/v3/member/company/spendings/', $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
-		$this->write_log( 'Response code: ' . $response_code );
+		Logger::write_log( 'Response code: ' . $response_code );
 
 		if ( $response_code == 400 ) {
-			$this->write_log( 'Error: ' . wp_remote_retrieve_body( $response ) );
+			Logger::write_log( 'Error: ' . wp_remote_retrieve_body( $response ) );
 		}
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			$this->write_log( "Something went wrong: $error_message" );
+			Logger::write_log( "Something went wrong: $error_message" );
 		} else {
-			$this->write_log( '----- Completed -----' );
+			Logger::write_log( '----- Completed -----' );
 		}
+	}
+
+	public function update_order_to_fav( $order ) {
+
+		Logger::write_log( 'Sending data to Favored CRM for order #' . $order->get_id() );
+
+		$body = array(
+			'order_id' => $order->get_id(),
+			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
+			'status' => $order->get_status() == 'completed' ? 'PROCESSED' : 'PENDING',
+		);
+
+		$response = HttpHelper::post( '/v3/member/company/spendings/update/', $body );
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+
+		if ( $response_code == 400 ) {
+			Logger::write_log( 'Error: ' . wp_remote_retrieve_body( $response ) );
+		}
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			Logger::write_log( "Something went wrong: $error_message" );
+		} else {
+			Logger::write_log( '----- Completed -----' );
+		}
+
 	}
 
 	public function sync_void_order_to_fav( $order ) {
 
-		$this->write_log( 'Order #' . $order_id . ' has been voided' );
+		Logger::write_log( 'Order #' . $order_id . ' has been voided' );
 
 		$body = array(
 			'order_id' => $order_id,
 			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
 		);
 
-		$this->write_log( 'Sending data to Favored CRM for order #' . $order_id );
+		Logger::write_log( 'Sending data to Favored CRM for order #' . $order_id );
 
 		$url = $this->get_base_url() . '/v3/member/company/void-order/';
 
@@ -758,13 +780,13 @@ class Favored_Admin {
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			$this->write_log( "Something went wrong: $error_message" );
+			Logger::write_log( "Something went wrong: $error_message" );
 		} else {
-			$this->write_log( '----- Completed -----' );
+			Logger::write_log( '----- Completed -----' );
 		}
 	}
 
-	public function sync_credit_to_fav( $order_id ) {
+	public function handle_order_created( $order_id ) {
 
 		if ( ! self::is_logged_in() ) {
 			return;
@@ -772,69 +794,7 @@ class Favored_Admin {
 
 		$order = wc_get_order( $order_id );
 
-		$cash_rewards = 0;
-
-		foreach ( $order->get_fees() as $fee ) {
-
-			if ( $fee->get_name( 'edit ') == 'Cash Rewards' ) {
-				$cash_rewards = $fee->get_total();
-			}
-		}
-
-		if ( $cash_rewards == 0 ) {
-			return;
-		}
-
-		$this->write_log( 'order #' . $order_id . ' used cash rewards: ' . $cash_rewards );
-
-		$body = array(
-			'cash_rewards' => $cash_rewards,
-			'order_id' => $order_id,
-			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
-		);
-
-		$this->write_log( 'Sending data to Favored CRM for order #' . $order_id );
-
-		$url = $this->get_base_url() . '/v3/member/company/cash-rewards/';
-
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-			)
-		);
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-
-		if ( is_wp_error( $response ) ) {
-			$error_message = $response->get_error_message();
-			$this->write_log( "Something went wrong: $error_message" );
-		} else {
-			$this->write_log( '----- Completed -----' );
-		}
-	}
-
-	public function write_log( $message ) {
-
-		$pluginlog = plugin_dir_path(__FILE__) . 'debug.log';
-
-		$date = new DateTime();
-		$date = $date->format("Y-m-d h:i:s");
-
-		$message = '[' . $date . '] ' . $message . PHP_EOL;
-
-		$filesystem = new WP_Filesystem_Direct( true );
-
-		if ( ! $filesystem->is_writable( $pluginlog ) ) {
-			$filesystem->put_contents( $pluginlog, '', 0 );
-		}
-
-		$filesystem->put_contents( $pluginlog, $message, FILE_APPEND );
+		$this->sync_order_to_fav( $order );
 
 	}
 
@@ -945,6 +905,7 @@ class Favored_Admin {
 		$error = '';
 
 		try {
+
 			$result = json_decode( wp_remote_retrieve_body( $response ), true );
 
 			if ( isset( $result['errorCode'] ) ) {
@@ -977,6 +938,8 @@ class Favored_Admin {
 
 			$success = true;
 
+			$this->register_api_keys();
+
 		} catch(Exception $e) {
 			echo esc_html( $e->getMessage() );
 		}
@@ -984,6 +947,24 @@ class Favored_Admin {
 		return array(
 			'success' => $success,
 			'error' => $error,
+		);
+
+	}
+
+	public function company_logout() {
+
+		$key = 'favored_options';
+
+		$favored_options = get_option( $key );
+
+		$favored_options['merchant_id'] = '';
+		$favored_options['secret'] = '';
+		$favored_options['mode'] = '';
+
+		update_option( $key, $favored_options );
+
+		return array(
+			'success' => true,
 		);
 
 	}
@@ -1045,6 +1026,8 @@ class Favored_Admin {
 			update_option( 'favored_options', $favored_options );
 
 			$success = true;
+
+			$this->register_api_keys();
 
 		} catch(Exception $e) {
 			echo esc_html( $e->getMessage() );

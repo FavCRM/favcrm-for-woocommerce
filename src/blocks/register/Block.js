@@ -31,32 +31,31 @@ export default function Block({ nonce }) {
     setIsLoading(true)
     setError('');
 
-    const result = await apiFetch({
-      path: '/fav/v1/register',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-WP-Nonce': nonce,
-      },
-      body: JSON.stringify({
-        ...data,
-        phone: `${data.areaCode}${data.phone}`,
-      }),
-    })
+    try {
 
-    if (result.registered === false) {
-      if (result.message == 'DUPLICATED_PHONE' || result.message == 'FAILED_TO_CREATE_FAV_USER') {
-        setError(__('This email has been registered', 'favcrm-for-woocommerce'))
+      const result = await apiFetch({
+        path: '/fav/v1/register',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': nonce,
+        },
+        body: JSON.stringify({
+          ...data,
+          phone: `${data.areaCode}${data.phone}`,
+        }),
+      })
+
+      if (!result.registered || result.message == 'DUPLICATED_PHONE' || result.message == 'FAILED_TO_CREATE_FAV_USER') {
+        throw new Error();
       }
 
+      window.location.href = '/';
+    } catch(e) {
+      setError(__('This email has been registered', 'favcrm-for-woocommerce'))
+
       setIsLoading(false)
-
-      return;
     }
-
-    window.location.href = '/';
-
-    setIsLoading(false)
   }
 
   return (

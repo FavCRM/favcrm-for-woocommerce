@@ -167,9 +167,8 @@ class Favored {
 		$this->loader->add_action( 'rest_api_init', $plugin_admin, 'register_rest_routes' );
 		$this->loader->add_action( 'admin_menu', $plugin_admin, 'add_plugin_admin_menu' );
 		$this->loader->add_action( 'cmb2_admin_init', $plugin_admin, 'register_and_build_fields' );
-		$this->loader->add_action( 'cmb2_save_options-page_fields_favored_main_option_metabox', $plugin_admin, 'save_page_fields', 10, 3 );
 		$this->loader->add_action( 'woocommerce_order_status_changed', $plugin_admin, 'handle_order_status_changed', 10, 3 );
-		$this->loader->add_action( 'woocommerce_new_order', $plugin_admin, 'sync_credit_to_fav', 10, 1 );
+		$this->loader->add_action( 'woocommerce_new_order', $plugin_admin, 'handle_order_created', 10, 1 );
 		$this->loader->add_action( 'current_screen', $plugin_admin, 'maybe_process', 10, 1 );
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'maybe_display_admin_notices' );
 

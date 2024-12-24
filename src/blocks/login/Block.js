@@ -8,6 +8,7 @@ export default function Block({ nonce }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [isLoading, setIsLoading] = useState(false)
+  const [error, setError] = useState()
 
   const handleLogin = async () => {
     if (isLoading) {
@@ -15,25 +16,32 @@ export default function Block({ nonce }) {
     }
 
     setIsLoading(true)
+    setError('');
 
-    const result = await apiFetch({
-      path: '/fav/v1/login',
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'X-WP-Nonce': nonce,
-      },
-      body: JSON.stringify({
-        email,
-        password,
-      }),
-    })
+    try {
+      const result = await apiFetch({
+        path: '/fav/v1/login',
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'X-WP-Nonce': nonce,
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      })
 
-    if (result.loggedin) {
+      if (!result.loggedin) {
+        throw new Error('Login failed');
+      }
+
       window.location.href = '/';
-    }
+    } catch(e) {
+      setError(__('Invalid email or password', 'favcrm-for-woocommerce'))
 
-    setIsLoading(false)
+      setIsLoading(false)
+    }
   }
 
   return (
@@ -56,6 +64,11 @@ export default function Block({ nonce }) {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        {
+          error && (
+            <div className="text-red-500 mb-4 text-sm">{error}</div>
+          )
+        }
         <div>
           <button
             class="bg-black text-white text-sm px-6 py-2 h-[36px]"

@@ -169,11 +169,46 @@ class Favored_Public {
 			[
 			'namespace' => 'fav-cash-rewards',
 			'callback'  => function( $data ) {
-				WC()->session->set( 'cash_rewards', $data['credits'] );
+				$credits = $data['credits'] > 0 ? $data['credits'] : 0;
+
+				$this->sync_credit_to_fav( $data['credits'] );
+				WC()->session->set( 'cash_rewards', $credits );
 			},
 			]
 		);
 
+	}
+
+	public function sync_credit_to_fav( $cash_rewards ) {
+
+		$member_id = get_user_meta( get_current_user_id(), 'fav_id', true );
+
+		Logger::write_log( '----- Syncing cash rewards to FavCRM -----' );
+
+		if ( $cash_rewards > 0 ) {
+			Logger::write_log( 'Member (#' . $member_id . ') used cash rewards: ' . $cash_rewards );
+		} else {
+			Logger::write_log( 'Member (#' . $member_id . ') voided cash rewards: ' . $cash_rewards );
+		}
+
+		$body = array(
+			'cash_rewards' => $cash_rewards * -1,
+			'member_id' => $member_id,
+			'transaction_type' => $cash_rewards > 0 ? 'CASH REWARD' : 'CASH REWARD (VOID)',
+		);
+
+		$url = '/v3/member/company/cash-rewards/';
+
+		$response = HttpHelper::post( $url, $body );
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			Logger::write_log( "Something went wrong: $error_message" );
+		} else {
+			Logger::write_log( '----- Completed -----' );
+		}
 	}
 
 	public function extend_schemas() {
@@ -183,16 +218,16 @@ class Favored_Public {
 				'endpoint'        => CartSchema::IDENTIFIER,
 				'namespace'       => 'fav',
 				'data_callback'   => function() {
+					$cash_rewards = 0;
+					$is_logged_in = is_user_logged_in();
+
 					$member = $this->get_my_member_profile();
 
-					$cash_rewards = 0;
-
-					if ( array_key_exists( 'cashRewards', $member ) ) {
-						$cash_rewards = $member['cashRewards'];
-					}
+					$cash_rewards = $member['cashRewards'] ?? 0;
 
 					return array(
 						'cashRewards' => $cash_rewards,
+						'isLoggedIn' => $is_logged_in,
 						'nonce' => wp_create_nonce( 'wc_store_api' ),
 					);
 				},
@@ -201,6 +236,9 @@ class Favored_Public {
 						'properties' => array(
 							'cashRewards' => array(
 								'type' => 'integer',
+							),
+							'isLoggedIn' => array(
+								'type' => 'boolean',
 							),
 						),
 					);

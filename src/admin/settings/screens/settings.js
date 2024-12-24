@@ -73,10 +73,31 @@ function SettingsContent({ nonce, settings }) {
     mutate(data);
   }
 
+  const handleLogout = async () => {
+    const result = await apiFetch({
+      path: '/fav/v1/company-logout',
+      method: 'POST',
+      headers: {
+        'X-WP-Nonce': nonce,
+      },
+    })
+
+    console.log(result)
+    location.href = '/wp-admin/admin.php?page=favcrm-for-register';
+  }
+
   return (
     <div>
       <div className="mb-2">
-        <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Settings', 'favcrm-for-woocommerce')}</h1>
+        <div className="flex justify-between items-center">
+          <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Settings', 'favcrm-for-woocommerce')}</h1>
+          <button
+            className="button"
+            onClick={handleLogout}
+          >
+            Logout
+          </button>
+        </div>
         <hr className="wp-header-end" />
       </div>
       <div>
