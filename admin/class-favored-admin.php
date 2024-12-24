@@ -1013,11 +1013,29 @@ class Favored_Admin {
 	public function fetch_access_control() {
     $favored_access_control = get_option('favored_access_control');
 
-    if ( ! $favored_access_control ) {
-      $favored_access_control = array(
-        'Administrator' => array(),
-        'Shop manager' => array(),
-      );
+    $all_roles = wp_roles();
+    $role_names = array();
+		foreach ( $all_roles as $value ) {
+      foreach ( $value as $r_value ) {
+        if(is_string($r_value)){
+          array_push($role_names,$r_value);
+        }
+      }
+		}
+
+    // if favored_access_control not exist in DB then init
+    if (!$favored_access_control) {
+      $favored_access_control = array();
+      foreach($role_names as $role_name){
+        $favored_access_control[$role_name] = array();
+      }
+    }
+
+    // add non-existing new role in case not in favored_access_control
+    foreach($role_names as $role_name){
+      if (is_null($favored_access_control[$role_name])){
+        $favored_access_control[$role_name] = array();
+      }
     }
 
     $retrieveBody = json_encode( $favored_access_control );
