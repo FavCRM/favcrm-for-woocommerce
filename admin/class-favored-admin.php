@@ -794,19 +794,9 @@ class Favored_Admin {
 
 		Logger::write_log( 'Sending data to Favored CRM for order #' . $order_id );
 
-		$url = $this->get_base_url() . '/v3/member/company/void-order/';
+		$url = '/v3/member/company/void-order/';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-			)
-		);
+		$response = HttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
@@ -892,46 +882,13 @@ class Favored_Admin {
 		include_once( plugin_dir_path( __FILE__ ) . 'includes/bug-report.php' );
 	}
 
-	private function get_base_url() {
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
-
-		// if ( WP_DEBUG ) {
-		// 	return 'http://192.168.1.2:8001';
-		// }
-
-		return $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-	}
-
-	private function build_headers() {
-
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-
-		return array(
-			'X-Merchant-ID' => $merchant_id,
-			'X-Secret' => $secret,
-			'Content-Type' => 'application/json',
-		);
-
-	}
-
 	public function company_login( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company-login/';
+		$url = '/v3/member/company-login/';
 
 		$body = $request->get_json_params();
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1074,35 +1031,19 @@ class Favored_Admin {
 
 	public function fetch_settings( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/settings/';
+		$url ='/v3/member/company/settings/';
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-			'timeout' => 30,
-		) );
-
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		return HttpHelper::get( $url );
 
 	}
 
 	public function update_settings( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/settings/';
+		$url = '/v3/member/company/settings/';
 
 		$body = $request->get_json_params();
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1131,50 +1072,33 @@ class Favored_Admin {
 	}
 
 	public function fetch_members( $request ) {
+
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
-		$search = $request->get_param( 'search' ) ?? '';
+		$search = $request->get_param( 'search' );
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/members/?page=' . $page . '&page_size=' . $page_size;
-    if (!empty($search)) {
-		  $url = $url . '&search=' . $search;
-    }
+		$url = '/v3/member/company/members/?page=' . $page . '&page_size=' . $page_size;
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-			'timeout' => 30,
-		) );
+		if ( ! empty( $search ) ) {
+			$url = $url . '&search=' . $search;
+		}
 
-		return array(
-			'page' => array(
-				'page_size' => (int) $response['headers']['x-page-size'],
-				'current_page' => (int) $response['headers']['x-current-page'],
-				'total_pages' => (int) $response['headers']['x-page-count'],
-			),
-			'items' => json_decode( wp_remote_retrieve_body( $response ), true )
-		);
+		return HttpHelper::get( $url, true );
+
 	}
 
 	public function fetch_members_by_uuid( $request ) {
 
 		$uuid = $request['uuid'];
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/members/'.$uuid.'/';
+		$url = '/v3/member/company/members/'.$uuid.'/';
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-			'timeout'     => 30,
-		) );
-
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		return HttpHelper::get( $url );
 
 	}
 
 	public function add_members( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/members/';
+		$url = '/v3/member/company/members/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1182,16 +1106,7 @@ class Favored_Admin {
 			'source' => 'WORDPRESS',
 		];
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1222,9 +1137,8 @@ class Favored_Admin {
 
 	public function update_members( $request ) {
 
-		$base_url = $this->get_base_url();
 		$uuid = $request['uuid'];
-		$url = $base_url . '/v3/member/company/members/'.$uuid.'/';
+		$url = '/v3/member/company/members/'.$uuid.'/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1232,16 +1146,7 @@ class Favored_Admin {
 			'source' => 'WORDPRESS',
 		];
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'PATCH',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::patch( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1272,19 +1177,10 @@ class Favored_Admin {
 
 	public function delete_members( $request ) {
 
-		$base_url = $this->get_base_url();
 		$uuid = $request['uuid'];
-		$url = $base_url . '/v3/member/company/members/'.$uuid.'/';
+		$url = '/v3/member/company/members/'.$uuid.'/';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'DELETE',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';
@@ -1318,46 +1214,19 @@ class Favored_Admin {
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/membership-tiers/?page=' . $page . '&page_size=' . $page_size;
+		$url = '/v3/member/company/membership-tiers/?page=' . $page . '&page_size=' . $page_size;
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return array(
-			'page' => array(
-				'page_size' => (int) $response['headers']['x-page-size'],
-				'current_page' => (int) $response['headers']['x-current-page'],
-				'total_pages' => (int) $response['headers']['x-page-count'],
-			),
-			'items' => json_decode( wp_remote_retrieve_body( $response ), true )
-		);
+		return HttpHelper::get( $url, true );
 
 	}
 
 	public function add_membership_tiers( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/membership-tiers/';
+		$url = '/v3/member/company/membership-tiers/';
 
 		$body = $request->get_json_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1388,27 +1257,13 @@ class Favored_Admin {
 
 	public function update_membership_tiers( $request ) {
 
-		$base_url = $this->get_base_url();
 		$id = $request['id'];
 
-		$url = $base_url . '/v3/member/company/membership-tiers/'.$id.'/';
+		$url = '/v3/member/company/membership-tiers/' . $id . '/';
 
 		$body = $request->get_json_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'PATCH',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::patch( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1439,19 +1294,10 @@ class Favored_Admin {
 
 	public function delete_membership_tiers( $request ) {
 
-		$base_url = $this->get_base_url();
 		$id = $request['id'];
-		$url = $base_url . '/v3/member/company/membership-tiers/'.$id.'/';
+		$url = '/v3/member/company/membership-tiers/' . $id . '/';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'DELETE',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';
@@ -1485,22 +1331,9 @@ class Favored_Admin {
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/reward-transactions/?page=' . $page . '&page_size=' . $page_size;
+		$url = '/v3/member/company/reward-transactions/?page=' . $page . '&page_size=' . $page_size;
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return array(
-			'page' => array(
-				'page_size' => (int) $response['headers']['x-page-size'],
-				'current_page' => (int) $response['headers']['x-current-page'],
-				'total_pages' => (int) $response['headers']['x-page-count'],
-			),
-			'items' => json_decode( wp_remote_retrieve_body( $response ), true )
-		);
+		return HttpHelper::get( $url, true );
 
 	}
 
@@ -1509,61 +1342,28 @@ class Favored_Admin {
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/reward-schemes/?page=' . $page . '&page_size=' . $page_size;
+		$url = '/v3/member/company/reward-schemes/?page=' . $page . '&page_size=' . $page_size;
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return array(
-			'page' => array(
-				'page_size' => (int) $response['headers']['x-page-size'],
-				'current_page' => (int) $response['headers']['x-current-page'],
-				'total_pages' => (int) $response['headers']['x-page-count'],
-			),
-			'items' => json_decode( wp_remote_retrieve_body( $response ), true )
-		);
+		return HttpHelper::get( $url, true );
 
 	}
 
 	public function fetch_reward_schemes_by_id( $request ) {
 
 		$id = $request['id'];
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/reward-schemes/'.$id.'/';
+		$url = '/v3/member/company/reward-schemes/'.$id.'/';
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		return HttpHelper::get( $url );
 
 	}
 
 	public function add_reward_schemes( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/reward-schemes/';
+		$url = '/v3/member/company/reward-schemes/';
 
 		$body = $request->get_json_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1594,27 +1394,13 @@ class Favored_Admin {
 
 	public function update_reward_schemes( $request ) {
 
-		$base_url = $this->get_base_url();
 		$id = $request['id'];
 
-		$url = $base_url . '/v3/member/company/reward-schemes/'.$id.'/';
+		$url = '/v3/member/company/reward-schemes/'.$id.'/';
 
 		$body = $request->get_json_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'PATCH',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::patch( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -1645,19 +1431,10 @@ class Favored_Admin {
 
 	public function delete_reward_schemes( $request ) {
 
-		$base_url = $this->get_base_url();
 		$id = $request['id'];
-		$url = $base_url . '/v3/member/company/reward-schemes/'.$id.'/';
+		$url = '/v3/member/company/reward-schemes/'.$id.'/';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'DELETE',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';
@@ -1691,58 +1468,40 @@ class Favored_Admin {
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/gift-offers/?page=' . $page . '&page_size=' . $page_size;
+		$url = '/v3/member/company/gift-offers/?page=' . $page . '&page_size=' . $page_size;
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return array(
-			'page' => array(
-				'page_size' => (int) $response['headers']['x-page-size'],
-				'current_page' => (int) $response['headers']['x-current-page'],
-				'total_pages' => (int) $response['headers']['x-page-count'],
-			),
-			'items' => json_decode( wp_remote_retrieve_body( $response ), true )
-		);
+		return HttpHelper::get( $url, true );
 
 	}
 
 	public function fetch_gift_offers_by_id( $request ) {
+
 		$id = $request['id'];
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/gift-offers/'.$id.'/';
+		$url = '/v3/member/company/gift-offers/'.$id.'/';
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		return HttpHelper::get( $url );
 
 	}
 
 	public function add_gift_offers( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/gift-offers/';
+		$url = '/v3/member/company/gift-offers/';
 
 		$body = $request->get_body_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
-
 		$files = $request->get_file_params();
 
-		$header = $this->build_headers();
-		unset($header['Content-Type']);
+		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
+		$secret = cmb2_get_option( 'favored_options', 'secret' );
 
 		$boundary = wp_generate_password( 24 );
-		$header['Content-type'] = 'multipart/form-data; boundary=' . $boundary;
+
+		$header = array(
+			'X-Merchant-ID' => $merchant_id,
+			'X-Secret' => $secret,
+			'Content-type' => 'multipart/form-data; boundary=' . $boundary,
+		);
+
 		$payload = '';
 		// First, add the standard POST fields:
 		foreach ( $body as $name => $value ) {
@@ -1770,18 +1529,7 @@ class Favored_Admin {
 		}
 		$payload .= '--' . $boundary . '--';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $header,
-			// 'body' => $body,
-			'body' => $payload,
-			'cookies' => array(),
-      		'multipart' => true,
-		) );
+		$response = HttpHelper::post( $url, $payload, $header, true );
 
 		$success = false;
 		$error = '';
@@ -1810,24 +1558,23 @@ class Favored_Admin {
 
 	public function update_gift_offers( $request ) {
 
-		$base_url = $this->get_base_url();
-
 		$id = $request['id'];
-		$url = $base_url . '/v3/member/company/gift-offers/'.$id.'/';
+		$url = '/v3/member/company/gift-offers/'.$id.'/';
 
 		$body = $request->get_body_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
-
 		$files = $request->get_file_params();
 
-		$header = $this->build_headers();
-		unset($header['Content-Type']);
+		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
+		$secret = cmb2_get_option( 'favored_options', 'secret' );
 
 		$boundary = wp_generate_password( 24 );
-		$header['Content-type'] = 'multipart/form-data; boundary=' . $boundary;
+
+		$header = array(
+			'X-Merchant-ID' => $merchant_id,
+			'X-Secret' => $secret,
+			'Content-type' => 'multipart/form-data; boundary=' . $boundary,
+		);
+
 		$payload = '';
 		// First, add the standard POST fields:
 		foreach ( $body as $name => $value ) {
@@ -1856,17 +1603,7 @@ class Favored_Admin {
 		}
 		$payload .= '--' . $boundary . '--';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'PATCH',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $header,
-			'body' => $payload,
-			'cookies' => array(),
-      		'multipart' => true,
-		) );
+		$response = HttpHelper::patch( $url, $payload, $header, true );
 
 		$success = false;
 		$error = '';
@@ -1895,19 +1632,10 @@ class Favored_Admin {
 
 	public function delete_gift_offers( $request ) {
 
-		$base_url = $this->get_base_url();
 		$id = $request['id'];
-		$url = $base_url . '/v3/member/company/gift-offers/'.$id.'/';
+		$url = '/v3/member/company/gift-offers/' . $id . '/';
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'DELETE',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';

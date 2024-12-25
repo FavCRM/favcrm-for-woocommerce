@@ -8,7 +8,7 @@ import dayjs from 'dayjs';
 const { __ } = wp.i18n;
 
 function AnimatedValueCell({ value }) {
-  if (value) {
+  if (value || value == 0) {
     return value;
   }
 
@@ -25,14 +25,14 @@ function DashboardWidget({ title, value, valueType = 'money' }) {
           <span className="text-sm font-bold">{title}</span>
         </div>
         <div className={classNames('flex justify-end', {
-          'animate-pulse': !value,
+          'animate-pulse': !value && value != 0,
         })}>
           <div className={classNames('mb-1 font-medium text-[#1E1E1E]', {
-            'h-6 w-16 bg-slate-200 rounded': !value,
+            'h-6 w-16 bg-slate-200 rounded': !value && value != 0,
           })}>
             <span className="text-xl">
               {
-                !!value && (
+                (!!value || value == 0) && (
                   <span>
                     {valueType === 'money' ? '$' : ''}
                     {new Intl.NumberFormat().format(value)}
@@ -63,23 +63,27 @@ function QuotaUsageWidget({ title, value }) {
             <div className="flex items-center">
               <span className="font-bold"><AnimatedValueCell value={value?.memberCount} /></span>
               <span className="px-1">/</span>
-              <span><AnimatedValueCell value={value?.memberLimit} /></span>
+              <span>
+                {
+                  value?.memberLimit == 0 ? 'Unlimited' : (
+                    <AnimatedValueCell value={value?.memberLimit} />
+                  )
+                }
+              </span>
             </div>
           </div>
           <div>
-            <div>Spending Records</div>
+            <div>Orders</div>
             <div className="flex items-center">
               <span className="font-bold"><AnimatedValueCell value={value?.spendingRecordCount} /></span>
               <span className="px-1">/</span>
-              <span><AnimatedValueCell value={value?.spendingRecordLimit} /></span>
-            </div>
-          </div>
-          <div>
-            <div>Gift Offers</div>
-            <div className="flex items-center">
-              <span className="font-bold"><AnimatedValueCell value={value?.giftOfferCount} /></span>
-              <span className="px-1">/</span>
-              <span><AnimatedValueCell value={value?.giftOfferLimit} /></span>
+              <span>
+                {
+                  value?.spendingRecordLimit == 0 ? 'Unlimited' : (
+                    <AnimatedValueCell value={value?.spendingRecordLimit} />
+                  )
+                }
+              </span>
             </div>
           </div>
           <div>
@@ -87,7 +91,13 @@ function QuotaUsageWidget({ title, value }) {
             <div className="flex items-center">
               <span className="font-bold"><AnimatedValueCell value={value?.rewardSchemeCount} /></span>
               <span className="px-1">/</span>
-              <span><AnimatedValueCell value={value?.rewardSchemeLimit} /></span>
+              <span>
+                {
+                  value?.rewardSchemeLimit == 0 ? 'Unlimited' : (
+                    <AnimatedValueCell value={value?.rewardSchemeLimit} />
+                  )
+                }
+              </span>
             </div>
           </div>
         </div>
@@ -115,7 +125,7 @@ function DashboardList({ title, columns = [], items = [] }) {
 
         <tbody id="the-list">
           {
-            !items.length && Array(5).fill(0).map((_, index) => (
+            !items && Array(5).fill(0).map((_, index) => (
               <tr key={index}>
                 {
                   columns.map(column => (
@@ -126,6 +136,15 @@ function DashboardList({ title, columns = [], items = [] }) {
                 }
               </tr>
             ))
+          }
+          {
+            items && items.length === 0 && (
+              <tr>
+                <td colSpan={columns.length} className="text-center">
+                  No items found
+                </td>
+              </tr>
+            )
           }
           {
             items && items.map((item, index) => (

@@ -79,6 +79,13 @@ export default function RewardSchemeList({ nonce }) {
             ))
           }
           {
+            data?.items?.length === 0 && (
+              <tr>
+                <td colSpan="7" className="text-center">No data found</td>
+              </tr>
+            )
+          }
+          {
             data?.items?.map(row => (
               <tr
                 key={row.id}

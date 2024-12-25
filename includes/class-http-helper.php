@@ -4,6 +4,8 @@ class HttpHelper {
 
     static private function get_base_url() {
 
+        return 'https://dev.favcrm.io';
+
         $mode = cmb2_get_option( 'favored_options', 'mode' );
         return $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
 
@@ -55,7 +57,7 @@ class HttpHelper {
 
     }
 
-    static public function post( $url, $data, $headers = array() ) {
+    static public function post( $url, $data, $headers = array(), $multipart = false ) {
 
         $base_url = self::get_base_url();
         $url = $base_url . $url;
@@ -70,17 +72,17 @@ class HttpHelper {
 			'redirection' => 5,
 			'httpversion' => '1.0',
 			'blocking' => true,
-			'headers' => self::build_headers(),
+			'headers' => $headers,
 			'body' => wp_json_encode( $data ),
-			'cookies' => array()
-			)
-		);
+			'cookies' => array(),
+            'multipart' => $multipart,
+        ));
 
         return $response;
 
     }
 
-    static public function patch( $url, $data, $headers = array() ) {
+    static public function patch( $url, $data, $headers = array(), $multipart = false ) {
 
         $base_url = self::get_base_url();
         $url = $base_url . $url;
@@ -93,10 +95,26 @@ class HttpHelper {
             'method' => 'PATCH',
             'headers' => $headers,
             'body' => wp_json_encode( $data ),
+            'multipart' => $multipart,
         ) );
 
         return $response;
 
     }
 
+    static public function delete( $url ) {
+
+            $base_url = self::get_base_url();
+            $url = $base_url . $url;
+
+            $headers = self::build_headers();
+
+            $response = wp_remote_request( $url, array(
+                'method' => 'DELETE',
+                'headers' => $headers,
+            ) );
+
+            return $response;
+
+    }
 }
