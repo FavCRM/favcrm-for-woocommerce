@@ -3,3 +3,4 @@ node_modules
 bin
 deploy.sh
 build.sh
+upload.sh
