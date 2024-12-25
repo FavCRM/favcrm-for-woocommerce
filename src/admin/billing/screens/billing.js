@@ -18,7 +18,7 @@ export default function Billing({ nonce }) {
 
     return result;
   }});
-  const { data: subscriptionData, refetch } = useQuery({ queryKey: ['subscription'], queryFn: async () => {
+  const { data: subscriptionData, isLoading: isSubscriptionDataLoading, refetch } = useQuery({ queryKey: ['subscription'], queryFn: async () => {
     const result = await apiFetch({
       path: '/fav/v1/subscription',
       headers: {
@@ -62,7 +62,7 @@ export default function Billing({ nonce }) {
   }
 
   const getSubscriptionButtonText = (item) => {
-    if (!subscriptionData || isMutating) {
+    if (isSubscriptionDataLoading || isMutating) {
       return (
         <LoadingSpinner
           isLoading={isMutating}

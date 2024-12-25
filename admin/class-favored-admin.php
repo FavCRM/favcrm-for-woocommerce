@@ -1003,8 +1003,7 @@ class Favored_Admin {
 
 	public function company_signup( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/companies/';
+		$url = '/v3/member/companies/';
 
 		$body = $request->get_json_params();
 		$body = [
@@ -1012,16 +1011,11 @@ class Favored_Admin {
 			'source' => 'WORDPRESS',
 		];
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$headers = [
+			'Content-Type' => 'application/json',
+		];
+
+		$response = HttpHelper::post( $url, $body, $headers );
 
 		$success = false;
 		$error = '';
@@ -1062,7 +1056,7 @@ class Favored_Admin {
 			$this->register_api_keys();
 
 		} catch(Exception $e) {
-			echo esc_html( $e->getMessage() );
+
 		}
 
 		return array(
@@ -1944,39 +1938,23 @@ class Favored_Admin {
 
 	public function fetch_subscription( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/subscription/get/';
+		$url = '/v3/subscription/get/';
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		return HttpHelper::get( $url );
 
 	}
 
 	public function fetch_subscription_plans( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/subscription/plans/';
+		$url = '/v3/subscription/plans/';
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-      		'timeout'     => 30,
-		) );
-
-		return array(
-			'page' => array(),
-			'items' => json_decode( wp_remote_retrieve_body( $response ), true )
-		);
+		return HttpHelper::get( $url, true );
 
 	}
 
 	public function change_subscription_plan( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/subscription/checkout/';
+		$url = '/v3/subscription/checkout/';
 
 		$payload = $request->get_json_params();
 
@@ -1987,16 +1965,7 @@ class Favored_Admin {
 			'cancel_url' => get_site_url() . '/wp-admin/admin.php?page=fav-crm-billing&result=cancel',
 		);
 
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => $this->build_headers(),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-		) );
+		$response = HttpHelper::post( $url, $body );
 
 		return array(
 			'data' => json_decode( wp_remote_retrieve_body( $response ), true )
