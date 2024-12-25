@@ -4,8 +4,6 @@ class HttpHelper {
 
     static private function get_base_url() {
 
-        return 'https://dev.favcrm.io';
-
         $mode = cmb2_get_option( 'favored_options', 'mode' );
         return $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
 
