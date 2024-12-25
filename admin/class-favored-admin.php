@@ -645,8 +645,6 @@ class Favored_Admin {
 		if ( empty( $key ) ) {
 			$this->register_api_keys();
 		}
-		var_dump($key);
-		exit();
 
 	}
 
@@ -763,6 +761,25 @@ class Favored_Admin {
 		}
 
 		Logger::write_log( '----- Completed -----' );
+
+	}
+
+	public function manual_sync_order() {
+
+		$order_id = $_POST['order_id'];
+
+		$order = wc_get_order( $order_id );
+		$fav_order_id = $order->get_meta( 'fav_order_id' );
+
+		if ( ! $fav_order_id ) {
+			$this->sync_order_to_fav( $order );
+		}
+
+		$this->update_order_to_fav( $order );
+
+		wp_send_json_success(array(
+			'success' => true,
+		));
 
 	}
 
@@ -2012,6 +2029,7 @@ class Favored_Admin {
 
 	public function order_meta_box_callback( $order ) {
 
+		$order_id = $order->get_id();
 		$fav_order_id = $order->get_meta( 'fav_order_id' ) ?: '-';
 		$fav_order_status = $order->get_meta( 'fav_order_status' ) ?: '-';
 		$fav_order_points = $order->get_meta( 'fav_order_points' ) ?: '-';

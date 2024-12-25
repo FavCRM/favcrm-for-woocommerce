@@ -178,6 +178,7 @@ class Favored {
 		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_order_meta_boxes' );
 		$this->loader->add_filter( 'manage_woocommerce_page_wc-orders_columns', $plugin_admin, 'add_order_column' );
 		$this->loader->add_action( 'manage_woocommerce_page_wc-orders_custom_column', $plugin_admin, 'display_wc_order_list_custom_column_content', 10, 2 );
+		$this->loader->add_action( 'wp_ajax_fav_sync_order', $plugin_admin, 'manual_sync_order' );
 
 	}
 
