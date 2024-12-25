@@ -175,6 +175,9 @@ class Favored {
 		$this->loader->add_action( 'woocommerce_new_order', $plugin_admin, 'handle_order_created', 10, 1 );
 		$this->loader->add_action( 'current_screen', $plugin_admin, 'maybe_process', 10, 1 );
 		$this->loader->add_action( 'admin_notices', $plugin_admin, 'maybe_display_admin_notices' );
+		$this->loader->add_action( 'add_meta_boxes', $plugin_admin, 'add_order_meta_boxes' );
+		$this->loader->add_filter( 'manage_woocommerce_page_wc-orders_columns', $plugin_admin, 'add_order_column' );
+		$this->loader->add_action( 'manage_woocommerce_page_wc-orders_custom_column', $plugin_admin, 'display_wc_order_list_custom_column_content', 10, 2 );
 
 	}
 

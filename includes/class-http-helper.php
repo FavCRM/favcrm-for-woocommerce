@@ -80,4 +80,23 @@ class HttpHelper {
 
     }
 
+    static public function patch( $url, $data, $headers = array() ) {
+
+        $base_url = self::get_base_url();
+        $url = $base_url . $url;
+
+        if ( empty( $headers ) ) {
+            $headers = self::build_headers();
+        }
+
+        $response = wp_remote_post( $url, array(
+            'method' => 'PATCH',
+            'headers' => $headers,
+            'body' => wp_json_encode( $data ),
+        ) );
+
+        return $response;
+
+    }
+
 }

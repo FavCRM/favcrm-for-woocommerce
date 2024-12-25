@@ -1,5 +1,7 @@
 <?php
 
+use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
+
 /**
  * The admin-specific functionality of the plugin.
  *
@@ -707,26 +709,35 @@ class Favored_Admin {
 
 		Logger::write_log( 'Sending data to Favored CRM for order #' . $order_data['order_id'] );
 
-		$response = HttpHelper::post( '/v3/member/company/spendings/', $body );
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-		Logger::write_log( 'Response code: ' . $response_code );
-
-		if ( $response_code == 400 ) {
-			Logger::write_log( 'Error: ' . wp_remote_retrieve_body( $response ) );
-		}
+		$response = HttpHelper::post( '/v3/member/company/spending-records/', $body );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			Logger::write_log( "Something went wrong: $error_message" );
-		} else {
-			Logger::write_log( '----- Completed -----' );
+
+			return;
 		}
+
+		$response = wp_remote_retrieve_body( $response );
+		$response = json_decode( $response, true );
+
+		$order->update_meta_data( 'fav_order_id', $response['uuid'] );
+		$order->update_meta_data( 'fav_order_status', $response['status'] );
+		$order->save();
+
+		Logger::write_log( '----- Completed -----' );
 	}
 
 	public function update_order_to_fav( $order ) {
 
 		Logger::write_log( 'Sending data to Favored CRM for order #' . $order->get_id() );
+
+		$fav_order_id = $order->get_meta( 'fav_order_id' );
+		$fav_order_status = $order->get_meta( 'fav_order_status' );
+
+		if ( $fav_order_status == 'PROCESSED' ) {
+			return;
+		}
 
 		$body = array(
 			'order_id' => $order->get_id(),
@@ -734,20 +745,24 @@ class Favored_Admin {
 			'status' => $order->get_status() == 'completed' ? 'PROCESSED' : 'PENDING',
 		);
 
-		$response = HttpHelper::post( '/v3/member/company/spendings/update/', $body );
-
-		$response_code = wp_remote_retrieve_response_code( $response );
-
-		if ( $response_code == 400 ) {
-			Logger::write_log( 'Error: ' . wp_remote_retrieve_body( $response ) );
-		}
+		$response = HttpHelper::patch( '/v3/member/company/spending-records/' . $fav_order_id . '/', $body );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
 			Logger::write_log( "Something went wrong: $error_message" );
-		} else {
-			Logger::write_log( '----- Completed -----' );
 		}
+
+		$response = wp_remote_retrieve_body( $response );
+		$response = json_decode( $response, true );
+
+		if ( $response['status'] == 'PROCESSED' ) {
+			$order->update_meta_data( 'fav_order_status', $response['status'] );
+			$order->update_meta_data( 'fav_order_points', $response['points'] );
+			$order->update_meta_data( 'fav_order_stamps', $response['stamps'] );
+			$order->save();
+		}
+
+		Logger::write_log( '----- Completed -----' );
 
 	}
 
@@ -1977,4 +1992,53 @@ class Favored_Admin {
 		);
 
 	}
+
+	public function add_order_meta_boxes() {
+
+		$screen = class_exists( '\Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController' ) && wc_get_container()->get( CustomOrdersTableController::class )->custom_orders_table_usage_is_enabled()
+			? wc_get_page_screen_id( 'shop-order' )
+			: 'shop_order';
+
+		add_meta_box(
+			'fav_order_meta_box',
+			__( 'FavCRM Order Details', 'favcrm-for-woocommerce' ),
+			array( $this, 'order_meta_box_callback' ),
+			$screen,
+			'side',
+			'high'
+		);
+
+	}
+
+	public function order_meta_box_callback( $order ) {
+
+		$fav_order_id = $order->get_meta( 'fav_order_id' );
+		$fav_order_status = $order->get_meta( 'fav_order_status' );
+		$fav_order_points = $order->get_meta( 'fav_order_points' );
+		$fav_order_stamps = $order->get_meta( 'fav_order_stamps' );
+
+		include( plugin_dir_path( __FILE__ ) . 'includes/order-meta-box.php' );
+
+	}
+
+	public function add_order_column( $columns ) {
+
+		$columns['fav-order-status'] = __( 'Fav Order', 'favcrm-for-woocommerce' );
+
+		return $columns;
+
+	}
+
+	public function display_wc_order_list_custom_column_content( $column, $order ) {
+
+		switch ( $column ) {
+
+			case 'fav-order-status':
+				$fav_order_status = $order->get_meta( 'fav_order_status' );
+				echo esc_html( $fav_order_status );
+				break;
+		}
+
+	}
+
 }
