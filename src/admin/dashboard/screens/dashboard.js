@@ -7,6 +7,16 @@ import dayjs from 'dayjs';
 
 const { __ } = wp.i18n;
 
+function AnimatedValueCell({ value }) {
+  if (value) {
+    return value;
+  }
+
+  return (
+    <span className="inline-block animate-pulse rounded bg-slate-200 h-6 w-16"></span>
+  )
+}
+
 function DashboardWidget({ title, value, valueType = 'money' }) {
   return (
     <li className="mb-0">
@@ -37,6 +47,52 @@ function DashboardWidget({ title, value, valueType = 'money' }) {
         </div>
       </div>
     </li>
+  )
+}
+
+function QuotaUsageWidget({ title, value }) {
+  return (
+    <div>
+      <div className="bg-white p-4 border border-[#e0e0e0] border-solid">
+        <div className="mb-4 text-[#555]">
+          <span className="text-sm font-bold">{title}</span>
+        </div>
+        <div className="grid grid-cols-4 gap-x-2">
+          <div>
+            <div>Members</div>
+            <div className="flex items-center">
+              <span className="font-bold"><AnimatedValueCell value={value?.memberCount} /></span>
+              <span className="px-1">/</span>
+              <span><AnimatedValueCell value={value?.memberLimit} /></span>
+            </div>
+          </div>
+          <div>
+            <div>Spending Records</div>
+            <div className="flex items-center">
+              <span className="font-bold"><AnimatedValueCell value={value?.spendingRecordCount} /></span>
+              <span className="px-1">/</span>
+              <span><AnimatedValueCell value={value?.spendingRecordLimit} /></span>
+            </div>
+          </div>
+          <div>
+            <div>Gift Offers</div>
+            <div className="flex items-center">
+              <span className="font-bold"><AnimatedValueCell value={value?.giftOfferCount} /></span>
+              <span className="px-1">/</span>
+              <span><AnimatedValueCell value={value?.giftOfferLimit} /></span>
+            </div>
+          </div>
+          <div>
+            <div>Reward Schemes</div>
+            <div className="flex items-center">
+              <span className="font-bold"><AnimatedValueCell value={value?.rewardSchemeCount} /></span>
+              <span className="px-1">/</span>
+              <span><AnimatedValueCell value={value?.rewardSchemeLimit} /></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   )
 }
 
@@ -143,6 +199,10 @@ export default function Dashboard({ nonce }) {
             />
           </ul>
         </div>
+        <QuotaUsageWidget
+          title="Account Quota Usage"
+          value={data?.quotaUsage}
+        />
         <div className="grid grid-cols-2 gap-x-6">
           <DashboardList
             title="Recent Members"

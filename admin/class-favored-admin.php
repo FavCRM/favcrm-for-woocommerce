@@ -834,7 +834,7 @@ class Favored_Admin {
 
 		$favored_options = get_option( 'favored_options' );
 
-		if ( ! ( $favored_options['merchant_id'] && $favored_options['secret'] ) ) {
+		if ( ! $this->is_logged_in() ) {
 			include_once( plugin_dir_path( __FILE__ ) . 'includes/register.php' );
 
 			wp_enqueue_script( 'fav-crm-register-script' );
@@ -1073,15 +1073,9 @@ class Favored_Admin {
 
 	public function fetch_dashboard( $request ) {
 
-		$base_url = $this->get_base_url();
-		$url = $base_url . '/v3/member/company/dashboard/';
+		$url = '/v3/member/company/dashboard/';
 
-		$response = wp_remote_get( $url, array(
-			'headers' => $this->build_headers(),
-			'timeout' => 30,
-		) );
-
-		return json_decode( wp_remote_retrieve_body( $response ), true );
+		return HttpHelper::get( $url );
 	}
 
 	public function fetch_settings( $request ) {
