@@ -122,6 +122,10 @@ class Favored {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-favored-public.php';
 
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-http-helper.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-favored-logger.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/cmb2/init.php';
+
 		if ( ! class_exists( 'WP_List_Table' ) ) {
 			require_once( ABSPATH . 'wp-admin/includes/class-wp-list-table.php' );
 		}

@@ -68,9 +68,6 @@ register_deactivation_hook( __FILE__, 'deactivate_favored' );
  */
 
 require plugin_dir_path( __FILE__ ) . 'includes/class-favored.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-http-helper.php';
-require plugin_dir_path( __FILE__ ) . 'includes/class-favored-logger.php';
-require_once plugin_dir_path( __FILE__ ) . 'includes/cmb2/init.php';
 
 /**
  * Begins execution of the plugin.
