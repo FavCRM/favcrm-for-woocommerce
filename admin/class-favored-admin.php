@@ -2012,10 +2012,10 @@ class Favored_Admin {
 
 	public function order_meta_box_callback( $order ) {
 
-		$fav_order_id = $order->get_meta( 'fav_order_id' );
-		$fav_order_status = $order->get_meta( 'fav_order_status' );
-		$fav_order_points = $order->get_meta( 'fav_order_points' );
-		$fav_order_stamps = $order->get_meta( 'fav_order_stamps' );
+		$fav_order_id = $order->get_meta( 'fav_order_id' ) ?: '-';
+		$fav_order_status = $order->get_meta( 'fav_order_status' ) ?: '-';
+		$fav_order_points = $order->get_meta( 'fav_order_points' ) ?: '-';
+		$fav_order_stamps = $order->get_meta( 'fav_order_stamps' ) ?: '-';
 
 		include( plugin_dir_path( __FILE__ ) . 'includes/order-meta-box.php' );
 
