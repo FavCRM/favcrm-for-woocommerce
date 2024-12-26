@@ -12,7 +12,11 @@ i18nCountries.registerLocale(require('i18n-iso-countries/langs/en.json'));
 i18nCountries.registerLocale(require('i18n-iso-countries/langs/zh.json'));
 
 export default function Block({ nonce }) {
-  const { control, register, handleSubmit, formState: { errors } } = useForm()
+  const { control, register, handleSubmit, formState: { errors } } = useForm({
+    defaultValues: {
+      agreeToReceivePromotion: false,
+    }
+  })
   const [error, setError] = useState('')
   const [isLoading, setIsLoading] = useState(false)
   const [locale, setLocale] = useState('en')
@@ -46,13 +50,17 @@ export default function Block({ nonce }) {
         }),
       })
 
-      if (!result.registered || result.message == 'DUPLICATED_PHONE' || result.message == 'FAILED_TO_CREATE_FAV_USER') {
-        throw new Error();
+      if (result.message == 'DUPLICATED_PHONE') {
+        throw new Error(__('This email or phone has been registered', 'favcrm-for-woocommerce'));
+      } else if (result.message == 'FAILED_TO_CREATE_FAV_USER') {
+        throw new Error(__('Failed to create user', 'favcrm-for-woocommerce'))
+      } else if (!result.registered) {
+        throw new Error(__('Failed to register', 'favcrm-for-woocommerce'))
       }
 
       window.location.href = '/';
     } catch(e) {
-      setError(__('This email has been registered', 'favcrm-for-woocommerce'))
+      setError(e.message)
 
       setIsLoading(false)
     }

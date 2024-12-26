@@ -251,10 +251,10 @@ class Favored_Public_Routes {
 
 		$url = '/member/external-platform/reward-redemptions/';
 
-		$body = wp_json_encode( array(
+		$body = array(
 			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
 			'gift_offer_id' => $payload['gift_offer_id'],
-		) );
+		);
 
 		$response = HttpHelper::post( $url, $body );
 
@@ -356,25 +356,26 @@ class Favored_Public_Routes {
 
 		$url = '/v3/member/company/members/';
 
-		$body = wp_json_encode( array(
+		$body = array(
 			'name' => $payload['name'],
 			'phone' => $payload['phone'],
 			'email' => $payload['email'],
 			'referral' => $payload['referral'],
 			'agree_to_receive_promotion' => $payload['agreeToReceivePromotion'],
-		) );
+		);
 
 		$response = HttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( $response_code != 200 ) {
+			var_dump(wp_remote_retrieve_body( $response ));
 			return;
 		}
 
 		$response = wp_remote_retrieve_body( $response );
 
-		return json_decode( $response );
+		return json_decode( $response, true );
 
 	}
 

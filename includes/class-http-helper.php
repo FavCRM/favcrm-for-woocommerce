@@ -17,7 +17,7 @@ class HttpHelper {
 		return array(
 			'X-Merchant-ID' => $merchant_id,
 			'X-Secret' => $secret,
-			'Content-Type' => 'application/json',
+			'Content-Type' => 'application/json; charset=utf-8',
 		);
 
 	}
@@ -72,6 +72,7 @@ class HttpHelper {
 			'blocking' => true,
 			'headers' => $headers,
 			'body' => wp_json_encode( $data ),
+            'data_format' => 'body',
 			'cookies' => array(),
             'multipart' => $multipart,
         ));
