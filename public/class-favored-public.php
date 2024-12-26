@@ -451,29 +451,14 @@ class Favored_Public {
 
 		$payload = $request->get_json_params();
 
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
+		$url = '/member/external-platform/reward-redemptions/';
 
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/member/external-platform/reward-redemptions/';
-
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-			'body' => wp_json_encode( array(
-				'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
-				'gift_offer_id' => $payload['gift_offer_id'],
-			) ),
+		$body = wp_json_encode( array(
+			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
+			'gift_offer_id' => $payload['gift_offer_id'],
 		) );
+
+		$response = HttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 		$body = wp_remote_retrieve_body( $response );
@@ -489,7 +474,7 @@ class Favored_Public {
 			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
 		}
 
-		$url = $base_url . '/member/external-platform/members/' . $fav_id . '/rewards/';
+		$url = '/member/external-platform/members/' . $fav_id . '/rewards/';
 
 		return HttpHelper::get( $url, true );
 
@@ -522,6 +507,7 @@ class Favored_Public {
 	}
 
 	public function ajax_register( $request ) {
+
 		$payload = $request->get_json_params();
 
 		$user_id = username_exists( $payload['phone'] );
@@ -553,7 +539,7 @@ class Favored_Public {
 
 		$user->set_role( 'customer' );
 
-		update_user_meta( $user_id, 'fav_id', $fav_user->uuid );
+		update_user_meta( $user_id, 'fav_id', $fav_user['uuid'] );
 
 		$info = array();
 		$info['user_login'] = $payload['phone'];
@@ -570,32 +556,17 @@ class Favored_Public {
 
 	public function create_fav_account( $payload ) {
 
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
+		$url = '/v3/member/company/members/';
 
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/v3/member/company/members/';
-
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-			'body' => wp_json_encode( array(
-				'name' => $payload['name'],
-				'phone' => $payload['phone'],
-				'email' => $payload['email'],
-				'referral' => $payload['referral'],
-				'agree_to_receive_promotion' => $payload['agreeToReceivePromotion'],
-			) ),
+		$body = wp_json_encode( array(
+			'name' => $payload['name'],
+			'phone' => $payload['phone'],
+			'email' => $payload['email'],
+			'referral' => $payload['referral'],
+			'agree_to_receive_promotion' => $payload['agreeToReceivePromotion'],
 		) );
+
+		$response = HttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
@@ -603,9 +574,9 @@ class Favored_Public {
 			return;
 		}
 
-		$body = wp_remote_retrieve_body( $response );
+		$response = wp_remote_retrieve_body( $response );
 
-		return json_decode( $body );
+		return json_decode( $response );
 
 	}
 
@@ -677,5 +648,6 @@ class Favored_Public {
 		if ( $discount > 0 ) {
 			$cart->add_fee( $membershipTier['name'] . ' ' . __( 'Member Discount', 'favcrm-for-woocommerce' ) . ' (' . $membershipTier['discount'] . '%)', -$discount );
 		}
+
 	}
 }

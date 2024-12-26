@@ -16,7 +16,7 @@
  * Plugin Name:       FavCRM for WooCommerce
  * Requires Plugins:  woocommerce
  * Description:       Member Management System
- * Version:           1.0.3
+ * Version:           1.0.4
  * Author:            FavCRM
  * Author URI:        https://favcrm.io
  * License:           GPL-2.0+

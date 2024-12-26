@@ -86,6 +86,7 @@ class Favored_Admin {
 
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-base.php';
 		require_once ABSPATH . 'wp-admin/includes/class-wp-filesystem-direct.php';
+
 	}
 
 	/**
@@ -592,10 +593,6 @@ class Favored_Admin {
 
 		[ $consumer_key, $consumer_secret ] = $this->generate_api_key();
 
-		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
-		$secret = cmb2_get_option( 'favored_options', 'secret' );
-		$mode = cmb2_get_option( 'favored_options', 'mode' );
-
 		$body = array(
 			'consumer_key' => $consumer_key,
 			'consumer_secret' => $consumer_secret,
@@ -603,23 +600,8 @@ class Favored_Admin {
 			'app_code' => 'woocommerce',
 		);
 
-		$base_url = $mode == 'test' ? 'https://dev.favcrm.io' : 'https://api.favoredapp.co';
-		$url = $base_url . '/app/register/';
-		$response = wp_remote_post( $url, array(
-			'method' => 'POST',
-			'timeout' => 45,
-			'redirection' => 5,
-			'httpversion' => '1.0',
-			'blocking' => true,
-			'headers' => array(
-				'X-Merchant-ID' => $merchant_id,
-				'X-Secret' => $secret,
-				'Content-Type' => 'application/json',
-			),
-			'body' => wp_json_encode( $body ),
-			'cookies' => array()
-			)
-		);
+		$url = '/app/register/';
+		$response = HttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
@@ -630,22 +612,6 @@ class Favored_Admin {
 			Logger::write_log( '----- API register completed -----' );
 			update_option( 'favored_registered', true );
 		}
-	}
-
-	public function save_page_fields( $object_id, $updated, $cmb ) {
-
-		global $wpdb;
-
-		$key = $wpdb->get_row( $wpdb->prepare("
-				SELECT consumer_key, consumer_secret, permissions
-				FROM {$wpdb->prefix}woocommerce_api_keys
-				WHERE description = %s
-			", "Favored"), ARRAY_A); // db call ok; no-cache ok
-
-		if ( empty( $key ) ) {
-			$this->register_api_keys();
-		}
-
 	}
 
 	public function handle_order_status_changed( $order_id, $old_status, $new_status ) {
