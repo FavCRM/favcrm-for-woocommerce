@@ -40,6 +40,12 @@ class Favored_Admin_Routes {
 			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
 		) );
 
+		register_rest_route( 'fav/v1', '/announcements', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fetch_announcements' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
 		register_rest_route( 'fav/v1', '/settings', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'fetch_settings' ),
@@ -261,6 +267,14 @@ class Favored_Admin_Routes {
 		$url = '/v3/member/company/dashboard/';
 
 		return HttpHelper::get( $url );
+	}
+
+	public function fetch_announcements( $request ) {
+
+		$url = '/v3/member/announcements/';
+
+		return HttpHelper::get( $url );
+
 	}
 
 	public function fetch_settings( $request ) {
