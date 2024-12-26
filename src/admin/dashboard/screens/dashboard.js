@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query';
 import { path } from 'ramda';
 import dayjs from 'dayjs';
 
-const { __ } = wp.i18n;
+const { __, sprintf } = wp.i18n;
 
 function AnimatedValueCell({ value }) {
   if (value || value == 0) {
@@ -176,6 +176,34 @@ function DashboardList({ title, columns = [], items = [] }) {
   )
 }
 
+function UpdateNotice({ nonce }) {
+  const { data } = useQuery({ queryKey: ['update-notice'], queryFn: async () => {
+    const result = await apiFetch({
+      path: '/fav/v1/update-notice',
+      headers: {
+        'X-WP-Nonce': nonce,
+      }
+    });
+
+    return result;
+  }});
+
+  if (!data) {
+    return null;
+  }
+
+  return (
+    <div
+      className="notice notice-info"
+    >
+      <div className="flex">
+        <p className="font-bold">{sprintf(__('A new version of FavCRM for WooCommerce (v%s) is available.', 'favcrm-for-woocommerce'), data)}</p>
+        <p><a href="https://storage.googleapis.com/favcrm/favcrm-for-woocommerce.zip">{__('Download', 'favcrm-for-woocommerce')}</a></p>
+      </div>
+    </div>
+  )
+}
+
 function AnnouncementWrapper({ nonce }) {
   // notice-error, notice-warning, notice-success, notice-info
   const { data } = useQuery({ queryKey: ['announcements'], queryFn: async () => {
@@ -242,6 +270,7 @@ export default function Dashboard({ nonce }) {
 
   return (
     <>
+      <UpdateNotice nonce={nonce} />
       <AnnouncementWrapper nonce={nonce} />
       <div className="max-w-[1280px]">
         <div className="mb-2">

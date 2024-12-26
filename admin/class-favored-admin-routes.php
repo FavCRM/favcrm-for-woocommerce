@@ -46,6 +46,12 @@ class Favored_Admin_Routes {
 			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
 		) );
 
+		register_rest_route( 'fav/v1', '/update-notice', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fetch_app_settings' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
 		register_rest_route( 'fav/v1', '/settings', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'fetch_settings' ),
@@ -274,6 +280,20 @@ class Favored_Admin_Routes {
 		$url = '/v3/member/announcements/';
 
 		return HttpHelper::get( $url );
+
+	}
+
+	public function fetch_app_settings( $request ) {
+
+		$url = '/member/app-settings/';
+
+		$response = HttpHelper::get( $url );
+
+		if ( $response['wpVersion'] == FAVORED_VERSION ) {
+			return null;
+		}
+
+		return $response['wpVersion'];
 
 	}
 
