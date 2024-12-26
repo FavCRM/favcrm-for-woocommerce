@@ -58,7 +58,7 @@ export default function Login({ nonce }) {
             <tbody>
               <tr>
                 <th scope="row">
-                  <label for="email">
+                  <label htmlFor="email">
                     {__('Email', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -78,7 +78,7 @@ export default function Login({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="password">
+                  <label htmlFor="password">
                     {__('Password', 'favcrm-for-woocommerce')}
                   </label>
                 </th>

@@ -159,7 +159,7 @@ export default function MembershipTierForm({ nonce }) {
             <tbody>
               <tr>
                 <th scope="row">
-                  <label for="Name">
+                  <label htmlFor="Name">
                     {__('Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -175,7 +175,7 @@ export default function MembershipTierForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="spendingCount">
+                  <label htmlFor="spendingCount">
                     {__('Spending Count', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -196,7 +196,7 @@ export default function MembershipTierForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="totalSpendingAmount">
+                  <label htmlFor="totalSpendingAmount">
                     {__('Total Spending Amount', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -218,7 +218,7 @@ export default function MembershipTierForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="description">
+                  <label htmlFor="description">
                     {__('Description', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -234,7 +234,7 @@ export default function MembershipTierForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="multiplier">
+                  <label htmlFor="multiplier">
                     {__('Multiplier', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -255,7 +255,7 @@ export default function MembershipTierForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="discount">
+                  <label htmlFor="discount">
                     {__('Discount (%)', 'favcrm-for-woocommerce')}
                   </label>
                 </th>

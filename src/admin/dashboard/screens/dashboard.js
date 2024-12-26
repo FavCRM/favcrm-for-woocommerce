@@ -226,7 +226,7 @@ function AnnouncementWrapper({ nonce }) {
       {
         data?.map(announcement => (
           <div
-            id={announcement.id}
+            key={announcement.id}
             className="notice notice-info py-3"
           >
             <div className="flex">

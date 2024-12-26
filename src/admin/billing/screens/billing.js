@@ -99,7 +99,7 @@ export default function Billing({ nonce }) {
         {
           data?.items?.map((item) => (
             <div
-              key={item.key}
+              key={item.id}
               className="bg-white shadow rounded p-4"
             >
               <div className="flex justify-between">

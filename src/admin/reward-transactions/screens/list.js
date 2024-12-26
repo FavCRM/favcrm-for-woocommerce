@@ -16,7 +16,6 @@ export default function RewardTransactionList({ nonce }) {
             'X-WP-Nonce': nonce,
           }
         });
-        console.log({ result })
 
         return result;
       } catch (err) {

@@ -7,7 +7,7 @@ const Pagination = (props) => {
       <div className="alignleft actions bulkactions">
         {bulkAction ?
           <>
-            <label for="bulk-action-selector-bottom" className="screen-reader-text">Select bulk action</label><select name="action2" id="bulk-action-selector-bottom">
+            <label htmlFor="bulk-action-selector-bottom" className="screen-reader-text">Select bulk action</label><select name="action2" id="bulk-action-selector-bottom">
               <option value="-1">Bulk actions</option>
               <option value="edit" className="hide-if-no-js">Edit</option>
               <option value="trash">Move to Trash</option>

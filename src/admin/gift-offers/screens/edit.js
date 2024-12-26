@@ -166,7 +166,7 @@ export default function GiftOfferForm({ nonce }) {
             <tbody>
               <tr>
                 <th scope="row">
-                  <label for="Name">
+                  <label htmlFor="Name">
                     {__('Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -182,7 +182,7 @@ export default function GiftOfferForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="description">
+                  <label htmlFor="description">
                     {__('Description', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -224,7 +224,7 @@ export default function GiftOfferForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="points">
+                  <label htmlFor="points">
                     {__('Points', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -243,7 +243,7 @@ export default function GiftOfferForm({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="stamps">
+                  <label htmlFor="stamps">
                     {__('Stamps', 'favcrm-for-woocommerce')}
                   </label>
                 </th>

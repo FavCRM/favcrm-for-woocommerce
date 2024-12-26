@@ -63,7 +63,7 @@ export default function Register({ nonce }) {
             <tbody>
               <tr>
                 <th scope="row">
-                  <label for="companyName">
+                  <label htmlFor="companyName">
                     {__('Company Name', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -83,7 +83,7 @@ export default function Register({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="phone">
+                  <label htmlFor="phone">
                     {__('Phone', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -103,7 +103,7 @@ export default function Register({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="email">
+                  <label htmlFor="email">
                     {__('Email', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -123,7 +123,7 @@ export default function Register({ nonce }) {
               </tr>
               <tr>
                 <th scope="row">
-                  <label for="contactPerson">
+                  <label htmlFor="contactPerson">
                     {__('Contact Person', 'favcrm-for-woocommerce')}
                   </label>
                 </th>
@@ -148,7 +148,7 @@ export default function Register({ nonce }) {
                     <legend className="screen-reader-text">
                       <span>checkbox</span>
                     </legend>
-                    <label for="agreeToTermsAndConditions">
+                    <label htmlFor="agreeToTermsAndConditions">
                       <input
                         id="agreeToTermsAndConditions"
                         name="agreeToTermsAndConditions"
