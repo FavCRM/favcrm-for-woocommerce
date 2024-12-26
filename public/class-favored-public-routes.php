@@ -230,13 +230,15 @@ class Favored_Public_Routes {
 
 
 	public function get_site( $request ) {
+
 		$site = get_bloginfo( 'name' );
 		$settings = $this->fetch_settings();
 
 		return array(
-			'title' => $site,
+			'title' => html_entity_decode( $site ),
 			'settings' => $settings,
 		);
+
 	}
 
 	public function create_reward_redemption( $request ) {
