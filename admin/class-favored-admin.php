@@ -177,6 +177,7 @@ class Favored_Admin {
 	public function register_rest_routes() {
 
 		$admin_routes = new Favored_Admin_Routes();
+		$admin_routes->register_routes();
 
 	}
 

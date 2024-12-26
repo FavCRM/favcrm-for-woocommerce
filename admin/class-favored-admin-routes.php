@@ -2,12 +2,6 @@
 
 class Favored_Admin_Routes {
 
-    public function __construct() {
-
-        $this->register_routes();
-
-    }
-
     public function custom_route_permission_callback( $request ) {
 
         $nonce = $request->get_header( 'X-WP-Nonce' );
@@ -20,7 +14,7 @@ class Favored_Admin_Routes {
 
     }
 
-    private function register_routes() {
+    public function register_routes() {
 
 		register_rest_route( 'fav/v1', '/company-signup', array(
 			'methods' => 'POST',
