@@ -58,7 +58,16 @@ export default function MembershipTierForm({ nonce }) {
     formState: {
       errors,
     },
-  } = useForm();
+  } = useForm({
+    defaultValues: {
+      name: "",
+      spendingCount: 0,
+      totalSpendingAmount: 0,
+      description: "",
+      multiplier: 1,
+      discount: 0,
+    },
+  });
 
   const { mutate, isPending: isMutating } = useMutation({
     mutationFn: async (data) => {
@@ -100,7 +109,6 @@ export default function MembershipTierForm({ nonce }) {
   });
 
   const onSubmit = (data) => {
-    // console.log("submitting...")
     const hasConflict = membershipTiers.find(({ spendingCount, totalSpendingAmount }) => {
       return +spendingCount === +data.spendingCount &&
         +totalSpendingAmount === +data.totalSpendingAmount
@@ -174,12 +182,11 @@ export default function MembershipTierForm({ nonce }) {
                 <td>
                   <input
                     id="spendingCount"
-                    type="text"
+                    type="number"
                     className="regular-text"
                     {...register('spendingCount', {
                       required: __('Spending Count is required', 'favcrm-for-woocommerce'),
                       validate: {
-                        isNumber: v => parseInt(v) || "Please enter nubmer",
                         validRange: v => (v >= 0) || "Spending Count should be >= 0",
                       },
                     })}
@@ -196,12 +203,12 @@ export default function MembershipTierForm({ nonce }) {
                 <td>
                   <input
                     id="totalSpendingAmount"
-                    type="text"
+                    type="number"
                     className="regular-text"
                     {...register('totalSpendingAmount', {
+                      valueAsNumber: true,
                       required: __('Total Spending Amount is required', 'favcrm-for-woocommerce'),
                       validate: {
-                        isNumber: v => parseInt(v) || "Please enter nubmer",
                         validRange: v => (v >= 0) || "Total Spending Amount should be>= 0",
                       },
                     })}
@@ -234,12 +241,12 @@ export default function MembershipTierForm({ nonce }) {
                 <td>
                   <input
                     id="multiplier"
-                    type="text"
+                    type="number"
                     className="regular-text"
                     {...register('multiplier', {
+                      valueAsNumber: true,
                       validate: {
-                        isNumber: v => parseInt(v) || "Please enter nubmer",
-                        validRange: v => (v >= 0) || "Multiplier should >= 0",
+                        validRange: v => v >= 1 || "Multiplier should be >= 1",
                       }
                     })}
                   />
@@ -255,12 +262,12 @@ export default function MembershipTierForm({ nonce }) {
                 <td>
                   <input
                     id="discount"
-                    type="text"
+                    type="number"
                     className="regular-text"
                     {
                     ...register('discount', {
+                      valueAsNumber: true,
                       validate: {
-                        isNumber: v => v === 0 ? true : parseInt(v) || "Please enter nubmer",
                         validRange: v => (v >= 0 && v <= 100) || "Discount should between 0-100",
                       }
                     })
