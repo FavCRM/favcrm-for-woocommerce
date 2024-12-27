@@ -1,6 +1,6 @@
 <?php
 
-class HttpHelper {
+class FavoredHttpHelper {
 
     static private function get_base_url() {
 

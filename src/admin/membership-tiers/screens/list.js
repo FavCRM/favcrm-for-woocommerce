@@ -161,10 +161,7 @@ export default function MembershipTierList({ nonce }) {
             <th scope="col" className="manage-column column-tags">Multiplier</th>
             <th scope="col" className="manage-column column-tags">Discount</th>
             <th scope="col" className="manage-column column-date sortable asc">
-              <a href="javascript:void(0)">
-                <span>Date</span>
-                <span className="sorting-indicator"></span>
-              </a>
+              <span>Date</span>
             </th>
           </tr>
         </tfoot>

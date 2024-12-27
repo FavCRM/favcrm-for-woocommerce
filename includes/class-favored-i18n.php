@@ -26,22 +26,6 @@
  */
 class Favored_i18n {
 
-
-	/**
-	 * Load the plugin text domain for translation.
-	 *
-	 * @since    1.0.0
-	 */
-	public function load_plugin_textdomain() {
-
-		load_plugin_textdomain(
-			'favcrm-for-woocommerce',
-			false,
-			dirname( dirname( plugin_basename( __FILE__ ) ) ) . '/languages/'
-		);
-
-	}
-
 	public function set_admin_script_translations() {
 
 		wp_set_script_translations(

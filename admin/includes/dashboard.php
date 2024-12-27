@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 $is_logged_in = Favored_Admin::is_logged_in();
 
 if ( ! $is_logged_in ) {

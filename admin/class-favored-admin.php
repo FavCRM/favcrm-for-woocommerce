@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 use Automattic\WooCommerce\Internal\DataStores\Orders\CustomOrdersTableController;
 
 /**
@@ -126,6 +128,8 @@ class Favored_Admin {
 			wp_register_script( $page[1], plugin_dir_url( __FILE__ ) . $page[2], array( 'wp-element', 'wp-api-fetch', 'react', 'wp-i18n' ), $this->version, true );
 		}
 
+		wp_register_script( 'fav-crm-order-meta-box', plugin_dir_url( __FILE__ ) . './js/order-meta-box.js', array(), $this->version, true );
+
 	}
 
 	/**
@@ -148,6 +152,10 @@ class Favored_Admin {
 		 */
 
 		$screen = get_current_screen();
+
+		if ($screen->id === 'woocommerce_page_wc-orders') {
+			wp_enqueue_script( 'fav-crm-order-meta-box' );
+		}
 
 		foreach( $this->pages as $page ) {
 			if ( $screen->id == $page[0] ) {
@@ -275,19 +283,18 @@ class Favored_Admin {
         }
 
 		$url = wp_get_referer();
-		$data = $_POST;
 
 		if ( strpos( $url, 'fav-crm-credential' ) > 0 ) {
-			$this->maybe_save_credential( $data );
+			$this->maybe_save_credential();
 		} else if ( strpos( $url, 'fav-crm-system-log' ) > 0 ) {
 			$this->maybe_send_diagnostic_log();
 		} else if ( strpos( $url, 'fav-crm-bug-report' ) > 0 ) {
-			$this->maybe_send_bug_report( $data );
+			$this->maybe_send_bug_report();
 		}
 
 	}
 
-	public function maybe_save_credential( $data ) {
+	public function maybe_save_credential() {
 
 		$key = 'favored_options';
 		$metabox_id = 'fav_credential_option_metabox';
@@ -299,7 +306,11 @@ class Favored_Admin {
 			$hookup = new CMB2_hookup( $cmb );
 
 			if ( $hookup->can_save( 'options-page' ) ) {
-				$cmb->save_fields( $key, 'options-page', $data );
+				$cmb->save_fields( $key, 'options-page', array(
+					'merchant_id' => sanitize_text_field( $_POST['merchant_id'] ),
+					'secret'   => sanitize_text_field( $_POST['secret'] ),
+					'mode'   => sanitize_text_field( $_POST['mode'] ),
+				) );
 			}
 		}
 
@@ -334,16 +345,16 @@ class Favored_Admin {
 
 	}
 
-	public function maybe_send_bug_report( $data ) {
+	public function maybe_send_bug_report() {
 
 		$pluginlog = FAVORED_BASE_PATH . 'debug.log';
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
 		$to = 'info@favcrm.io';
-		$subject = '[Bug Report] ' . $data['issue'];
+		$subject = '[Bug Report] ' . sanitize_text_field( $_POST['issue'] );
 
-		$message = $data['description'] . '<br>';
+		$message = sanitize_text_field( $_POST['description'] ) . '<br>';
 		$message .= '-----------------------------------------' . '<br>';
 		$message .= 'Merchant ID: ' . $merchant_id . '<br>';
 		$message .= 'Site URL: ' . get_site_url() . '<br>';
@@ -354,7 +365,7 @@ class Favored_Admin {
 
 		$attachments = array();
 
-		foreach( $data['attachments'] as $attachment ) {
+		foreach( sanitize_text_field( $_POST['attachments'] ) as $attachment ) {
 			$attachments[] = str_replace( 'http://localhost:8082', WP_CONTENT_DIR, $attachment );
 		}
 
@@ -421,15 +432,15 @@ class Favored_Admin {
 		);
 
 		$url = '/app/register/';
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			Logger::write_log( "API register error: $error_message" );
+			FavoredLogger::write_log( "API register error: $error_message" );
 		} else {
-			Logger::write_log( '----- API register completed -----' );
+			FavoredLogger::write_log( '----- API register completed -----' );
 			update_option( 'favored_registered', true );
 		}
 	}
@@ -491,13 +502,13 @@ class Favored_Admin {
 			'status' => $order->get_status() == 'completed' ? 'PROCESSED' : 'PENDING',
 		);
 
-		Logger::write_log( 'Sending data to Favored CRM for order #' . $order_data['order_id'] );
+		FavoredLogger::write_log( 'Sending data to Favored CRM for order #' . $order_data['order_id'] );
 
-		$response = HttpHelper::post( '/v3/member/company/spending-records/', $body );
+		$response = FavoredHttpHelper::post( '/v3/member/company/spending-records/', $body );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			Logger::write_log( "Something went wrong: $error_message" );
+			FavoredLogger::write_log( "Something went wrong: $error_message" );
 
 			return;
 		}
@@ -509,12 +520,12 @@ class Favored_Admin {
 		$order->update_meta_data( 'fav_order_status', $response['status'] );
 		$order->save();
 
-		Logger::write_log( '----- Completed -----' );
+		FavoredLogger::write_log( '----- Completed -----' );
 	}
 
 	public function update_order_to_fav( $order ) {
 
-		Logger::write_log( 'Sending data to Favored CRM for order #' . $order->get_id() );
+		FavoredLogger::write_log( 'Sending data to Favored CRM for order #' . $order->get_id() );
 
 		$fav_order_id = $order->get_meta( 'fav_order_id' );
 		$fav_order_status = $order->get_meta( 'fav_order_status' );
@@ -529,11 +540,11 @@ class Favored_Admin {
 			'status' => $order->get_status() == 'completed' ? 'PROCESSED' : 'PENDING',
 		);
 
-		$response = HttpHelper::patch( '/v3/member/company/spending-records/' . $fav_order_id . '/', $body );
+		$response = FavoredHttpHelper::patch( '/v3/member/company/spending-records/' . $fav_order_id . '/', $body );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			Logger::write_log( "Something went wrong: $error_message" );
+			FavoredLogger::write_log( "Something went wrong: $error_message" );
 		}
 
 		$response = wp_remote_retrieve_body( $response );
@@ -546,13 +557,13 @@ class Favored_Admin {
 			$order->save();
 		}
 
-		Logger::write_log( '----- Completed -----' );
+		FavoredLogger::write_log( '----- Completed -----' );
 
 	}
 
 	public function manual_sync_order() {
 
-		$order_id = $_POST['order_id'];
+		$order_id = sanitize_text_field( $_POST['order_id'] );
 
 		$order = wc_get_order( $order_id );
 		$fav_order_id = $order->get_meta( 'fav_order_id' );
@@ -571,26 +582,26 @@ class Favored_Admin {
 
 	public function sync_void_order_to_fav( $order ) {
 
-		Logger::write_log( 'Order #' . $order_id . ' has been voided' );
+		FavoredLogger::write_log( 'Order #' . $order_id . ' has been voided' );
 
 		$body = array(
 			'order_id' => $order_id,
 			'member_id' => get_user_meta( get_current_user_id(), 'fav_id', true ),
 		);
 
-		Logger::write_log( 'Sending data to Favored CRM for order #' . $order_id );
+		FavoredLogger::write_log( 'Sending data to Favored CRM for order #' . $order_id );
 
 		$url = '/v3/member/company/void-order/';
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			Logger::write_log( "Something went wrong: $error_message" );
+			FavoredLogger::write_log( "Something went wrong: $error_message" );
 		} else {
-			Logger::write_log( '----- Completed -----' );
+			FavoredLogger::write_log( '----- Completed -----' );
 		}
 	}
 
@@ -674,7 +685,7 @@ class Favored_Admin {
 
 		$body = $request->get_json_params();
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';

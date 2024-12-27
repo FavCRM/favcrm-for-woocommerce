@@ -52,9 +52,7 @@ export default function RewardTransactionList({ nonce }) {
             <th scope="col" id="transactionObject" className="manage-column column-amount">{__('Transaction Object', 'favcrm-for-woocommerce')}</th>
             <th scope="col" id="Change" className="manage-column column-amount">{__('Change', 'favcrm-for-woocommerce')}</th>
             <th scope="col" id="date" className="manage-column column-date sortable asc">
-              <a href="javascript:void(0)">
-                <span>Created At</span><span className="sorting-indicator"></span>
-              </a>
+              <span>Created At</span><span className="sorting-indicator"></span>
             </th>
           </tr>
         </thead>

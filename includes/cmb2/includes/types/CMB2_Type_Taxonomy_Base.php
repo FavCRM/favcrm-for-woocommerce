@@ -102,9 +102,7 @@ abstract class CMB2_Type_Taxonomy_Base extends CMB2_Type_Multi_Base {
 
 		$args = wp_parse_args( $this->field->prop( 'query_args', array() ), $args );
 
-		return CMB2_Utils::wp_at_least( '4.5.0' )
-			? get_terms( $args )
-			: get_terms( $this->field->args( 'taxonomy' ), http_build_query( $args ) );
+		return get_terms( $args );
 	}
 
 	protected function no_terms_result( $error, $tag = 'li' ) {

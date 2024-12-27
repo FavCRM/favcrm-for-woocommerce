@@ -16,7 +16,7 @@
  * Plugin Name:       FavCRM for WooCommerce
  * Requires Plugins:  woocommerce
  * Description:       Member Management System
- * Version:           1.0.4
+ * Version:           1.0.5
  * Author:            FavCRM
  * Author URI:        https://favcrm.io
  * License:           GPL-2.0+
@@ -38,14 +38,14 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FAVORED_VERSION', '1.0.4' );
+define( 'FAVORED_VERSION', '1.0.5' );
 define( 'FAVORED_BASE_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
  * The code that runs during plugin activation.
  * This action is documented in includes/class-favored-activator.php
  */
-function activate_favored() {
+function favored_activate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-favored-activator.php';
 	Favored_Activator::activate();
 }
@@ -54,13 +54,13 @@ function activate_favored() {
  * The code that runs during plugin deactivation.
  * This action is documented in includes/class-favored-deactivator.php
  */
-function deactivate_favored() {
+function favored_deactivate() {
 	require_once plugin_dir_path( __FILE__ ) . 'includes/class-favored-deactivator.php';
 	Favored_Deactivator::deactivate();
 }
 
-register_activation_hook( __FILE__, 'activate_favored' );
-register_deactivation_hook( __FILE__, 'deactivate_favored' );
+register_activation_hook( __FILE__, 'favored_activate' );
+register_deactivation_hook( __FILE__, 'favored_deactivate' );
 
 /**
  * The core plugin class that is used to define internationalization,
@@ -78,10 +78,10 @@ require plugin_dir_path( __FILE__ ) . 'includes/class-favored.php';
  *
  * @since    1.0.0
  */
-function run_favored() {
+function favored_run() {
 
 	$plugin = new Favored();
 	$plugin->run();
 
 }
-run_favored();
+favored_run();

@@ -1,5 +1,7 @@
 <?php
 
+if ( ! defined( 'ABSPATH' ) ) exit;
+
 class Favored_Admin_Routes {
 
     public function custom_route_permission_callback( $request ) {
@@ -218,7 +220,7 @@ class Favored_Admin_Routes {
 			'Content-Type' => 'application/json',
 		];
 
-		$response = HttpHelper::post( $url, $body, $headers );
+		$response = FavoredHttpHelper::post( $url, $body, $headers );
 
 		$success = false;
 		$error = '';
@@ -272,14 +274,14 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/member/company/dashboard/';
 
-		return HttpHelper::get( $url );
+		return FavoredHttpHelper::get( $url );
 	}
 
 	public function fetch_announcements( $request ) {
 
 		$url = '/v3/member/announcements/';
 
-		return HttpHelper::get( $url );
+		return FavoredHttpHelper::get( $url );
 
 	}
 
@@ -287,7 +289,7 @@ class Favored_Admin_Routes {
 
 		$url = '/member/app-settings/';
 
-		$response = HttpHelper::get( $url );
+		$response = FavoredHttpHelper::get( $url );
 
 		if ( $response['wpVersion'] == FAVORED_VERSION ) {
 			return null;
@@ -301,7 +303,7 @@ class Favored_Admin_Routes {
 
 		$url ='/v3/member/company/settings/';
 
-		return HttpHelper::get( $url );
+		return FavoredHttpHelper::get( $url );
 
 	}
 
@@ -311,7 +313,7 @@ class Favored_Admin_Routes {
 
 		$body = $request->get_json_params();
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -351,7 +353,7 @@ class Favored_Admin_Routes {
 			$url = $url . '&search=' . $search;
 		}
 
-		return HttpHelper::get( $url, true );
+		return FavoredHttpHelper::get( $url, true );
 
 	}
 
@@ -360,7 +362,7 @@ class Favored_Admin_Routes {
 		$uuid = $request['uuid'];
 		$url = '/v3/member/company/members/'.$uuid.'/';
 
-		return HttpHelper::get( $url );
+		return FavoredHttpHelper::get( $url );
 
 	}
 
@@ -374,7 +376,7 @@ class Favored_Admin_Routes {
 			'source' => 'WORDPRESS',
 		];
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -414,7 +416,7 @@ class Favored_Admin_Routes {
 			'source' => 'WORDPRESS',
 		];
 
-		$response = HttpHelper::patch( $url, $body );
+		$response = FavoredHttpHelper::patch( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -448,7 +450,7 @@ class Favored_Admin_Routes {
 		$uuid = $request['uuid'];
 		$url = '/v3/member/company/members/'.$uuid.'/';
 
-		$response = HttpHelper::delete( $url );
+		$response = FavoredHttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';
@@ -484,7 +486,7 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/member/company/membership-tiers/?page=' . $page . '&page_size=' . $page_size;
 
-		return HttpHelper::get( $url, true );
+		return FavoredHttpHelper::get( $url, true );
 
 	}
 
@@ -494,7 +496,7 @@ class Favored_Admin_Routes {
 
 		$body = $request->get_json_params();
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -531,7 +533,7 @@ class Favored_Admin_Routes {
 
 		$body = $request->get_json_params();
 
-		$response = HttpHelper::patch( $url, $body );
+		$response = FavoredHttpHelper::patch( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -565,7 +567,7 @@ class Favored_Admin_Routes {
 		$id = $request['id'];
 		$url = '/v3/member/company/membership-tiers/' . $id . '/';
 
-		$response = HttpHelper::delete( $url );
+		$response = FavoredHttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';
@@ -601,7 +603,7 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/member/company/reward-transactions/?page=' . $page . '&page_size=' . $page_size;
 
-		return HttpHelper::get( $url, true );
+		return FavoredHttpHelper::get( $url, true );
 
 	}
 
@@ -612,7 +614,7 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/member/company/reward-schemes/?page=' . $page . '&page_size=' . $page_size;
 
-		return HttpHelper::get( $url, true );
+		return FavoredHttpHelper::get( $url, true );
 
 	}
 
@@ -621,7 +623,7 @@ class Favored_Admin_Routes {
 		$id = $request['id'];
 		$url = '/v3/member/company/reward-schemes/'.$id.'/';
 
-		return HttpHelper::get( $url );
+		return FavoredHttpHelper::get( $url );
 
 	}
 
@@ -631,7 +633,7 @@ class Favored_Admin_Routes {
 
 		$body = $request->get_json_params();
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -668,7 +670,7 @@ class Favored_Admin_Routes {
 
 		$body = $request->get_json_params();
 
-		$response = HttpHelper::patch( $url, $body );
+		$response = FavoredHttpHelper::patch( $url, $body );
 
 		$success = false;
 		$error = '';
@@ -702,7 +704,7 @@ class Favored_Admin_Routes {
 		$id = $request['id'];
 		$url = '/v3/member/company/reward-schemes/'.$id.'/';
 
-		$response = HttpHelper::delete( $url );
+		$response = FavoredHttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';
@@ -738,7 +740,7 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/member/company/gift-offers/?page=' . $page . '&page_size=' . $page_size;
 
-		return HttpHelper::get( $url, true );
+		return FavoredHttpHelper::get( $url, true );
 
 	}
 
@@ -748,7 +750,7 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/member/company/gift-offers/'.$id.'/';
 
-		return HttpHelper::get( $url );
+		return FavoredHttpHelper::get( $url );
 
 	}
 
@@ -797,7 +799,7 @@ class Favored_Admin_Routes {
 		}
 		$payload .= '--' . $boundary . '--';
 
-		$response = HttpHelper::post( $url, $payload, $header, true );
+		$response = FavoredHttpHelper::post( $url, $payload, $header, true );
 
 		$success = false;
 		$error = '';
@@ -871,7 +873,7 @@ class Favored_Admin_Routes {
 		}
 		$payload .= '--' . $boundary . '--';
 
-		$response = HttpHelper::patch( $url, $payload, $header, true );
+		$response = FavoredHttpHelper::patch( $url, $payload, $header, true );
 
 		$success = false;
 		$error = '';
@@ -903,7 +905,7 @@ class Favored_Admin_Routes {
 		$id = $request['id'];
 		$url = '/v3/member/company/gift-offers/' . $id . '/';
 
-		$response = HttpHelper::delete( $url );
+		$response = FavoredHttpHelper::delete( $url );
 
 		$success = false;
 		$error = '';
@@ -936,7 +938,7 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/subscription/get/';
 
-		return HttpHelper::get( $url );
+		return FavoredHttpHelper::get( $url );
 
 	}
 
@@ -944,7 +946,7 @@ class Favored_Admin_Routes {
 
 		$url = '/v3/subscription/plans/';
 
-		return HttpHelper::get( $url, true );
+		return FavoredHttpHelper::get( $url, true );
 
 	}
 
@@ -961,7 +963,7 @@ class Favored_Admin_Routes {
 			'cancel_url' => get_site_url() . '/wp-admin/admin.php?page=fav-crm-billing&result=cancel',
 		);
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		return array(
 			'data' => json_decode( wp_remote_retrieve_body( $response ), true )

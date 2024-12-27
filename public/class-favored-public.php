@@ -123,12 +123,12 @@ class Favored_Public {
 
 		$member_id = get_user_meta( get_current_user_id(), 'fav_id', true );
 
-		Logger::write_log( '----- Syncing cash rewards to FavCRM -----' );
+		FavoredLogger::write_log( '----- Syncing cash rewards to FavCRM -----' );
 
 		if ( $cash_rewards > 0 ) {
-			Logger::write_log( 'Member (#' . $member_id . ') used cash rewards: ' . $cash_rewards );
+			FavoredLogger::write_log( 'Member (#' . $member_id . ') used cash rewards: ' . $cash_rewards );
 		} else {
-			Logger::write_log( 'Member (#' . $member_id . ') voided cash rewards: ' . $cash_rewards );
+			FavoredLogger::write_log( 'Member (#' . $member_id . ') voided cash rewards: ' . $cash_rewards );
 		}
 
 		$body = array(
@@ -139,15 +139,15 @@ class Favored_Public {
 
 		$url = '/v3/member/company/cash-rewards/';
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( is_wp_error( $response ) ) {
 			$error_message = $response->get_error_message();
-			Logger::write_log( "Something went wrong: $error_message" );
+			FavoredLogger::write_log( "Something went wrong: $error_message" );
 		} else {
-			Logger::write_log( '----- Completed -----' );
+			FavoredLogger::write_log( '----- Completed -----' );
 		}
 	}
 

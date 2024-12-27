@@ -122,7 +122,7 @@ class Favored {
 		 */
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'public/class-favored-public.php';
 
-		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-http-helper.php';
+		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-favored-http-helper.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/class-favored-logger.php';
 		require_once plugin_dir_path( dirname( __FILE__ ) ) . 'includes/cmb2/init.php';
 
@@ -147,7 +147,6 @@ class Favored {
 
 		$plugin_i18n = new Favored_i18n();
 
-		$this->loader->add_action( 'plugins_loaded', $plugin_i18n, 'load_plugin_textdomain' );
 		$this->loader->add_action( 'admin_enqueue_scripts', $plugin_i18n, 'set_admin_script_translations', 100 );
 		$this->loader->add_action( 'init', $plugin_i18n, 'set_public_script_translations', 100 );
 

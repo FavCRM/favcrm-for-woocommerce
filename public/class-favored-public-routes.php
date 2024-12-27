@@ -2,24 +2,18 @@
 
 class Favored_Public_Routes {
 
+	public function logged_in_user_permission_callback( $request ) {
+
+        return is_user_logged_in();
+
+    }
+
     public function register_routes() {
-
-        register_rest_route( 'wc/v3', '/payment-intents', array(
-			'methods' => 'POST',
-			'callback' => array( $this, 'create_order_payment_intent' ),
-			'permission_callback' => '__return_true',
-		  ) );
-
-		register_rest_route( 'wc/v3', '/orders/(?P<id>\d+)', array(
-			'methods' => 'PUT',
-			'callback' => array( $this, 'update_order' ),
-			'permission_callback' => '__return_true',
-		) );
 
 		register_rest_route( 'fav/v1', '/my-member-profile', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'get_my_member_profile' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this, 'logged_in_user_permission_callback' ),
 		) );
 
 		register_rest_route( 'fav/v1', '/my-reward-schemes', array(
@@ -37,7 +31,7 @@ class Favored_Public_Routes {
 		register_rest_route( 'fav/v1', '/my-activities', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'get_my_activities' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this, 'logged_in_user_permission_callback' ),
 		) );
 
 		register_rest_route( 'fav/v1', '/site', array(
@@ -49,13 +43,13 @@ class Favored_Public_Routes {
 		register_rest_route( 'fav/v1', '/reward-redemptions', array(
 			'methods' => 'POST',
 			'callback' => array( $this, 'create_reward_redemption' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this, 'logged_in_user_permission_callback' ),
 		) );
 
 		register_rest_route( 'fav/v1', '/my-rewards', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'get_my_rewards' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this, 'logged_in_user_permission_callback' ),
 		) );
 
 		register_rest_route( 'fav/v1', '/login', array(
@@ -73,110 +67,10 @@ class Favored_Public_Routes {
 		register_rest_route( 'fav/v1', '/logout', array(
 			'methods' => 'POST',
 			'callback' => array( $this, 'ajax_logout' ),
-			'permission_callback' => '__return_true',
+			'permission_callback' => array( $this, 'logged_in_user_permission_callback' ),
 		) );
 
     }
-
-    // TODO check usage and remove if not used
-    public function create_order_payment_intent( $request ) {
-
-		if ( !is_user_logged_in() ) {
-			wp_send_json_error( 'Authentication required', 401 );
-		}
-
-		$order_id = $request['order_id'];
-		$amount = $request['amount'];
-
-		$stripe_settings = get_option( 'woocommerce_stripe_settings' );
-
-		if ( $stripe_settings['testmode'] == 'yes' ) {
-			$publishable_key = $stripe_settings['test_publishable_key'];
-			$secret_key = $stripe_settings['test_secret_key'];
-		} else {
-			$publishable_key = $stripe_settings['publishable_key'];
-			$secret_key = $stripe_settings['secret_key'];
-		}
-
-		$response = wp_remote_post( 'https://api.stripe.com/v1/payment_intents', array(
-			'headers' => array(
-				'Authorization' => 'Bearer ' . $secret_key,
-				'Content-Type' => 'application/x-www-form-urlencoded',
-			),
-			'body' => array(
-				'amount' => $amount * 100,
-				'currency' => 'hkd',
-				'metadata[order_id]' => $order_id,
-			),
-		) );
-
-		$payment_intent = json_decode( wp_remote_retrieve_body( $response ) );
-
-		return array(
-			'publishable_key' => $publishable_key,
-			'payment_intent' => $payment_intent,
-		);
-
-	}
-
-    public function update_order( $request ) {
-
-		if ( !is_user_logged_in() ) {
-			wp_send_json_error( 'Authentication required', 401 );
-		}
-
-		$payload = $request->get_params();
-
-		$order_id = $payload['id'];
-		$payment_intent_id = $payload['payment_intent_id'];
-
-		$stripe_settings = get_option( 'woocommerce_stripe_settings' );
-
-		if ( $stripe_settings['testmode'] == 'yes' ) {
-			$publishable_key = $stripe_settings['test_publishable_key'];
-			$secret_key = $stripe_settings['test_secret_key'];
-		} else {
-			$publishable_key = $stripe_settings['publishable_key'];
-			$secret_key = $stripe_settings['secret_key'];
-		}
-
-		$response = wp_remote_get( 'https://api.stripe.com/v1/payment_intents/' . $payment_intent_id, array(
-			'headers' => array(
-				'Authorization' => 'Bearer ' . $secret_key,
-				'Content-Type' => 'application/x-www-form-urlencoded',
-			),
-		) );
-
-		$payment_intent = json_decode( wp_remote_retrieve_body( $response ), true );
-		$order = wc_get_order( $order_id );
-
-		if ( $payment_intent['status'] == 'succeeded' && ( $payment_intent['amount_received'] / 100 ) == $order->get_total() ) {
-
-			$order->set_status( 'processing' );
-			$order->update_meta_data( '_stripe_intent_id', $payment_intent_id );
-			$order->update_meta_data( '_stripe_source_id', $payment_intent['charges']['data'][0]['payment_method'] );
-			$order->update_meta_data( '_stripe_charge_captured', true );
-			$order->save();
-
-		}
-
-		$order_data = $order->get_data();
-
-		$order_line_items = array();
-
-		foreach ( $order->get_items() as $item_id => $item ) {
-			$order_line_items[] = $item->get_data();
-		}
-
-		$order_data['line_items'] = $order_line_items;
-		$order_data['shipping_method'] = $order->get_shipping_method();
-
-		return array(
-			'order' => $order_data,
-			'status' => $payment_intent['status'],
-		);
-
-	}
 
     public function get_my_member_profile() {
 
@@ -190,7 +84,7 @@ class Favored_Public_Routes {
 			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
 		}
 
-		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/' );
+		return FavoredHttpHelper::get( '/v3/member/company/members/' . $fav_id . '/' );
 
 	}
 
@@ -198,7 +92,7 @@ class Favored_Public_Routes {
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
-		return HttpHelper::get( '/v3/member/outlets/' . $merchant_id . '/reward-schemes/', true );
+		return FavoredHttpHelper::get( '/v3/member/outlets/' . $merchant_id . '/reward-schemes/', true );
 
 	}
 
@@ -206,7 +100,7 @@ class Favored_Public_Routes {
 
 		$merchant_id = cmb2_get_option( 'favored_options', 'merchant_id' );
 
-		return HttpHelper::get( '/v3/member/outlets/' . $merchant_id . '/gift-offers/', true );
+		return FavoredHttpHelper::get( '/v3/member/outlets/' . $merchant_id . '/gift-offers/', true );
 
 	}
 
@@ -218,13 +112,13 @@ class Favored_Public_Routes {
 			return new WP_Error( 'error', 'Favored ID not found', array( 'status' => 404 ) );
 		}
 
-		return HttpHelper::get( '/v3/member/company/members/' . $fav_id . '/reward-transactions/', true );
+		return FavoredHttpHelper::get( '/v3/member/company/members/' . $fav_id . '/reward-transactions/', true );
 
 	}
 
 	public function fetch_settings() {
 
-		return HttpHelper::get( '/v3/member/company/settings/' );
+		return FavoredHttpHelper::get( '/v3/member/company/settings/' );
 
 	}
 
@@ -258,7 +152,7 @@ class Favored_Public_Routes {
 			'gift_offer_id' => $payload['gift_offer_id'],
 		);
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 		$body = wp_remote_retrieve_body( $response );
@@ -276,7 +170,7 @@ class Favored_Public_Routes {
 
 		$url = '/member/external-platform/members/' . $fav_id . '/rewards/';
 
-		return HttpHelper::get( $url, true );
+		return FavoredHttpHelper::get( $url, true );
 
 	}
 
@@ -366,7 +260,7 @@ class Favored_Public_Routes {
 			'agree_to_receive_promotion' => $payload['agreeToReceivePromotion'],
 		);
 
-		$response = HttpHelper::post( $url, $body );
+		$response = FavoredHttpHelper::post( $url, $body );
 
 		$response_code = wp_remote_retrieve_response_code( $response );
 

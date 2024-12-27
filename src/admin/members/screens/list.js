@@ -100,17 +100,15 @@ export default function MemberList({ nonce }) {
               <label className="screen-reader-text" htmlFor="cb-select-all-1">Select All</label>
               <input id="cb-select-all-1" type="checkbox" />
             </td>
-            <th scope="col" id="title" className="manage-column column-title column-primary sortable desc">
+            <th scope="col" id="title" className="manage-column column-title column-primary">
               <span>ID</span>
             </th>
             <th scope="col" id="author" className="manage-column column-name">Name</th>
             <th scope="col" id="categories" className="manage-column column-phone">Phone</th>
             <th scope="col" id="tags" className="manage-column column-points">Points</th>
             <th scope="col" id="tags" className="manage-column column-stamps">Stamps</th>
-            <th scope="col" id="date" className="manage-column column-date sortable asc">
-              <a href="javascript:void(0)">
-                <span>Created At</span><span className="sorting-indicator"></span>
-              </a>
+            <th scope="col" id="date" className="manage-column column-date">
+              <span>Created At</span><span className="sorting-indicator"></span>
             </th>
           </tr>
         </thead>
@@ -172,18 +170,15 @@ export default function MemberList({ nonce }) {
                 </td>
                 <td className="name column-name has-row-actions column-primary" data-colname="Name">
                   <strong> <Link to={`/edit/${row.uuid}`} className="">{row.name}</Link> </strong>
-                  <button type="button" className="toggle-row"><span className="screen-reader-text">Show more details</span></button>
                 </td>
                 <td className="phone column-phone" data-colname="Phone">
-                  <a href="javascript:void(0)">{row.phone}</a>
+                  {row.phone}
                 </td>
                 <td className="points column-points" data-colname="Points">
                   <span aria-hidden="true">{row.points}</span>
-                  <span className="screen-reader-text">No tags</span>
                 </td>
                 <td className="stamps column-stamps" data-colname="Stamps">
                   <span aria-hidden="true">{row.stamps}</span>
-                  <span className="screen-reader-text">No tags</span>
                 </td>
                 <td className="date column-created-at" data-colname="Created At">
                   <abbr title={row.createdAt}>{dayjs(row.createdAt).format('YYYY-MM-DD HH:mm:ss')}</abbr>
@@ -212,11 +207,8 @@ export default function MemberList({ nonce }) {
             {/*     </span> */}
             {/*   </span> */}
             {/* </th> */}
-            <th scope="col" className="manage-column column-date sortable asc">
-              <a href="javascript:void(0)">
-                <span>Date</span>
-                <span className="sorting-indicator"></span>
-              </a>
+            <th scope="col" className="manage-column column-date">
+              <span>Date</span>
             </th>
           </tr>
         </tfoot>

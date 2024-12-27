@@ -5,7 +5,7 @@ Tags: loyalty program, membership, member, reward, woocommerce
 Requires at least: 3.5.1
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -56,6 +56,13 @@ the /assets directory or the directory that contains the stable readme.txt (tags
 directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
 (or jpg, jpeg, gif).
 2. This is the second screen shot
+
+== External services ==
+
+This plugin connects to an API to record user's order spending for rewarding points / stamps.
+
+It sends the order data every time it created (If the user is not logged in, it will not be sent anyway).
+This service is provided by "FavCRM": [terms of use](https://favcrm.io/terms), [privacy policy](https://favcrm.io/privacy).
 
 == Changelog ==
 

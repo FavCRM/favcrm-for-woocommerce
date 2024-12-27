@@ -1,6 +1,6 @@
 <?php
 
-class Logger {
+class FavoredLogger {
 
     static public function write_log( $message ) {
 
