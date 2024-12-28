@@ -263,7 +263,7 @@ class Favored_Public {
 
 		$member = $this->get_my_member_profile();
 
-		if ( $member === null || ! array_key_exists( 'membershipTier', $member ) ) {
+		if ( $member === null || ! is_array( $member ) || ! array_key_exists( 'membershipTier', $member ) ) {
 			return;
 		}
 

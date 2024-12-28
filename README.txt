@@ -64,6 +64,10 @@ This plugin connects to an API to record user's order spending for rewarding poi
 It sends the order data every time it created (If the user is not logged in, it will not be sent anyway).
 This service is provided by "FavCRM": [terms of use](https://favcrm.io/terms), [privacy policy](https://favcrm.io/privacy).
 
+== Source Code ==
+
+You may find the original source code in our repository https://github.com/FavCRM/favcrm-for-woocommerce
+
 == Changelog ==
 
 = 1.0 =

@@ -228,7 +228,7 @@ class Favored_Public_Routes {
 			);
 		}
 
-		$user_id = wp_create_user( $payload['phone'], $payload['password'], $payload['email'] );
+		$user_id = wp_create_user( $payload['email'], $payload['password'], $payload['email'] );
 		$user = get_user_by( 'id', $user_id );
 
 		$user->set_role( 'customer' );
@@ -236,7 +236,7 @@ class Favored_Public_Routes {
 		update_user_meta( $user_id, 'fav_id', $fav_user['uuid'] );
 
 		$info = array();
-		$info['user_login'] = $payload['phone'];
+		$info['user_login'] = $payload['email'];
 		$info['user_password'] = $payload['password'];
 		$info['remember'] = true;
 

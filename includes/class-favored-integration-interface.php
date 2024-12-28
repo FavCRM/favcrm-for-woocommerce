@@ -33,7 +33,7 @@ class Favored_Plugin_Integration implements IntegrationInterface {
 		// $style_path = 'build/frontend/cart-use-credit/style-index.css';
 
 		$script_url = plugin_dir_url( dirname( __FILE__ ) ) . $script_path;
-		$style_url = plugin_dir_url( dirname( __FILE__ ) ) . $style_path;
+		// $style_url = plugin_dir_url( dirname( __FILE__ ) ) . $style_path;
 
 		$script_asset_path = plugin_dir_path( dirname( __FILE__ ) ) . '/build/frontend/cart-use-credit/index.asset.php';
 		$script_asset      = file_exists( $script_asset_path )
