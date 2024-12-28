@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import apiFetch from '@wordpress/api-fetch';
 import { useMutation } from '@tanstack/react-query';
-import { useForm, Controller } from 'react-hook-form'
+import { useForm } from 'react-hook-form'
 import LoadingSpinner from '../../../components/LoadingSpinner';
 import { useFetch } from '../../services/useFetch';
 const { __ } = wp.i18n;
@@ -11,43 +11,27 @@ export default function MembershipTierForm({ nonce }) {
   const navigate = useNavigate();
   const { membershipTierId } = useParams();
   const [locale, setLocale] = useState('en')
-  const [membershipTiers, setMembershipTiers] = useState([])
 
-  // console.log({ membershipTierId })
   const {
-    data: allTiers,
-    isLoading: membertierLoading,
-    error: membertierError,
-    refetch: membertierRefresh
-  } = useFetch("membership-tiers", `/fav/v1/membership-tiers?page=1&page_size=1000`, nonce)
-
-  const thisMembershipTier = (() => {
-    if (!membershipTierId) return null
-    return allTiers?.items?.find(tier => +tier?.id === +membershipTierId)
-  })()
+    data: thisMembershipTier,
+  } = useFetch('membership-tier', `/fav/v1/membership-tiers/${membershipTierId}`, nonce, !!membershipTierId)
 
   useEffect(() => {
     const locale = document.documentElement.lang.split('-')[0];
     setLocale(locale)
+  }, [])
 
-    if (!membertierLoading && allTiers?.items) {
-      // set existing records for PATCH update
-      if (membershipTierId) {
-        reset({
-          ...thisMembershipTier,
-          spendingCount: +thisMembershipTier.spendingCount,
-          totalSpendingAmount: +thisMembershipTier.totalSpendingAmount,
-          multiplier: +thisMembershipTier.multiplier,
-          discount: +thisMembershipTier.discount,
-        })
-      }
-
-      setMembershipTiers(() => allTiers?.items)
+  useEffect(() => {
+    if (thisMembershipTier) {
+      reset({
+        ...thisMembershipTier,
+        spendingCount: +thisMembershipTier.spendingCount,
+        totalSpendingAmount: +thisMembershipTier.totalSpendingAmount,
+        multiplier: +thisMembershipTier.multiplier,
+        discount: +thisMembershipTier.discount,
+      })
     }
-
-  }, [membertierLoading])
-
-  const action = membershipTierId ? "Edit" : "Add"
+  }, [thisMembershipTier])
 
   const [error, setError] = useState('');
 
@@ -71,33 +55,27 @@ export default function MembershipTierForm({ nonce }) {
 
   const { mutate, isPending: isMutating } = useMutation({
     mutationFn: async (data) => {
-      const reqData = { ...data }
-
-      const result = await (async () => {
-        if (!membershipTierId) {
-          return await apiFetch({
-            path: '/fav/v1/membership-tiers',
-            method: 'POST',
-            headers: {
-              'X-WP-Nonce': nonce,
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify(reqData),
-          });
-        }
-
+      if (!membershipTierId) {
         return await apiFetch({
-          path: `/fav/v1/membership-tiers/${membershipTierId}`,
-          method: 'PATCH',
+          path: '/fav/v1/membership-tiers',
+          method: 'POST',
           headers: {
             'X-WP-Nonce': nonce,
             'Content-Type': 'application/json',
           },
-          body: JSON.stringify(reqData),
+          body: JSON.stringify(data),
         });
-      })()
+      }
 
-      return result;
+      return await apiFetch({
+        path: `/fav/v1/membership-tiers/${membershipTierId}`,
+        method: 'PATCH',
+        headers: {
+          'X-WP-Nonce': nonce,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
     },
     onSuccess: (data) => {
       if (data?.success) {
@@ -109,48 +87,46 @@ export default function MembershipTierForm({ nonce }) {
   });
 
   const onSubmit = (data) => {
-    const hasConflict = membershipTiers.find(({ spendingCount, totalSpendingAmount }) => {
-      return +spendingCount === +data.spendingCount &&
-        +totalSpendingAmount === +data.totalSpendingAmount
-    })
-
-    /* handle create new if conflict, Key (company_id, spending_count, total_spending_amount) */
-    if (!membershipTierId && hasConflict) {
-      setError(`spending count(${hasConflict.spendingCount}) & total spending amount(${hasConflict.totalSpendingAmount}) are conflicting with existing tier: ${hasConflict.name}, please change these fields to different value`)
-      return
-    }
-
     mutate(data);
   }
 
   return (
-    (!membertierLoading) &&
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Membership Tier`, 'favcrm-for-woocommerce')}</h1>
+        <h1 className="wp-heading-inline">
+          {
+            !!membershipTierId
+              ? __(`Edit Membership Tier`, 'favcrm-for-woocommerce')
+              : __(`Add Membership Tier`, 'favcrm-for-woocommerce')
+          }
+        </h1>
         <hr className="wp-header-end" />
         {
-          !!membershipTierId &&
-          <div className="my-auto">
-            <button
-              className="cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800"
-              type="button"
-              onClick={async () => {
-                if (!confirm(`You are about to delete membership ${thisMembershipTier?.name}, click confirm to delete.`))
-                  return
+          !!membershipTierId && (
+            <div className="my-auto">
+              <button
+                className="cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800"
+                type="button"
+                onClick={async () => {
+                  if (!confirm(`You are about to delete membership ${thisMembershipTier?.name}, click confirm to delete.`))
+                    return
 
-                const deleteResponse = await apiFetch({
-                  path: `/fav/v1/membership-tiers/${membershipTierId}`,
-                  method: 'DELETE',
-                  headers: {
-                    'X-WP-Nonce': nonce,
-                    'Content-Type': 'application/json',
-                  },
-                });
+                  const deleteResponse = await apiFetch({
+                    path: `/fav/v1/membership-tiers/${membershipTierId}`,
+                    method: 'DELETE',
+                    headers: {
+                      'X-WP-Nonce': nonce,
+                      'Content-Type': 'application/json',
+                    },
+                  });
 
-                window.location.href = '/wp-admin/admin.php?page=fav-crm-membership-tiers';
-              }}> Delete </button>
-          </div>
+                  window.location.href = '/wp-admin/admin.php?page=fav-crm-membership-tiers';
+                }}
+              >
+                Delete
+              </button>
+            </div>
+          )
         }
       </div>
       <div>

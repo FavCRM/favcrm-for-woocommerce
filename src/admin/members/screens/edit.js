@@ -265,7 +265,7 @@ export default function MemberForm({ nonce }) {
                   <div>
                     <select
                       id="month"
-                      {...register('month', { required: 'Required' })}
+                      {...register('month')}
                     >
                       <option value="">Month</option>
                       {
@@ -276,7 +276,7 @@ export default function MemberForm({ nonce }) {
                     </select>
                     <select
                       id="day"
-                      {...register('day', { required: 'Required' })}
+                      {...register('day')}
                     >
                       <option value="">Day</option>
                       {
@@ -286,13 +286,6 @@ export default function MemberForm({ nonce }) {
                       }
                     </select>
                   </div>
-                  {
-                    (errors.day || errors.month) && (
-                      <div className="mt-1 error-message text-red-500 font-normal">
-                        {__('Please select birth month and day', 'favcrm-for-woocommerce')}
-                      </div>
-                    )
-                  }
                 </td>
               </tr>
               <tr>

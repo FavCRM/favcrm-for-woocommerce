@@ -265,7 +265,6 @@ class Favored_Public_Routes {
 		$response_code = wp_remote_retrieve_response_code( $response );
 
 		if ( $response_code != 200 ) {
-			var_dump(wp_remote_retrieve_body( $response ));
 			return;
 		}
 

@@ -109,6 +109,12 @@ class Favored_Admin_Routes {
 		) );
 
 		register_rest_route( 'fav/v1', '/membership-tiers/(?P<id>[\W\w]+)', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fetch_membership_tiers_by_id' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
+		register_rest_route( 'fav/v1', '/membership-tiers/(?P<id>[\W\w]+)', array(
 			'methods' => 'PATCH',
 			'callback' => array( $this, 'update_membership_tiers' ),
 			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
@@ -522,6 +528,15 @@ class Favored_Admin_Routes {
 			'success' => $success,
 			'error' => $error,
 		);
+
+	}
+
+	public function fetch_membership_tiers_by_id( $request ) {
+
+		$id = $request['id'];
+		$url = '/v3/member/company/membership-tiers/'.$id.'/';
+
+		return FavoredHttpHelper::get( $url );
 
 	}
 
