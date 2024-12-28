@@ -1,7 +1,6 @@
 import apiFetch from '@wordpress/api-fetch';
 import { useQuery } from '@tanstack/react-query';
 import dayjs from 'dayjs';
-import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Pagination } from '../../common/pagination';
 import { __ } from '@wordpress/i18n';

@@ -26,9 +26,8 @@ export default function MemberForm({ nonce }) {
   const [locale, setLocale] = useState('en')
 
   const { data: tiers, isLoading: tiersLoading, error: tiersError, refetch: tiersRefresh } = useFetch("membership-tiers", `/fav/v1/membership-tiers`, nonce)
-  const { data: thisMember, isLoading: memberLoading, error: memberError, refetch: memberRefresh } = useFetch("member", `/fav/v1/members/${memberId}`, nonce)
+  const { data: thisMember, isLoading: memberLoading, error: memberError, refetch: memberRefresh } = useFetch("member", `/fav/v1/members/${memberId}`, nonce, !!memberId)
 
-  const action = memberId ? "Edit" : "Add"
   const [error, setError] = useState('');
   const {
     control,
@@ -114,7 +113,13 @@ export default function MemberForm({ nonce }) {
   return (
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Member`, 'favcrm-for-woocommerce')}</h1>
+        <h1 className="wp-heading-inline">
+          {
+            !!memberId
+              ? __('Edit Member', 'favcrm-for-woocommerce')
+              : __('Add Member', 'favcrm-for-woocommerce')
+          }
+        </h1>
         <hr className="wp-header-end" />
         {
           memberId && (

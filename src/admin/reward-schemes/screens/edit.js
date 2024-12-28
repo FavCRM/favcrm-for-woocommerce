@@ -12,13 +12,12 @@ export default function RewardSchemeForm({ nonce }) {
   const { rewardSchemeId } = useParams();
   const [locale, setLocale] = useState('en')
 
-  // console.log({ rewardSchemeId })
   const {
     data: thisRewardScheme,
     isLoading: rewardSchemeLoading,
     error: rewardSchemeError,
     refetch: rewardSchemeRefresh
-  } = useFetch("reward-scheme", `/fav/v1/reward-schemes/${rewardSchemeId}`, nonce)
+  } = useFetch("reward-scheme", `/fav/v1/reward-schemes/${rewardSchemeId}`, nonce, !!rewardSchemeId);
 
   useEffect(() => {
     const locale = document.documentElement.lang.split('-')[0];
@@ -32,8 +31,6 @@ export default function RewardSchemeForm({ nonce }) {
     }
 
   }, [rewardSchemeLoading])
-
-  const action = rewardSchemeId ? "Edit" : "Add"
 
   const [error, setError] = useState('');
 
@@ -87,7 +84,13 @@ export default function RewardSchemeForm({ nonce }) {
     (!rewardSchemeLoading) &&
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Reward Scheme`, 'favcrm-for-woocommerce')}</h1>
+        <h1 className="wp-heading-inline">
+          {
+            !!rewardSchemeId
+              ? __('Edit Reward Scheme', 'favcrm-for-woocommerce')
+              : __('Add Reward Scheme', 'favcrm-for-woocommerce')
+          }
+        </h1>
         <hr className="wp-header-end" />
         {
           !!rewardSchemeId &&

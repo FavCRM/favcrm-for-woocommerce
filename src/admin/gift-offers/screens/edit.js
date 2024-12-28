@@ -20,7 +20,7 @@ export default function GiftOfferForm({ nonce }) {
     isLoading: giftOfferLoading,
     error: giftOfferError,
     refetch: giftOfferRefresh
-  } = useFetch("gift-offer", `/fav/v1/gift-offers/${giftOfferId}`, nonce)
+  } = useFetch("gift-offer", `/fav/v1/gift-offers/${giftOfferId}`, nonce, !!giftOfferId)
 
   const {
     data: tiers,
@@ -56,8 +56,6 @@ export default function GiftOfferForm({ nonce }) {
       }
     }
   }, [giftOfferLoading])
-
-  const action = giftOfferId ? "Edit" : "Add"
 
   const [error, setError] = useState('');
 
@@ -134,30 +132,38 @@ export default function GiftOfferForm({ nonce }) {
     (!giftOfferLoading && !tiersLoading) &&
     <div>
       <div className="mb-2 flex gap-2 ">
-        <h1 className="wp-heading-inline">{__(`${action} Gift Offer`, 'favcrm-for-woocommerce')}</h1>
+        <h1 className="wp-heading-inline">
+          {
+            !!giftOfferId
+              ? __('Edit Gift Offer', 'favcrm-for-woocommerce')
+              : __('Add Gift Offer', 'favcrm-for-woocommerce')
+          }
+        </h1>
         <hr className="wp-header-end" />
         {
-          !!giftOfferId &&
-          <div className="my-auto">
-            <button
-              className="cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800"
-              type="button"
-              onClick={async () => {
-                if (!confirm(`You are about to delete gift offer ${thisGiftOffer?.name}, click confirm to delete.`))
-                  return
+          !!giftOfferId && (
 
-                const deleteResponse = await apiFetch({
-                  path: `/fav/v1/gift-offers/${giftOfferId}`,
-                  method: 'DELETE',
-                  headers: {
-                    'X-WP-Nonce': nonce,
-                    'Content-Type': 'application/json',
-                  },
-                });
+            <div className="my-auto">
+              <button
+                className="cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800"
+                type="button"
+                onClick={async () => {
+                  if (!confirm(`You are about to delete gift offer ${thisGiftOffer?.name}, click confirm to delete.`))
+                    return
 
-                window.location.href = '/wp-admin/admin.php?page=fav-crm-gift-offers';
-              }}> Delete </button>
-          </div>
+                  const deleteResponse = await apiFetch({
+                    path: `/fav/v1/gift-offers/${giftOfferId}`,
+                    method: 'DELETE',
+                    headers: {
+                      'X-WP-Nonce': nonce,
+                      'Content-Type': 'application/json',
+                    },
+                  });
+
+                  window.location.href = '/wp-admin/admin.php?page=fav-crm-gift-offers';
+                }}> Delete </button>
+            </div>
+          )
         }
       </div>
       <div>
@@ -191,7 +197,7 @@ export default function GiftOfferForm({ nonce }) {
                     id="description"
                     type="text"
                     className="regular-text"
-                    {...register('description', {})}
+                    {...register('description')}
                   />
                   {<div className="mt-1 error-message text-red-500 font-normal">{errors.description?.message}</div>}
                 </td>
