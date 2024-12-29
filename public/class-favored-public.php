@@ -163,7 +163,9 @@ class Favored_Public {
 
 					$member = $this->get_my_member_profile();
 
-					$cash_rewards = $member['cashRewards'] ?? 0;
+					if ( $member !== null && is_array( $member ) ) {
+						$cash_rewards = $member['cashRewards'] ?? 0;
+					}
 
 					return array(
 						'cashRewards' => $cash_rewards,
