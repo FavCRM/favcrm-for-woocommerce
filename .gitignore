@@ -4,3 +4,4 @@ bin
 deploy.sh
 build.sh
 upload.sh
+*.log
