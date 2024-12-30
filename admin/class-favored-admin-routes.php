@@ -217,10 +217,7 @@ class Favored_Admin_Routes {
 		$url = '/v3/member/companies/';
 
 		$body = $request->get_json_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
+		$body = array_merge( $body, array( 'source' => 'WORDPRESS' ) );
 
 		$headers = [
 			'Content-Type' => 'application/json',
@@ -377,10 +374,7 @@ class Favored_Admin_Routes {
 		$url = '/v3/member/company/members/';
 
 		$body = $request->get_json_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
+		$body = array_merge( $body, array( 'source' => 'WORDPRESS' ) );
 
 		$response = FavoredHttpHelper::post( $url, $body );
 
@@ -417,10 +411,7 @@ class Favored_Admin_Routes {
 		$url = '/v3/member/company/members/'.$uuid.'/';
 
 		$body = $request->get_json_params();
-		$body = [
-			...$body,
-			'source' => 'WORDPRESS',
-		];
+		$body = array_merge( $body, array( 'source' => 'WORDPRESS' ) );
 
 		$response = FavoredHttpHelper::patch( $url, $body );
 

@@ -103,17 +103,17 @@ class FavoredHttpHelper {
 
     static public function delete( $url ) {
 
-            $base_url = self::get_base_url();
-            $url = $base_url . $url;
+        $base_url = self::get_base_url();
+        $url = $base_url . $url;
 
-            $headers = self::build_headers();
+        $headers = self::build_headers();
 
-            $response = wp_remote_request( $url, array(
-                'method' => 'DELETE',
-                'headers' => $headers,
-            ) );
+        $response = wp_remote_request( $url, array(
+            'method' => 'DELETE',
+            'headers' => $headers,
+        ) );
 
-            return $response;
+        return $response;
 
     }
 }

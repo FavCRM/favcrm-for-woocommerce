@@ -66,7 +66,7 @@ This service is provided by "FavCRM": [terms of use](https://favcrm.io/terms), [
 
 == Source Code ==
 
-You may find the original source code in our repository https://github.com/FavCRM/favcrm-for-woocommerce
+You may find the original source code in our repository https://github.com/favcrm/favcrm-for-woocommerce
 
 == Changelog ==
 
