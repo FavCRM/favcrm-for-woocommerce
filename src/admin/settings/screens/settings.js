@@ -7,11 +7,6 @@ import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const { __ } = wp.i18n;
 
-const permissions = [
-  "Read",
-  "Write",
-]
-
 export default function Settings({ nonce }) {
   const { data, isLoading, error } = useQuery({
     queryKey: ['settings'], queryFn: async () => {
@@ -26,41 +21,7 @@ export default function Settings({ nonce }) {
     }
   });
 
-  const { data: aclData, isLoading: isAclLoading, error: aclError } = useQuery({
-    queryKey: ['access-control'], queryFn: async () => {
-      const result = await apiFetch({
-        path: '/fav/v1/settings/access-control',
-        headers: {
-          'X-WP-Nonce': nonce,
-        }
-      });
-
-      return result;
-    }
-  });
-
-  const { mutate: aclMutate, isPending: isAclMutating } = useMutation({
-    mutationFn: async (data) => {
-      const result = await apiFetch({
-        path: '/fav/v1/settings/access-control',
-        method: 'POST',
-        headers: {
-          'X-WP-Nonce': nonce,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      return result;
-    },
-    onSuccess: (data) => {
-      if (data?.errorCode) {
-        setError(data.error);
-      }
-    }
-  });
-
-  if (!data || isLoading || !aclData || isAclLoading) {
+  if (!data || isLoading) {
     return (
       <div className="flex">
         <LoadingSpinner
@@ -77,12 +38,7 @@ export default function Settings({ nonce }) {
       nonce={nonce}
       settings={data}
     >
-      <AclForm
-        aclData={aclData}
-        permissions={permissions}
-        mutate={aclMutate}
-        isMutating={isAclMutating}
-      />
+      <AclForm nonce={nonce} />
     </SettingsContent>
   )
 }
@@ -233,17 +189,58 @@ function SettingsContent({ children, nonce, settings }) {
   )
 }
 
-function AclForm({ aclData, permissions, mutate, isMutating }) {
-  const [roles, setRoles] = useState(aclData);
+function AclForm({ nonce }) {
+  const permissions = [
+    "Read",
+    "Write",
+    "Delete",
+  ]
 
-  return (
+  const { data, isLoading, error: aclError } = useQuery({
+    queryKey: ['access-control'], queryFn: async () => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        headers: {
+          'X-WP-Nonce': nonce,
+        }
+      });
+
+      setRoles(() => ({ ...result }))
+      return result;
+    }
+  });
+
+  const { mutate, isPending: isMutating } = useMutation({
+    mutationFn: async (data) => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        method: 'POST',
+        headers: {
+          'X-WP-Nonce': nonce,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      return result;
+    },
+    onSuccess: (data) => {
+      if (data?.errorCode) {
+        setError(data.error);
+      }
+    }
+  });
+
+  const [roles, setRoles] = useState(data || {});
+
+  return !isLoading && (
     <form onSubmit={(e) => {
       e.preventDefault()
       mutate(roles)
     }}>
       <section className='w-1/3'>
         <h1>Access Control</h1>
-        <div className="grid grid-cols-3">
+        <div className={`grid grid-cols-${permissions.length + 1}`}>
           <div className='border border-solid border-slate-300 border-t-0 border-l-0'>&nbsp;</div>
           {
             permissions.map((perm, i) => (
