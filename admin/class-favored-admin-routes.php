@@ -263,6 +263,7 @@ class Favored_Admin_Routes {
 
 			$this->register_api_keys();
 
+
 		} catch(Exception $e) {
 
 		}
@@ -975,6 +976,129 @@ class Favored_Admin_Routes {
 			'data' => json_decode( wp_remote_retrieve_body( $response ), true )
 		);
 
+	}
+
+	public function company_login( $request ) {
+
+		$url = '/v3/member/company-login/';
+
+		$body = $request->get_json_params();
+
+		$response = FavoredHttpHelper::post( $url, $body );
+
+		$success = false;
+		$error = '';
+
+		try {
+
+			$result = json_decode( wp_remote_retrieve_body( $response ), true );
+
+			if ( isset( $result['errorCode'] ) ) {
+				return array(
+					'success' => false,
+					'error' => $result['error'],
+					'errorCode' => $result['errorCode'],
+				);
+			}
+
+			$merchant_id = $result['merchantId'];
+			$secret = $result['accessToken'];
+			$mode = 'live';
+
+			if ( ! $merchant_id || ! $secret ) {
+				throw new Exception( 'Invalid response' );
+			}
+
+			$favored_options = get_option( 'favored_options' );
+
+			if ( ! $favored_options ) {
+				$favored_options = [];
+			}
+
+			$favored_options['merchant_id'] = $merchant_id;
+			$favored_options['secret'] = $secret;
+			$favored_options['mode'] = $mode;
+
+			update_option( 'favored_options', $favored_options );
+
+			$success = true;
+
+			$this->register_api_keys();
+
+		} catch(Exception $e) {
+			echo esc_html( $e->getMessage() );
+		}
+
+		return array(
+			'success' => $success,
+			'error' => $error,
+		);
+
+	}
+
+	public function company_logout() {
+
+		$key = 'favored_options';
+
+		$favored_options = get_option( $key );
+
+		$favored_options['merchant_id'] = '';
+		$favored_options['secret'] = '';
+		$favored_options['mode'] = '';
+
+		update_option( $key, $favored_options );
+
+		return array(
+			'success' => true,
+		);
+
+	}
+
+	public function generate_api_key() {
+
+		global $wpdb;
+
+		$consumer_key    = 'ck_' . wc_rand_hash();
+		$consumer_secret = 'cs_' . wc_rand_hash();
+		$permissions     = 'read_write';
+
+		$wpdb->insert( $wpdb->prefix . 'woocommerce_api_keys', array(
+			'user_id'         => get_current_user_id(),
+			'description'     => 'favcrm-for-woocommerce',
+			'permissions'     => $permissions,
+			'consumer_key'    => wc_api_hash( $consumer_key ),
+			'consumer_secret' => $consumer_secret,
+			'truncated_key'   => substr( $consumer_key, -7 ),
+			'last_access'     => current_time( 'mysql' ),
+		) ); // db call ok; no-cache ok
+
+		return [ $consumer_key, $consumer_secret ];
+
+	}
+
+	public function register_api_keys() {
+
+		[ $consumer_key, $consumer_secret ] = $this->generate_api_key();
+
+		$body = array(
+			'consumer_key' => $consumer_key,
+			'consumer_secret' => $consumer_secret,
+			'url' => get_site_url(),
+			'app_code' => 'woocommerce',
+		);
+
+		$url = '/app/register/';
+		$response = FavoredHttpHelper::post( $url, $body );
+
+		$response_code = wp_remote_retrieve_response_code( $response );
+
+		if ( is_wp_error( $response ) ) {
+			$error_message = $response->get_error_message();
+			FavoredLogger::write_log( "API register error: $error_message" );
+		} else {
+			FavoredLogger::write_log( '----- API register completed -----' );
+			update_option( 'favored_registered', true );
+		}
 	}
 
 }

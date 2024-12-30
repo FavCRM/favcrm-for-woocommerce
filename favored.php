@@ -16,7 +16,7 @@
  * Plugin Name:       FavCRM for WooCommerce
  * Requires Plugins:  woocommerce
  * Description:       Member Management System
- * Version:           1.0.7
+ * Version:           1.0.8
  * Author:            FavCRM
  * Author URI:        https://favcrm.io
  * License:           GPL-2.0+
@@ -38,7 +38,7 @@ if ( ! defined( 'WPINC' ) ) {
  * Start at version 1.0.0 and use SemVer - https://semver.org
  * Rename this for your plugin and update it as you release new versions.
  */
-define( 'FAVORED_VERSION', '1.0.7' );
+define( 'FAVORED_VERSION', '1.0.8' );
 define( 'FAVORED_BASE_PATH', plugin_dir_path( __FILE__ ) );
 
 /**
