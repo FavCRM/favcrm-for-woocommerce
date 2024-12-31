@@ -248,7 +248,7 @@ function AclForm({ nonce }) {
       e.preventDefault()
       mutate(roles)
     }}>
-      <section className='w-1/3'>
+      <section className='w-3/5'>
         <h1>Access Control</h1>
         {/* <div className={`grid grid-cols-${permissions.length + 1}`}> */}
         <div className={`grid grid-cols-4`}>
@@ -261,7 +261,7 @@ function AclForm({ nonce }) {
           {Object.keys(roles).map((roleCode, i) => {
             return (
               <React.Fragment key={i}>
-                <div key={i} className='h-8 font-bold text-end p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{roles[roleCode]?.roleName}</div>
+                <div key={i} className='h-6 font-bold text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{roles[roleCode]?.roleName}</div>
                 {permissions.map((perm, i) => (
                   <div key={i} className='text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>
                     <input
@@ -297,7 +297,7 @@ function AclForm({ nonce }) {
             )
           })}
           <div></div>
-          <div>
+          <div className='mt-2'>
             <button
               className="button button-primary w-fit mx-auto"
               type="submit"
