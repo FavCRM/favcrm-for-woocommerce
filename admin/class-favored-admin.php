@@ -238,6 +238,11 @@ class Favored_Admin {
 			'permission_callback' => 'custom_route_permission_callback',
 		) );
 
+		register_rest_route( 'fav/v1', '/permissions-check', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fav_current_user_can' ),
+			'permission_callback' => 'custom_route_permission_callback',
+		) );
 
 		register_rest_route( 'fav/v1', '/members', array(
 			'methods' => 'GET',
@@ -1021,7 +1026,7 @@ class Favored_Admin {
   public function fav_current_user_can($request) {
 		$perm = $request->get_param( 'permission' );
     if (current_user_can($perm)){
-      return new WP_REST_Response(null, 200);
+      return new WP_REST_Response(array('data'=>"Authorised"), 200);
     }
 
     return new WP_REST_Response(array(

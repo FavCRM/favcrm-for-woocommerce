@@ -2,12 +2,14 @@ import React, { useState } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-
+import { useUserCan } from '../../../utils/favPermission';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const { __ } = wp.i18n;
 
 export default function Settings({ nonce }) {
+  const { isLoading: permissionsCheckLoading, userCan } = useUserCan(nonce);
+
   const { data, isLoading, error } = useQuery({
     queryKey: ['settings'], queryFn: async () => {
       const result = await apiFetch({
@@ -21,7 +23,7 @@ export default function Settings({ nonce }) {
     }
   });
 
-  if (!data || isLoading) {
+  if (!data || isLoading || permissionsCheckLoading) {
     return (
       <div className="flex">
         <LoadingSpinner
@@ -37,13 +39,17 @@ export default function Settings({ nonce }) {
     <SettingsContent
       nonce={nonce}
       settings={data}
+      userCan={userCan}
     >
-      <AclForm nonce={nonce} />
+      <AclForm
+        nonce={nonce}
+        userCan={userCan}
+      />
     </SettingsContent>
   )
 }
 
-function SettingsContent({ children, nonce, settings }) {
+function SettingsContent({ children, nonce, settings, userCan }) {
   const [error, setError] = useState('');
   const {
     register,
@@ -163,7 +169,7 @@ function SettingsContent({ children, nonce, settings }) {
                   <button
                     className="button button-primary"
                     type="submit"
-                    disabled={isMutating}
+                    disabled={isMutating || !userCan.write}
                   >
                     {
                       isMutating
@@ -244,7 +250,8 @@ function AclForm({ nonce }) {
     }}>
       <section className='w-1/3'>
         <h1>Access Control</h1>
-        <div className={`grid grid-cols-${permissions.length + 1}`}>
+        {/* <div className={`grid grid-cols-${permissions.length + 1}`}> */}
+        <div className={`grid grid-cols-4`}>
           <div className='border border-solid border-slate-300 border-t-0 border-l-0'>&nbsp;</div>
           {
             permissions.map((perm, i) => (
