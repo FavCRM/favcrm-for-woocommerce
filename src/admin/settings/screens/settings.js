@@ -93,7 +93,6 @@ function SettingsContent({ children, nonce, settings, userCan }) {
       },
     })
 
-    console.log(result)
     location.href = '/wp-admin/admin.php?page=favcrm-for-register';
   }
 
