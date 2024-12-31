@@ -1010,31 +1010,49 @@ class Favored_Admin {
 		);
 	}
 
-	public function fetch_access_control() {
-    $favored_access_control = get_option('favored_access_control');
+	public function fav_get_permissions() {
+    return array(
+      "read"=>"Read",
+      "write"=>"Write",
+      "delete"=>"Delete",
+    );
+  }
 
-    $all_roles = wp_roles();
-    $role_names = array();
-		foreach ( $all_roles as $value ) {
-      foreach ( $value as $r_value ) {
-        if(is_string($r_value)){
-          array_push($role_names,$r_value);
-        }
-      }
-		}
-
-    // if favored_access_control not exist in DB then init
-    if (!$favored_access_control) {
-      $favored_access_control = array();
-      foreach($role_names as $role_name){
-        $favored_access_control[$role_name] = array();
-      }
+  public function fav_current_user_can($request) {
+		$perm = $request->get_param( 'permission' );
+    if (current_user_can($perm)){
+      return new WP_REST_Response(null, 200);
     }
 
-    // add non-existing new role in case not in favored_access_control
-    foreach($role_names as $role_name){
-      if (is_null($favored_access_control[$role_name])){
-        $favored_access_control[$role_name] = array();
+    return new WP_REST_Response(array(
+      'error' => "You don't have sufficient permission",
+      'errorCode' => 403,
+    ), 403);
+  }
+
+	public function fetch_access_control() {
+    $favored_access_control = array();
+    $permissions = $this->fav_get_permissions();
+
+    $all_roles = wp_roles();
+    
+    $role_names = array();
+    foreach ( $all_roles->roles as $role_code=>$r_value ) {
+      if (!is_array($r_value)) continue;
+      array_push($role_names,$r_value[$role_code]);
+      $favored_access_control[$role_code] = array(
+        "roleName" => $r_value["name"],
+        "permissions" => array(),
+      );
+      
+      foreach ($permissions as $permCode => $permName) {
+        if (
+          !!$r_value["capabilities"] && 
+            array_key_exists($permCode, $r_value["capabilities"]) &&
+            !!$r_value["capabilities"][$permCode]
+        ) {
+          array_push($favored_access_control[$role_code]["permissions"],$permName);
+        }
       }
     }
 
@@ -1047,6 +1065,19 @@ class Favored_Admin {
 
 		$success = false;
 		$error = '';
+
+    $permissions = $this->fav_get_permissions();
+    foreach($body as $role => $reqPermissions){
+      $roleObj = get_role($role);
+
+      foreach($permissions as $perm){
+        if (in_array($perm, $reqPermissions)){
+          $roleObj->add_cap(strtolower($perm));
+        }else{
+          $roleObj->remove_cap(strtolower($perm));
+        }
+      }
+    }
 
 		try {
 			update_option('favored_access_control', $body);
@@ -1061,40 +1092,13 @@ class Favored_Admin {
 		);
 	}
 
-  /**
-   * Checks if a value exists in an array
-   * @param string $role_name <p>
-   * The role name to check against user's roles.
-   * </p>
-   * <p>
-   * Current existing role_name has "Administrator"
-   * and "Shop manager".
-   * </p>
-   * @param string $permission <p>
-   * The permission to be checked whether in 
-   * array of $favored_access_control[$role_name] or not.
-   * Current existing permission has "Read" and "Write".
-   * </p>
-   * @return bool true if user's roles match $role_name & $permission is in $favored_access_control[$role_name],
-   */
-  function user_role_has_permission($role_name, $permission) {
-    $current_user_id = get_current_user_id();
-    $user_meta = get_userdata($current_user_id);
-    $user_roles = $user_meta->roles;
-    $favored_access_control = get_option('favored_access_control');
-    
-    return in_array(strtolower($role_name), $user_roles) && in_array($permission, $favored_access_control[ucfirst($role_name)]);
-  }
-
 	public function fetch_members( $request ) {
-    // $admin_can_read = $this->user_role_has_permission("Administrator", "Read");
-    // $shop_manager_can_read = $this->user_role_has_permission("Shop manager", "Read");
-    // if (!$admin_can_read && !$shop_manager_can_read){
-    //   return new WP_REST_Response(array(
-    //     'error' => "You don't have sufficient permission",
-    //     'errorCode' => 403,
-    //   ), 403);
-    // }
+    if (!current_user_can("read")){
+      return new WP_REST_Response(array(
+        'error' => "You don't have sufficient permission",
+        'errorCode' => 403,
+      ), 403);
+    }
 
 		$page = $request->get_param( 'page' ) ?? 1;
 		$page_size = $request->get_param( 'page_size' ) ?? 20;

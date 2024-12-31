@@ -212,6 +212,10 @@ function AclForm({ nonce }) {
 
   const { mutate, isPending: isMutating } = useMutation({
     mutationFn: async (data) => {
+      const reqData = Object.keys(data).reduce((acc, roleName) => {
+        acc[roleName] = data[roleName].permissions
+        return acc
+      }, {})
       const result = await apiFetch({
         path: '/fav/v1/settings/access-control',
         method: 'POST',
@@ -219,7 +223,7 @@ function AclForm({ nonce }) {
           'X-WP-Nonce': nonce,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(data),
+        body: JSON.stringify(reqData),
       });
 
       return result;
@@ -247,25 +251,35 @@ function AclForm({ nonce }) {
               <div key={i} className='text-center font-bold p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{perm}</div>
             ))
           }
-          {Object.keys(roles).map((role, i) => {
+          {Object.keys(roles).map((roleCode, i) => {
             return (
               <React.Fragment key={i}>
-                <div key={i} className='h-8 font-bold text-end p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{role}</div>
+                <div key={i} className='h-8 font-bold text-end p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{roles[roleCode]?.roleName}</div>
                 {permissions.map((perm, i) => (
                   <div key={i} className='text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>
                     <input
                       type="checkbox"
                       name={perm}
-                      checked={roles[role].find(thisPerm => thisPerm === perm)}
+                      checked={roles[roleCode]?.permissions.find(thisPerm => thisPerm === perm)}
                       onChange={(e) => {
                         const { checked, name } = e.target
                         if (checked) { // add checked permission
-                          setRoles(roles => ({ ...roles, [role]: [...roles[role], name] }))
+                          setRoles(roles => ({
+                            ...roles,
+                            [roleCode]: {
+                              ...roles[roleCode],
+                              permissions: [...roles[roleCode]?.permissions, name]
+                            }
+                          }))
                         } else { // remove permission
                           setRoles(roles => ({
-                            ...roles, [role]: roles[role].filter((exisitingPermission) => {
-                              return exisitingPermission !== name
-                            })
+                            ...roles,
+                            [roleCode]: {
+                              ...roles[roleCode],
+                              permissions: roles[roleCode]?.permissions.filter((exisitingPermission) => {
+                                return exisitingPermission !== name
+                              })
+                            }
                           }))
                         }
                       }}
