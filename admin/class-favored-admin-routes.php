@@ -66,6 +66,24 @@ class Favored_Admin_Routes {
 			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
 		) );
 
+		register_rest_route( 'fav/v1', '/settings/access-control', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fetch_access_control' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
+		register_rest_route( 'fav/v1', '/settings/access-control', array(
+			'methods' => 'POST',
+			'callback' => array( $this, 'update_access_control' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
+		register_rest_route( 'fav/v1', '/permissions-check', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fav_current_user_can' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
 		register_rest_route( 'fav/v1', '/members', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'fetch_members' ),
@@ -335,6 +353,88 @@ class Favored_Admin_Routes {
 
 			$success = true;
 
+		} catch(Exception $e) {
+			echo esc_html( $e->getMessage() );
+		}
+
+		return array(
+			'success' => $success,
+			'error' => $error,
+		);
+	}
+
+	public function fav_get_permissions() {
+    return array(
+      "read"=>"Read",
+      "write"=>"Write",
+      "delete"=>"Delete",
+    );
+  }
+
+  public function fav_current_user_can($request) {
+		$perm = $request->get_param( 'permission' );
+    if (current_user_can($perm)){
+      return new WP_REST_Response(array('data'=>"Authorised"), 200);
+    }
+
+    return new WP_REST_Response(array(
+      'error' => "You don't have sufficient permission",
+      'errorCode' => 403,
+    ), 403);
+  }
+
+	public function fetch_access_control() {
+    $favored_access_control = array();
+    $permissions = $this->fav_get_permissions();
+
+    $all_roles = wp_roles();
+    
+    $role_names = array();
+    foreach ( $all_roles->roles as $role_code=>$r_value ) {
+      if (!is_array($r_value)) continue;
+      array_push($role_names,$r_value[$role_code]);
+      $favored_access_control[$role_code] = array(
+        "roleName" => $r_value["name"],
+        "permissions" => array(),
+      );
+      
+      foreach ($permissions as $permCode => $permName) {
+        if (
+          !!$r_value["capabilities"] && 
+            array_key_exists($permCode, $r_value["capabilities"]) &&
+            !!$r_value["capabilities"][$permCode]
+        ) {
+          array_push($favored_access_control[$role_code]["permissions"],$permName);
+        }
+      }
+    }
+
+    $retrieveBody = json_encode( $favored_access_control );
+		return json_decode( $retrieveBody, true );
+	}
+
+	public function update_access_control($request) {
+		$body = $request->get_json_params();
+
+		$success = false;
+		$error = '';
+
+    $permissions = $this->fav_get_permissions();
+    foreach($body as $role => $reqPermissions){
+      $roleObj = get_role($role);
+
+      foreach($permissions as $perm){
+        if (in_array($perm, $reqPermissions)){
+          $roleObj->add_cap(strtolower($perm));
+        }else{
+          $roleObj->remove_cap(strtolower($perm));
+        }
+      }
+    }
+
+		try {
+			update_option('favored_access_control', $body);
+			$success = true;
 		} catch(Exception $e) {
 			echo esc_html( $e->getMessage() );
 		}
