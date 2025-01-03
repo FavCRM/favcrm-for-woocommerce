@@ -40,6 +40,7 @@ if ( ! defined( 'WPINC' ) ) {
  */
 define( 'FAVORED_VERSION', '1.0.8' );
 define( 'FAVORED_BASE_PATH', plugin_dir_path( __FILE__ ) );
+define( 'FAVORED_PERMISSIONS', array( 'read_favored', 'write_favored', 'delete_favored' ) );
 
 /**
  * The code that runs during plugin activation.

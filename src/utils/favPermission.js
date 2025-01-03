@@ -3,44 +3,44 @@ import { useQuery } from '@tanstack/react-query';
 import apiFetch from '@wordpress/api-fetch';
 
 function useUserCan(nonce) {
-  try {
-    // const [isLoading, setIsLoading] = useState(true)
-    const [userCan, setUserCan] = useState({
-      read: false,
-      write: false,
-      delete: false,
-    })
+  const [userCan, setUserCan] = useState({
+    read: false,
+    write: false,
+    delete: false,
+  })
 
-    const { data, isLoading, error } = useQuery({
-      queryKey: ['readPermission'],
-      queryFn: async () => {
-        const result = await apiFetch({
-          path: `/fav/v1/permissions-check`,
-          headers: {
-            'X-WP-Nonce': nonce,
-          }
-        });
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['readPermission'],
+    queryFn: async () => {
+      const result = await apiFetch({
+        path: `/fav/v1/permissions-check`,
+        headers: {
+          'X-WP-Nonce': nonce,
+        }
+      });
 
-        return result;
-      },
-      retry: false,
-    });
+      return result;
+    },
+    retry: false,
+  });
 
-    useEffect(() => {
-      if (isLoading) {
-        return
-      }
-      const { data: userPermissions } = data
-      setUserCan(() => ({
-        ...userPermissions
-      }))
-    }, [isLoading]);
+  useEffect(() => {
+    if (isLoading) {
+      return
+    }
 
-    return { isLoading, userCan }
+    const { data: userPermissions } = data
 
-  } catch (e) {
-    throw e
-  }
+    const updatedPermissions = {
+      read: userPermissions.read_favored,
+      write: userPermissions.write_favored,
+      delete: userPermissions.delete_favored,
+    }
+
+    setUserCan(updatedPermissions);
+  }, [isLoading]);
+
+  return { isLoading, userCan }
 }
 
 export { useUserCan }

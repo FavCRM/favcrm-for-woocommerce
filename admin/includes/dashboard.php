@@ -9,7 +9,7 @@ if ( ! $is_logged_in ) {
     exit;
 }
 
-if ( ! current_user_can( 'manage_options' ) ) {
+if ( ! current_user_can( 'read_favored' ) ) {
    wp_die( esc_html__( 'You do not have sufficient capabilities to access this page.', 'favcrm-for-woocommerce' ) );
 }
 

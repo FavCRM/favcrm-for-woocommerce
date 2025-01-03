@@ -365,27 +365,23 @@ class Favored_Admin_Routes {
 
 	public function fav_get_permissions() {
 
-		return array(
-			"read" => "Read",
-			"write" => "Write",
-			"delete" => "Delete",
-		);
+		return FAVORED_PERMISSIONS;
 
 	}
 
-  	public function fav_current_user_can($request) {
+  	public function fav_current_user_can( $request ) {
 
 		$user_permissions = array(
-			"read" => false,
-			"write" => false,
-			"delete" => false,
+			"read_favored" => false,
+			"write_favored" => false,
+			"delete_favored" => false,
 		);
 
 
     	$fav_permissions = $this->fav_get_permissions();
 
-		foreach( $fav_permissions as $key => $val ) {
-			$user_permissions[$key] = current_user_can( $key );
+		foreach( $fav_permissions as $permission ) {
+			$user_permissions[$permission] = current_user_can( $permission );
 		}
 
 		return new WP_REST_Response( array( 'data' => $user_permissions ), 200 );
@@ -399,28 +395,19 @@ class Favored_Admin_Routes {
 
 		$all_roles = wp_roles();
 
-		$role_names = array();
+		foreach ( $all_roles->roles as $role_code => $value ) {
 
-		foreach ( $all_roles->roles as $role_code => $r_value ) {
-
-			if ( !is_array( $r_value ) ) continue;
-
-			array_push( $role_names, $r_value[$role_code] );
-
-			$favored_access_control[$role_code] = array(
-				"roleName" => $r_value["name"],
+			$favored_access_control [$role_code ] = array(
+				"name" => $value["name"],
 				"permissions" => array(),
 			);
 
-			foreach ( $permissions as $permCode => $permName ) {
+			$role = get_role( $role_code );
 
-				if (
-					!!$r_value["capabilities"] &&
-					array_key_exists( $permCode, $r_value["capabilities"] ) &&
-					!!$r_value["capabilities"][$permCode]
-				) {
-					array_push( $favored_access_control[$role_code]["permissions"], $permName );
-				}
+			foreach ( $permissions as $permission ) {
+
+				$favored_access_control[ $role_code ][ 'permissions' ][ $permission ] = $role->has_cap( strtolower( $permission ) );
+
 			}
 
 		}
@@ -433,29 +420,33 @@ class Favored_Admin_Routes {
 		$body = $request->get_json_params();
 
 		$success = false;
-		$error = '';
 
     	$permissions = $this->fav_get_permissions();
 
-    	foreach( $body as $role => $reqPermissions ) {
+    	foreach( $body as $role => $value ) {
 
 			$roleObj = get_role( $role );
 
       		foreach( $permissions as $perm ) {
 
-				if ( in_array( $perm, $reqPermissions ) ) {
-          			$roleObj->add_cap(strtolower($perm));
+				if ( $value['permissions'][$perm] ) {
+          			$roleObj->add_cap( strtolower( $perm ) );
         		} else {
-          			$roleObj->remove_cap(strtolower($perm));
+          			$roleObj->remove_cap( strtolower( $perm ) );
         		}
       		}
+
     	}
 
-    	$success = true;
+		// Make sure the administrator role has all permissions
+		$administrator = get_role( 'administrator' );
+
+		foreach( $permissions as $perm ) {
+			$administrator->add_cap( strtolower( $perm ) );
+		}
 
 		return array(
-			'success' => $success,
-			'error' => $error,
+			'success' => true,
 		);
 
 	}

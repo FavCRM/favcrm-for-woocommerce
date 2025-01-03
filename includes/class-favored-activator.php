@@ -66,5 +66,11 @@ class Favored_Activator
       // Insert the post into the database
       $post_id = wp_insert_post( $register_page );
     }
+
+    $administrator = get_role('administrator');
+
+    foreach( FAVORED_PERMISSIONS as $permission ) {
+      $administrator->add_cap($permission);
+    }
   }
 }

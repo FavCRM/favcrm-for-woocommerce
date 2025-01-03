@@ -216,10 +216,6 @@ function AclForm({ nonce }) {
 
   const { mutate, isPending: isMutating } = useMutation({
     mutationFn: async (data) => {
-      const reqData = Object.keys(data).reduce((acc, roleName) => {
-        acc[roleName] = data[roleName].permissions
-        return acc
-      }, {})
       const result = await apiFetch({
         path: '/fav/v1/settings/access-control',
         method: 'POST',
@@ -227,7 +223,7 @@ function AclForm({ nonce }) {
           'X-WP-Nonce': nonce,
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(reqData),
+        body: JSON.stringify(data),
       });
 
       return result;
@@ -269,30 +265,25 @@ function AclForm({ nonce }) {
             Object.keys(roles).map((roleCode, i) => {
               return (
                 <React.Fragment key={i}>
-                  <div key={i} className="font-bold border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">{roles[roleCode]?.roleName}</div>
+                  <div key={i} className="font-bold border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">{roles[roleCode]?.name}</div>
                   {
                     permissions.map(perm => (
                       <div key={perm} className="flex items-center justify-center border border-solid border-slate-300 border-t-0 border-l-0">
                         <input
                           type="checkbox"
                           name={perm}
-                          checked={roles[roleCode]?.permissions.find(thisPerm => thisPerm === perm)}
+                          checked={roles[roleCode]?.permissions[`${perm.toLowerCase()}_favored`]}
                           disabled={roleCode === 'administrator'}
                           onChange={(e) => {
-                            const { checked, name } = e.target
-                            const permissions = checked
-                              ? [...roles[roleCode]?.permissions, name]
-                              : roles[roleCode]?.permissions.filter((exisitingPermission) => {
-                                return exisitingPermission !== name
-                              })
+                            const { checked } = e.target
 
-                            setRoles(roles => ({
-                              ...roles,
-                              [roleCode]: {
-                                ...roles[roleCode],
-                                permissions,
-                              }
-                            }))
+                            setRoles(prevRoles => {
+                              const updatedRoles = { ...prevRoles }
+
+                              updatedRoles[roleCode].permissions[`${perm.toLowerCase()}_favored`] = checked;
+
+                              return updatedRoles;
+                            });
                           }}
                         />
                       </div>
@@ -302,7 +293,7 @@ function AclForm({ nonce }) {
               )
             })
           }
-          <div className="mt-2 pl-[220px]">
+          <div className="mt-4 pl-[220px]">
             <button
               className="button button-primary w-fit mx-auto"
               type="submit"
