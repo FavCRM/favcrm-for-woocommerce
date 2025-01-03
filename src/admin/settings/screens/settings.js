@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
@@ -210,7 +210,6 @@ function AclForm({ nonce }) {
         }
       });
 
-      setRoles(() => ({ ...result }))
       return result;
     }
   });
@@ -240,63 +239,70 @@ function AclForm({ nonce }) {
     }
   });
 
-  const [roles, setRoles] = useState(data || {});
+  const [roles, setRoles] = useState({});
 
-  return !isLoading && (
+  useEffect(() => {
+    if (data) {
+      setRoles(data)
+    }
+  }, [data])
+
+  if (isLoading) {
+    return null;
+  }
+
+  return (
     <form onSubmit={(e) => {
       e.preventDefault()
       mutate(roles)
     }}>
-      <section className='w-3/5'>
+      <section className="py-6 w-3/5">
         <h1>Access Control</h1>
-        {/* <div className={`grid grid-cols-${permissions.length + 1}`}> */}
-        <div className={`grid grid-cols-4`}>
-          <div className='border border-solid border-slate-300 border-t-0 border-l-0'>&nbsp;</div>
+        <div className="grid grid-cols-[210px_1fr_1fr_1fr]">
+          <div className="border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">&nbsp;</div>
           {
             permissions.map((perm, i) => (
-              <div key={i} className='text-center font-bold p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{perm}</div>
+              <div key={i} className="text-center font-bold p-[20px_10px_20px_0] border border-solid border-slate-300 border-t-0 border-l-0">{perm}</div>
             ))
           }
-          {Object.keys(roles).map((roleCode, i) => {
-            return (
-              <React.Fragment key={i}>
-                <div key={i} className='h-6 font-bold text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>{roles[roleCode]?.roleName}</div>
-                {permissions.map((perm, i) => (
-                  <div key={i} className='text-center p-4 border border-solid border-slate-300 border-t-0 border-l-0'>
-                    <input
-                      type="checkbox"
-                      name={perm}
-                      checked={roles[roleCode]?.permissions.find(thisPerm => thisPerm === perm)}
-                      onChange={(e) => {
-                        const { checked, name } = e.target
-                        if (checked) { // add checked permission
-                          setRoles(roles => ({
-                            ...roles,
-                            [roleCode]: {
-                              ...roles[roleCode],
-                              permissions: [...roles[roleCode]?.permissions, name]
-                            }
-                          }))
-                        } else { // remove permission
-                          setRoles(roles => ({
-                            ...roles,
-                            [roleCode]: {
-                              ...roles[roleCode],
-                              permissions: roles[roleCode]?.permissions.filter((exisitingPermission) => {
+          {
+            Object.keys(roles).map((roleCode, i) => {
+              return (
+                <React.Fragment key={i}>
+                  <div key={i} className="font-bold border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">{roles[roleCode]?.roleName}</div>
+                  {
+                    permissions.map(perm => (
+                      <div key={perm} className="flex items-center justify-center border border-solid border-slate-300 border-t-0 border-l-0">
+                        <input
+                          type="checkbox"
+                          name={perm}
+                          checked={roles[roleCode]?.permissions.find(thisPerm => thisPerm === perm)}
+                          disabled={roleCode === 'administrator'}
+                          onChange={(e) => {
+                            const { checked, name } = e.target
+                            const permissions = checked
+                              ? [...roles[roleCode]?.permissions, name]
+                              : roles[roleCode]?.permissions.filter((exisitingPermission) => {
                                 return exisitingPermission !== name
                               })
-                            }
-                          }))
-                        }
-                      }}
-                    />
-                  </div>
-                ))}
-              </React.Fragment>
-            )
-          })}
-          <div></div>
-          <div className='mt-2'>
+
+                            setRoles(roles => ({
+                              ...roles,
+                              [roleCode]: {
+                                ...roles[roleCode],
+                                permissions,
+                              }
+                            }))
+                          }}
+                        />
+                      </div>
+                    ))
+                  }
+                </React.Fragment>
+              )
+            })
+          }
+          <div className="mt-2 pl-[220px]">
             <button
               className="button button-primary w-fit mx-auto"
               type="submit"
@@ -313,7 +319,6 @@ function AclForm({ nonce }) {
               }
             </button>
           </div>
-          <div></div>
         </div>
       </section>
     </form>

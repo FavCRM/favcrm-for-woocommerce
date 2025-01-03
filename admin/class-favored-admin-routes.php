@@ -364,85 +364,100 @@ class Favored_Admin_Routes {
 	}
 
 	public function fav_get_permissions() {
-    return array(
-      "read"=>"Read",
-      "write"=>"Write",
-      "delete"=>"Delete",
-    );
-  }
 
-  public function fav_current_user_can($request) {
-    $user_permissions = array(
-      "read"=>false,
-      "write"=>false,
-      "delete"=>false,
-    );
+		return array(
+			"read" => "Read",
+			"write" => "Write",
+			"delete" => "Delete",
+		);
 
-    $fav_permissions = $this->fav_get_permissions();
+	}
 
-    foreach($fav_permissions as $key=>$val){
-      if (current_user_can($key)) {
-        $user_permissions[$key] = true;
-      }
-    }
-    
-    return new WP_REST_Response(array('data'=>$user_permissions), 200);
-  }
+  	public function fav_current_user_can($request) {
+
+		$user_permissions = array(
+			"read" => false,
+			"write" => false,
+			"delete" => false,
+		);
+
+
+    	$fav_permissions = $this->fav_get_permissions();
+
+		foreach( $fav_permissions as $key => $val ) {
+			$user_permissions[$key] = current_user_can( $key );
+		}
+
+		return new WP_REST_Response( array( 'data' => $user_permissions ), 200 );
+
+  	}
 
 	public function fetch_access_control() {
-    $favored_access_control = array();
-    $permissions = $this->fav_get_permissions();
 
-    $all_roles = wp_roles();
-    
-    $role_names = array();
-    foreach ( $all_roles->roles as $role_code=>$r_value ) {
-      if (!is_array($r_value)) continue;
-      array_push($role_names,$r_value[$role_code]);
-      $favored_access_control[$role_code] = array(
-        "roleName" => $r_value["name"],
-        "permissions" => array(),
-      );
-      
-      foreach ($permissions as $permCode => $permName) {
-        if (
-          !!$r_value["capabilities"] && 
-            array_key_exists($permCode, $r_value["capabilities"]) &&
-            !!$r_value["capabilities"][$permCode]
-        ) {
-          array_push($favored_access_control[$role_code]["permissions"],$permName);
-        }
-      }
-    }
+		$favored_access_control = array();
+		$permissions = $this->fav_get_permissions();
 
-    return $favored_access_control;
+		$all_roles = wp_roles();
+
+		$role_names = array();
+
+		foreach ( $all_roles->roles as $role_code => $r_value ) {
+
+			if ( !is_array( $r_value ) ) continue;
+
+			array_push( $role_names, $r_value[$role_code] );
+
+			$favored_access_control[$role_code] = array(
+				"roleName" => $r_value["name"],
+				"permissions" => array(),
+			);
+
+			foreach ( $permissions as $permCode => $permName ) {
+
+				if (
+					!!$r_value["capabilities"] &&
+					array_key_exists( $permCode, $r_value["capabilities"] ) &&
+					!!$r_value["capabilities"][$permCode]
+				) {
+					array_push( $favored_access_control[$role_code]["permissions"], $permName );
+				}
+			}
+
+		}
+
+    	return $favored_access_control;
 	}
 
 	public function update_access_control($request) {
+
 		$body = $request->get_json_params();
 
 		$success = false;
 		$error = '';
 
-    $permissions = $this->fav_get_permissions();
-    foreach($body as $role => $reqPermissions){
-      $roleObj = get_role($role);
+    	$permissions = $this->fav_get_permissions();
 
-      foreach($permissions as $perm){
-        if (in_array($perm, $reqPermissions)){
-          $roleObj->add_cap(strtolower($perm));
-        }else{
-          $roleObj->remove_cap(strtolower($perm));
-        }
-      }
-    }
+    	foreach( $body as $role => $reqPermissions ) {
 
-    $success = true;
+			$roleObj = get_role( $role );
+
+      		foreach( $permissions as $perm ) {
+
+				if ( in_array( $perm, $reqPermissions ) ) {
+          			$roleObj->add_cap(strtolower($perm));
+        		} else {
+          			$roleObj->remove_cap(strtolower($perm));
+        		}
+      		}
+    	}
+
+    	$success = true;
 
 		return array(
 			'success' => $success,
 			'error' => $error,
 		);
+
 	}
 
 	public function fetch_members( $request ) {
