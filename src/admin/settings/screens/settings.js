@@ -1,25 +1,29 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import apiFetch from '@wordpress/api-fetch';
 import { useQuery, useMutation } from '@tanstack/react-query';
 import { useForm } from 'react-hook-form';
-
+import { useUserCan } from '../../../utils/favPermission';
 import LoadingSpinner from '../../../components/LoadingSpinner';
 
 const { __ } = wp.i18n;
 
 export default function Settings({ nonce }) {
-  const { data, isLoading, error } = useQuery({ queryKey: ['settings'], queryFn: async () => {
-    const result = await apiFetch({
-      path: '/fav/v1/settings',
-      headers: {
-        'X-WP-Nonce': nonce,
-      }
-    });
+  const { isLoading: permissionsCheckLoading, userCan } = useUserCan(nonce);
 
-    return result;
-  }});
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['settings'], queryFn: async () => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings',
+        headers: {
+          'X-WP-Nonce': nonce,
+        }
+      });
 
-  if (!data || isLoading) {
+      return result;
+    }
+  });
+
+  if (!data || isLoading || permissionsCheckLoading) {
     return (
       <div className="flex">
         <LoadingSpinner
@@ -35,11 +39,17 @@ export default function Settings({ nonce }) {
     <SettingsContent
       nonce={nonce}
       settings={data}
-    />
+      userCan={userCan}
+    >
+      <AclForm
+        nonce={nonce}
+        userCan={userCan}
+      />
+    </SettingsContent>
   )
 }
 
-function SettingsContent({ nonce, settings }) {
+function SettingsContent({ children, nonce, settings, userCan }) {
   const [error, setError] = useState('');
   const {
     register,
@@ -48,6 +58,7 @@ function SettingsContent({ nonce, settings }) {
   } = useForm({
     defaultValues: settings,
   });
+
   const { mutate, isPending: isMutating } = useMutation({
     mutationFn: async (data) => {
       const result = await apiFetch({
@@ -82,9 +93,29 @@ function SettingsContent({ nonce, settings }) {
       },
     })
 
-    console.log(result)
     location.href = '/wp-admin/admin.php?page=favcrm-for-register';
   }
+
+  const { mutate: aclMutate, isPending: isAclMutating } = useMutation({
+    mutationFn: async (data) => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        method: 'POST',
+        headers: {
+          'X-WP-Nonce': nonce,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      return result;
+    },
+    onSuccess: (data) => {
+      if (data?.errorCode) {
+        setError(data.error);
+      }
+    }
+  });
 
   return (
     <div>
@@ -115,7 +146,7 @@ function SettingsContent({ nonce, settings }) {
                     id="pointsToCashConversionRate"
                     type="text"
                     className="regular-text mb-1"
-                    {...register('pointsToCashConversionRate', { required: __('Required', 'favcrm-for-woocommerce')})}
+                    {...register('pointsToCashConversionRate', { required: __('Required', 'favcrm-for-woocommerce') })}
                   />
                   <div>Note: Enter 0 to disable</div>
                   {
@@ -137,15 +168,15 @@ function SettingsContent({ nonce, settings }) {
                   <button
                     className="button button-primary"
                     type="submit"
-                    disabled={isMutating}
+                    disabled={isMutating || !userCan.write}
                   >
                     {
                       isMutating
                         ? <LoadingSpinner
-                            isLoading={isMutating}
-                            color="text-black"
-                            size="size-4"
-                          />
+                          isLoading={isMutating}
+                          color="text-black"
+                          size="size-4"
+                        />
                         : __('Save', 'favcrm-for-woocommerce')
                     }
                   </button>
@@ -154,7 +185,133 @@ function SettingsContent({ nonce, settings }) {
             </tbody>
           </table>
         </form>
+
+        <div className='w-full h-1 border border-l-0 border-r-0 border-t-0 border-b-1 border-slate-300 border-solid'></div>
+
+        {children}
       </div>
     </div>
+  )
+}
+
+function AclForm({ nonce }) {
+  const permissions = [
+    "Read",
+    "Write",
+    "Delete",
+  ]
+
+  const { data, isLoading, error: aclError } = useQuery({
+    queryKey: ['access-control'], queryFn: async () => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        headers: {
+          'X-WP-Nonce': nonce,
+        }
+      });
+
+      return result;
+    }
+  });
+
+  const { mutate, isPending: isMutating } = useMutation({
+    mutationFn: async (data) => {
+      const result = await apiFetch({
+        path: '/fav/v1/settings/access-control',
+        method: 'POST',
+        headers: {
+          'X-WP-Nonce': nonce,
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(data),
+      });
+
+      return result;
+    },
+    onSuccess: (data) => {
+      if (data?.errorCode) {
+        setError(data.error);
+      }
+    }
+  });
+
+  const [roles, setRoles] = useState({});
+
+  useEffect(() => {
+    if (data) {
+      setRoles(data)
+    }
+  }, [data])
+
+  if (isLoading) {
+    return null;
+  }
+
+  return (
+    <form onSubmit={(e) => {
+      e.preventDefault()
+      mutate(roles)
+    }}>
+      <section className="py-6 w-3/5">
+        <h1>Access Control</h1>
+        <div className="grid grid-cols-[210px_1fr_1fr_1fr]">
+          <div className="border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">&nbsp;</div>
+          {
+            permissions.map((perm, i) => (
+              <div key={i} className="text-center font-bold p-[20px_10px_20px_0] border border-solid border-slate-300 border-t-0 border-l-0">{perm}</div>
+            ))
+          }
+          {
+            Object.keys(roles).map((roleCode, i) => {
+              return (
+                <React.Fragment key={i}>
+                  <div key={i} className="font-bold border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">{roles[roleCode]?.name}</div>
+                  {
+                    permissions.map(perm => (
+                      <div key={perm} className="flex items-center justify-center border border-solid border-slate-300 border-t-0 border-l-0">
+                        <input
+                          type="checkbox"
+                          name={perm}
+                          checked={roles[roleCode]?.permissions[`${perm.toLowerCase()}_favored`]}
+                          disabled={roleCode === 'administrator'}
+                          onChange={(e) => {
+                            const { checked } = e.target
+
+                            setRoles(prevRoles => {
+                              const updatedRoles = { ...prevRoles }
+
+                              updatedRoles[roleCode].permissions[`${perm.toLowerCase()}_favored`] = checked;
+
+                              return updatedRoles;
+                            });
+                          }}
+                        />
+                      </div>
+                    ))
+                  }
+                </React.Fragment>
+              )
+            })
+          }
+          <div className="mt-4 pl-[220px]">
+            <button
+              className="button button-primary w-fit mx-auto"
+              type="submit"
+              disabled={isMutating}
+            >
+              {
+                isMutating
+                  ? <LoadingSpinner
+                    isLoading={isMutating}
+                    color="text-black"
+                    size="size-4"
+                  /> :
+                  __('Set Permission', 'favcrm-for-woocommerce')
+              }
+            </button>
+          </div>
+        </div>
+      </section>
+    </form>
   )
 }

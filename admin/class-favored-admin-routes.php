@@ -66,6 +66,24 @@ class Favored_Admin_Routes {
 			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
 		) );
 
+		register_rest_route( 'fav/v1', '/settings/access-control', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fetch_access_control' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
+		register_rest_route( 'fav/v1', '/settings/access-control', array(
+			'methods' => 'POST',
+			'callback' => array( $this, 'update_access_control' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
+		register_rest_route( 'fav/v1', '/permissions-check', array(
+			'methods' => 'GET',
+			'callback' => array( $this, 'fav_current_user_can' ),
+			'permission_callback' => array( $this, 'custom_route_permission_callback' ),
+		) );
+
 		register_rest_route( 'fav/v1', '/members', array(
 			'methods' => 'GET',
 			'callback' => array( $this, 'fetch_members' ),
@@ -343,6 +361,94 @@ class Favored_Admin_Routes {
 			'success' => $success,
 			'error' => $error,
 		);
+	}
+
+	public function fav_get_permissions() {
+
+		return FAVORED_PERMISSIONS;
+
+	}
+
+  	public function fav_current_user_can( $request ) {
+
+		$user_permissions = array(
+			"read_favored" => false,
+			"write_favored" => false,
+			"delete_favored" => false,
+		);
+
+
+    	$fav_permissions = $this->fav_get_permissions();
+
+		foreach( $fav_permissions as $permission ) {
+			$user_permissions[$permission] = current_user_can( $permission );
+		}
+
+		return new WP_REST_Response( array( 'data' => $user_permissions ), 200 );
+
+  	}
+
+	public function fetch_access_control() {
+
+		$favored_access_control = array();
+		$permissions = $this->fav_get_permissions();
+
+		$all_roles = wp_roles();
+
+		foreach ( $all_roles->roles as $role_code => $value ) {
+
+			$favored_access_control [$role_code ] = array(
+				"name" => $value["name"],
+				"permissions" => array(),
+			);
+
+			$role = get_role( $role_code );
+
+			foreach ( $permissions as $permission ) {
+
+				$favored_access_control[ $role_code ][ 'permissions' ][ $permission ] = $role->has_cap( strtolower( $permission ) );
+
+			}
+
+		}
+
+    	return $favored_access_control;
+	}
+
+	public function update_access_control($request) {
+
+		$body = $request->get_json_params();
+
+		$success = false;
+
+    	$permissions = $this->fav_get_permissions();
+
+    	foreach( $body as $role => $value ) {
+
+			$roleObj = get_role( $role );
+
+      		foreach( $permissions as $perm ) {
+
+				if ( $value['permissions'][$perm] ) {
+          			$roleObj->add_cap( strtolower( $perm ) );
+        		} else {
+          			$roleObj->remove_cap( strtolower( $perm ) );
+        		}
+      		}
+
+    	}
+
+		// Make sure the administrator role has all permissions
+		$administrator = get_role( 'administrator' );
+
+		foreach( $permissions as $perm ) {
+			$administrator->add_cap( strtolower( $perm ) );
+		}
+
+		return array(
+			'success' => true,
+		);
+
 	}
 
 	public function fetch_members( $request ) {

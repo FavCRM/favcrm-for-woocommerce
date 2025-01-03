@@ -14,6 +14,7 @@ import { useFetch } from '../../services/useFetch';
 import { countries } from 'country-codes-flags-phone-codes';
 import { ComboBox } from '../../../components/ComboBox'
 import { getMonths, getDayByMonth } from '../../../utils/monthDay';
+import { useUserCan } from "../../../utils/favPermission";
 
 dayjs.extend(customParseFormat);
 
@@ -24,6 +25,7 @@ export default function MemberForm({ nonce }) {
   const navigate = useNavigate();
   const { memberId } = useParams();
   const [locale, setLocale] = useState('en')
+  const { isLoading: permissionsCheckLoading, userCan } = useUserCan(nonce);
 
   const { data: tiers, isLoading: tiersLoading, error: tiersError, refetch: tiersRefresh } = useFetch("membership-tiers", `/fav/v1/membership-tiers`, nonce)
   const { data: thisMember, isLoading: memberLoading, error: memberError, refetch: memberRefresh } = useFetch("member", `/fav/v1/members/${memberId}`, nonce, !!memberId)
@@ -104,7 +106,7 @@ export default function MemberForm({ nonce }) {
     mutate(data);
   }
 
-  if ((tiersLoading || memberLoading)) {
+  if ((tiersLoading || memberLoading || permissionsCheckLoading)) {
     return null;
   }
 
@@ -125,8 +127,9 @@ export default function MemberForm({ nonce }) {
           memberId && (
             <div className="my-auto">
               <button
-                className="cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800"
+                className={`${!!userCan.delete ? 'cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800' : 'p-1 bg-white text-gray-300 rounded border border-solid'}`}
                 type="button"
+                disabled={!userCan.delete}
                 onClick={async () => {
                   if (!confirm(`You are about to delete member ${defaultValues?.name}, click confirm to delete.`)) {
                     return
@@ -366,7 +369,7 @@ export default function MemberForm({ nonce }) {
                     <button
                       className="button button-primary"
                       type="submit"
-                      disabled={isMutating}
+                      disabled={isMutating || !userCan.write}
                     >
                       {
                         isMutating

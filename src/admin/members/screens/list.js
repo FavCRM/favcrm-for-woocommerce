@@ -4,8 +4,11 @@ import dayjs from 'dayjs';
 import { Link } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { Pagination } from '../../common/pagination';
+import { useUserCan } from '../../../utils/favPermission';
 
 export default function MemberList({ nonce }) {
+  const { isLoading: permissionsCheckLoading, userCan } = useUserCan(nonce);
+
   const { data, isLoading, error, refetch } = useQuery({
     queryKey: ['members', querystring],
     queryFn: async () => {
@@ -51,7 +54,7 @@ export default function MemberList({ nonce }) {
     <div>
       <div className="mb-2 flex gap-2">
         <h1 className="wp-heading-inline my-auto pt-0">Member List</h1>
-        <Link to="/edit" className="page-title-action mt-auto">Add New Member</Link>
+        <Link to="/edit" className={`mt-auto p-2 ${!!userCan.write ? 'bg-white text-blue-800 rounded border border-solid no-underline' : 'pointer-events-none no-underline bg-white text-gray-300 rounded border border-solid'}`}>Add New Member</Link>
         <div className="relative my-auto h-6">
           <label htmlFor="Search" className="sr-only">Search</label>
           <input
@@ -115,7 +118,7 @@ export default function MemberList({ nonce }) {
 
         <tbody id="the-list">
           {
-            isLoading && Array(10).fill(0).map((_, index) => (
+            isLoading && permissionsCheckLoading && Array(10).fill(0).map((_, index) => (
               <tr key={index}>
                 <td>
                   <div className="animate-pulse rounded-md bg-[#AAA] h-6"></div>
@@ -149,7 +152,7 @@ export default function MemberList({ nonce }) {
             )
           }
           {
-            data?.items?.map(row => (
+            userCan.read && data?.items?.map(row => (
               <tr
                 key={row.id}
                 id={`member-${row.id}`}
