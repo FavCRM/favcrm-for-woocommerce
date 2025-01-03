@@ -23,6 +23,10 @@ class FavoredLogger {
 		$src = fopen( $pluginlog, 'r+' );
 		$dest = fopen( 'php://temp', 'w' );
 
+		if ( ! $src || ! $dest ) {
+			return false;
+		}
+
 		fwrite( $dest, $message );
 
 		stream_copy_to_stream( $src, $dest );
