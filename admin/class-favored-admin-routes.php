@@ -445,9 +445,7 @@ class Favored_Admin_Routes {
 			$administrator->add_cap( strtolower( $perm ) );
 		}
 
-		return array(
-			'success' => true,
-		);
+		return $this->fetch_access_control();
 
 	}
 
