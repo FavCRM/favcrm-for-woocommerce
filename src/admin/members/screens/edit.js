@@ -127,7 +127,7 @@ export default function MemberForm({ nonce }) {
           memberId && (
             <div className="my-auto">
               <button
-                className={`${userCan.delete ? 'cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800' : 'p-1 bg-white text-gray-300 rounded border border-solid'}`}
+                className={`${!!userCan.delete ? 'cursor-pointer p-1 text-red-800 bg-slate-50 border-solid border-red-800 rounded hover:text-white hover:bg-red-800' : 'p-1 bg-white text-gray-300 rounded border border-solid'}`}
                 type="button"
                 disabled={!userCan.delete}
                 onClick={async () => {

@@ -378,7 +378,6 @@ class Favored_Admin_Routes {
       "delete"=>false,
     );
 
-
     $fav_permissions = $this->fav_get_permissions();
 
     foreach($fav_permissions as $key=>$val){
@@ -416,8 +415,7 @@ class Favored_Admin_Routes {
       }
     }
 
-    $retrieveBody = json_encode( $favored_access_control );
-		return json_decode( $retrieveBody, true );
+    return $favored_access_control;
 	}
 
 	public function update_access_control($request) {
