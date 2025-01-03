@@ -4,46 +4,18 @@ import apiFetch from '@wordpress/api-fetch';
 
 function useUserCan(nonce) {
   try {
-    const [isLoading, setIsLoading] = useState(true)
+    // const [isLoading, setIsLoading] = useState(true)
     const [userCan, setUserCan] = useState({
       read: false,
       write: false,
       delete: false,
     })
 
-    const { data: readResp, isLoading: readLoading, error: readErr } = useQuery({
+    const { data, isLoading, error } = useQuery({
       queryKey: ['readPermission'],
       queryFn: async () => {
         const result = await apiFetch({
-          path: `/fav/v1/permissions-check?permission=read`,
-          headers: {
-            'X-WP-Nonce': nonce,
-          }
-        });
-
-        return result;
-      },
-      retry: false,
-    });
-
-    const { data: writeResp, isLoading: writeLoading, error: writeErr } = useQuery({
-      queryKey: ['writePermission'], queryFn: async () => {
-        const result = await apiFetch({
-          path: `/fav/v1/permissions-check?permission=write`,
-          headers: {
-            'X-WP-Nonce': nonce,
-          }
-        });
-
-        return result;
-      },
-      retry: false,
-    });
-
-    const { data: deleteResp, isLoading: deleteLoading, error: deleteErr } = useQuery({
-      queryKey: ['deletePermission'], queryFn: async () => {
-        const result = await apiFetch({
-          path: `/fav/v1/permissions-check?permission=delete`,
+          path: `/fav/v1/permissions-check`,
           headers: {
             'X-WP-Nonce': nonce,
           }
@@ -55,19 +27,14 @@ function useUserCan(nonce) {
     });
 
     useEffect(() => {
-      if (!readLoading && !writeLoading && !deleteLoading) {
-        setIsLoading(() => false)
+      if (isLoading) {
+        return
       }
-
-      if (!isLoading) {
-        setUserCan(() => ({
-          ...userCan,
-          read: !readErr,
-          write: !writeErr,
-          delete: !deleteErr,
-        }))
-      }
-    }, [readLoading, writeLoading, deleteLoading, isLoading]);
+      const { data: userPermissions } = data
+      setUserCan(() => ({
+        ...userPermissions
+      }))
+    }, [isLoading]);
 
     return { isLoading, userCan }
 

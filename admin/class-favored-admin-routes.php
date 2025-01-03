@@ -372,15 +372,22 @@ class Favored_Admin_Routes {
   }
 
   public function fav_current_user_can($request) {
-		$perm = $request->get_param( 'permission' );
-    if (current_user_can($perm)){
-      return new WP_REST_Response(array('data'=>"Authorised"), 200);
-    }
+    $user_permissions = array(
+      "read"=>false,
+      "write"=>false,
+      "delete"=>false,
+    );
 
-    return new WP_REST_Response(array(
-      'error' => "You don't have sufficient permission",
-      'errorCode' => 403,
-    ), 403);
+
+    $fav_permissions = $this->fav_get_permissions();
+
+    foreach($fav_permissions as $key=>$val){
+      if (current_user_can($key)) {
+        $user_permissions[$key] = true;
+      }
+    }
+    
+    return new WP_REST_Response(array('data'=>$user_permissions), 200);
   }
 
 	public function fetch_access_control() {
@@ -432,12 +439,7 @@ class Favored_Admin_Routes {
       }
     }
 
-		try {
-			update_option('favored_access_control', $body);
-			$success = true;
-		} catch(Exception $e) {
-			echo esc_html( $e->getMessage() );
-		}
+    $success = true;
 
 		return array(
 			'success' => $success,
