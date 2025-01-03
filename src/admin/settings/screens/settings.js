@@ -96,27 +96,6 @@ function SettingsContent({ children, nonce, settings, userCan }) {
     location.href = '/wp-admin/admin.php?page=favcrm-for-register';
   }
 
-  const { mutate: aclMutate, isPending: isAclMutating } = useMutation({
-    mutationFn: async (data) => {
-      const result = await apiFetch({
-        path: '/fav/v1/settings/access-control',
-        method: 'POST',
-        headers: {
-          'X-WP-Nonce': nonce,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
-      });
-
-      return result;
-    },
-    onSuccess: (data) => {
-      if (data?.errorCode) {
-        setError(data.error);
-      }
-    }
-  });
-
   return (
     <div>
       <div className="mb-2">
@@ -196,9 +175,18 @@ function SettingsContent({ children, nonce, settings, userCan }) {
 
 function AclForm({ nonce }) {
   const permissions = [
-    "Read",
-    "Write",
-    "Delete",
+    {
+      title: 'Read',
+      description: __('Allow users to view content', 'favcrm-for-woocommerce'),
+    },
+    {
+      title: 'Write',
+      description: __('Allow users to create content', 'favcrm-for-woocommerce'),
+    },
+    {
+      title: 'Delete',
+      description: __('Allow users to delete content', 'favcrm-for-woocommerce'),
+    },
   ]
 
   const { data, isLoading, error: aclError } = useQuery({
@@ -231,6 +219,8 @@ function AclForm({ nonce }) {
     onSuccess: (data) => {
       if (data?.errorCode) {
         setError(data.error);
+      } else {
+        setRoles(data);
       }
     }
   });
@@ -238,80 +228,125 @@ function AclForm({ nonce }) {
   const [roles, setRoles] = useState({});
 
   useEffect(() => {
+    jQuery('.woocommerce-help-tip').tipTip({
+        'attribute': 'data-tip',
+        'fadeIn': 50,
+        'fadeOut': 50,
+        'delay': 200,
+    });
+  });
+
+  useEffect(() => {
     if (data) {
       setRoles(data)
     }
   }, [data])
+
+  const handleSubmit = () => {
+    mutate(roles);
+  }
+
+  const handleReset = async () => {
+    const updatedRoles = {};
+
+    Object.keys(roles).forEach(roleCode => {
+      updatedRoles[roleCode] = {
+        ...roles[roleCode],
+        permissions: {
+          read_favored: false,
+          write_favored: false,
+          delete_favored: false,
+        }
+      }
+    });
+
+    mutate(updatedRoles);
+  }
 
   if (isLoading) {
     return null;
   }
 
   return (
-    <form onSubmit={(e) => {
-      e.preventDefault()
-      mutate(roles)
-    }}>
-      <section className="py-6 w-3/5">
-        <h1>Access Control</h1>
-        <div className="grid grid-cols-[210px_1fr_1fr_1fr]">
-          <div className="border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">&nbsp;</div>
-          {
-            permissions.map((perm, i) => (
-              <div key={i} className="text-center font-bold p-[20px_10px_20px_0] border border-solid border-slate-300 border-t-0 border-l-0">{perm}</div>
-            ))
-          }
-          {
-            Object.keys(roles).map((roleCode, i) => {
-              return (
-                <React.Fragment key={i}>
-                  <div key={i} className="font-bold border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">{roles[roleCode]?.name}</div>
-                  {
-                    permissions.map(perm => (
-                      <div key={perm} className="flex items-center justify-center border border-solid border-slate-300 border-t-0 border-l-0">
-                        <input
-                          type="checkbox"
-                          name={perm}
-                          checked={roles[roleCode]?.permissions[`${perm.toLowerCase()}_favored`]}
-                          disabled={roleCode === 'administrator'}
-                          onChange={(e) => {
-                            const { checked } = e.target
+    <section className="py-6 w-3/5">
+      <h1>Access Control</h1>
+      <div className="grid grid-cols-[210px_1fr_1fr_1fr]">
+        <div className="border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">&nbsp;</div>
+        {
+          permissions.map(perm => (
+            <div key={perm.title} className="flex items-center justify-center p-[20px_10px_20px_0] border border-solid border-slate-300 border-t-0 border-l-0">
+              <div className="text-center font-bold">{perm.title}</div>
+              <span className="woocommerce-help-tip text-[1.5rem] cursor-[help] inline-block text-[#666] size-[16px] relative" data-tip={perm.description}></span>
+            </div>
+          ))
+        }
+        {
+          Object.keys(roles).map(roleCode => {
+            return (
+              <React.Fragment key={roleCode}>
+                <div className="font-bold border border-solid border-slate-300 border-t-0 border-l-0 p-[20px_10px_20px_0]">{roles[roleCode]?.name}</div>
+                {
+                  permissions.map(perm => (
+                    <div key={perm.title} className="flex items-center justify-center border border-solid border-slate-300 border-t-0 border-l-0">
+                      <input
+                        type="checkbox"
+                        name={perm}
+                        checked={roles[roleCode]?.permissions[`${perm.title.toLowerCase()}_favored`]}
+                        disabled={roleCode === 'administrator'}
+                        onChange={(e) => {
+                          const { checked } = e.target
 
-                            setRoles(prevRoles => {
-                              const updatedRoles = { ...prevRoles }
+                          setRoles(prevRoles => {
+                            const updatedRoles = { ...prevRoles }
 
-                              updatedRoles[roleCode].permissions[`${perm.toLowerCase()}_favored`] = checked;
+                            updatedRoles[roleCode].permissions[`${perm.title.toLowerCase()}_favored`] = checked;
 
-                              return updatedRoles;
-                            });
-                          }}
-                        />
-                      </div>
-                    ))
-                  }
-                </React.Fragment>
-              )
-            })
-          }
-          <div className="mt-4 pl-[220px]">
-            <button
-              className="button button-primary w-fit mx-auto"
-              type="submit"
-              disabled={isMutating}
-            >
-              {
-                isMutating
-                  ? <LoadingSpinner
-                    isLoading={isMutating}
-                    color="text-black"
-                    size="size-4"
-                  /> :
-                  __('Set Permission', 'favcrm-for-woocommerce')
-              }
-            </button>
-          </div>
+                            return updatedRoles;
+                          });
+                        }}
+                      />
+                    </div>
+                  ))
+                }
+              </React.Fragment>
+            )
+          })
+        }
+        <div className="mt-4 pl-[220px] flex gap-x-4">
+          <button
+            type="button"
+            onClick={handleSubmit}
+            className="button button-primary w-fit mx-auto"
+            disabled={isMutating}
+          >
+            {
+              isMutating
+                ? <LoadingSpinner
+                  isLoading={isMutating}
+                  color="text-black"
+                  size="size-4"
+                /> :
+                __('Set Permission', 'favcrm-for-woocommerce')
+            }
+          </button>
+          <button
+            type="button"
+            onClick={handleReset}
+            className="button w-fit mx-auto"
+            disabled={isMutating}
+          >
+            {
+              isMutating
+                ? <LoadingSpinner
+                  isLoading={isMutating}
+                  color="text-black"
+                  size="size-4"
+                /> :
+                __('Reset', 'favcrm-for-woocommerce')
+            }
+          </button>
         </div>
-      </section>
-    </form>
+      </div>
+    </section>
   )
 }

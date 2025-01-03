@@ -112,6 +112,7 @@ class Favored_Admin {
 		 */
 
 		 wp_enqueue_style( $this->plugin_name, plugin_dir_url( __FILE__ ) . '../public/css/editor-style.css?'  . time(), array(), $this->version, 'all' );
+		 wp_enqueue_style( 'woocommerce_admin_styles' );
 
 	}
 
@@ -167,6 +168,8 @@ class Favored_Admin {
 				break;
 			}
 		}
+
+		wp_enqueue_script( 'jquery-tiptip' );
 
 	}
 
