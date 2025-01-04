@@ -5,11 +5,11 @@ Tags: loyalty program, membership, member, reward point, woocommerce
 Requires at least: 3.5.1
 Tested up to: 6.7
 Requires PHP: 5.6
-Stable tag: 1.0.9
+Stable tag: 1.0.10
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-FavCRM for WooCommerce enhances your store with a loyalty program, enabling customers to become members, earn point rewards, and redeem points as cash for their purchases.
+Enhances your store with a loyalty program, enabling member program, earn point rewards, and redeem points as cash for their purchases.
 
 == Description ==
 
@@ -62,11 +62,9 @@ Yes, we offer customer support via email and through our support forum. Feel fre
 
 == Screenshots ==
 
-1. This screen shot description corresponds to screenshot-1.(png|jpg|jpeg|gif). Note that the screenshot is taken from
-the /assets directory or the directory that contains the stable readme.txt (tags or trunk). Screenshots in the /assets
-directory take precedence. For example, `/assets/screenshot-1.png` would win over `/tags/4.3/screenshot-1.png`
-(or jpg, jpeg, gif).
-2. This is the second screen shot
+1. Dashboard
+2. Member widget
+3. Use credit block
 
 == Support ==
 
@@ -89,6 +87,9 @@ This service is provided by "FavCRM": [terms of use](https://favcrm.io/terms-of-
 You may find the original source code in our repository https://github.com/favcrm/favcrm-for-woocommerce
 
 == Changelog ==
+
+= 1.0.10 =
+* Simpify registration form
 
 = 1.0.9 =
 * Added access permission control
