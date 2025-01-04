@@ -54,7 +54,7 @@ export default function Register({ nonce }) {
     <div>
       <div className="mb-2">
         <h1 className="wp-heading-inline">{__('FavCRM for WooCommerce Account Registration', 'favcrm-for-woocommerce')}</h1>
-        <h2 className="mt-0 text-gray-500 font-normal">{__('Create new account and get started', 'favcrm-for-woocommerce')}</h2>
+        <h2 className="mt-0 text-gray-500 font-normal">{__('No credit card required, try it for free', 'favcrm-for-woocommerce')}</h2>
         <hr className="wp-header-end" />
       </div>
       <div>
@@ -81,7 +81,7 @@ export default function Register({ nonce }) {
                   }
                 </td>
               </tr>
-              <tr>
+              {/* <tr>
                 <th scope="row">
                   <label htmlFor="phone">
                     {__('Phone', 'favcrm-for-woocommerce')}
@@ -100,7 +100,7 @@ export default function Register({ nonce }) {
                     )
                   }
                 </td>
-              </tr>
+              </tr> */}
               <tr>
                 <th scope="row">
                   <label htmlFor="email">
@@ -142,7 +142,7 @@ export default function Register({ nonce }) {
                 </td>
               </tr>
               <tr>
-                <th scope="row">Checkbox</th>
+                <th scope="row"></th>
                 <td>
                   <fieldset>
                     <legend className="screen-reader-text">
