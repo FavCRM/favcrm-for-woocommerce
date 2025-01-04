@@ -96,6 +96,15 @@ function SettingsContent({ children, nonce, settings, userCan }) {
     location.href = '/wp-admin/admin.php?page=favcrm-for-register';
   }
 
+  useEffect(() => {
+    jQuery('.woocommerce-help-tip').tipTip({
+        'attribute': 'data-tip',
+        'fadeIn': 50,
+        'fadeOut': 50,
+        'delay': 200,
+    });
+  });
+
   return (
     <div>
       <div className="mb-2">
@@ -117,7 +126,28 @@ function SettingsContent({ children, nonce, settings, userCan }) {
               <tr>
                 <th scope="row">
                   <label htmlFor="pointsToCashConversionRate">
+                    {__('Member program name', 'favcrm-for-woocommerce')}
+                  </label>
+                </th>
+                <td>
+                  <input
+                    id="memberProgramName"
+                    type="text"
+                    className="regular-text mb-1"
+                    {...register('memberProgramName', { required: __('Required', 'favcrm-for-woocommerce') })}
+                  />
+                  {
+                    errors.memberProgramName && (
+                      <div className="mt-1 error-message text-red-500 font-normal">{errors.memberProgramName.message}</div>
+                    )
+                  }
+                </td>
+              </tr>
+              <tr>
+                <th scope="row">
+                  <label htmlFor="pointsToCashConversionRate">
                     {__('Points to Cash Conversion Rate', 'favcrm-for-woocommerce')}
+                    <span className="woocommerce-help-tip text-[1.5rem] cursor-[help] inline-block text-[#666] size-[16px] relative" data-tip={__('Each 1 point can be converted into cash for purchases', 'favcrm-for-woocommerce')}></span>
                   </label>
                 </th>
                 <td>
@@ -226,15 +256,6 @@ function AclForm({ nonce }) {
   });
 
   const [roles, setRoles] = useState({});
-
-  useEffect(() => {
-    jQuery('.woocommerce-help-tip').tipTip({
-        'attribute': 'data-tip',
-        'fadeIn': 50,
-        'fadeOut': 50,
-        'delay': 200,
-    });
-  });
 
   useEffect(() => {
     if (data) {
