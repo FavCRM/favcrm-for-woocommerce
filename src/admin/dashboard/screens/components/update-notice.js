@@ -25,7 +25,7 @@ export default function UpdateNotice({ nonce }) {
     >
       <div className="flex">
         <p className="font-bold">{sprintf(__('A new version of FavCRM for WooCommerce (v%s) is available.', 'favcrm-for-woocommerce'), data)}</p>
-        <p><a href="https://storage.googleapis.com/favcrm/favcrm-for-woocommerce.zip">{__('Download', 'favcrm-for-woocommerce')}</a></p>
+        <p><a href="/wp-admin/plugins.php">{__('Update Now', 'favcrm-for-woocommerce')}</a></p>
       </div>
     </div>
   )

@@ -313,11 +313,7 @@ class Favored_Admin_Routes {
 
 		$response = FavoredHttpHelper::get( $url );
 
-		if ( $response['wpVersion'] == FAVORED_VERSION ) {
-			return null;
-		}
-
-		return $response['wpVersion'];
+		return version_compare( $response['wpVersion'], FAVORED_VERSION, '>' ) ? $response['wpVersion'] : null;
 
 	}
 
