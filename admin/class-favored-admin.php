@@ -202,7 +202,7 @@ class Favored_Admin {
 			add_submenu_page( 'fav-crm', __('Members', 'favcrm-for-woocommerce'), __('Members', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-members', array( &$this, 'render_members_list_page' ) );
 			add_submenu_page( 'fav-crm', __('Reward Transactions', 'favcrm-for-woocommerce'), __('Reward Transactions', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-reward-transactions', array( &$this, 'render_reward_transactions_list_page' ) );
 			add_submenu_page( 'fav-crm', __('Membership Tiers', 'favcrm-for-woocommerce'), __('Membership Tiers', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-membership-tiers', array( &$this, 'render_membership_tiers_list_page' ) );
-			// add_submenu_page( 'fav-crm', __('Reward Schemes', 'favcrm-for-woocommerce'), __('Reward Schemes', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-reward-schemes', array( &$this, 'render_reward_schemes_list_page' ) );
+			add_submenu_page( 'fav-crm', __('Reward Schemes', 'favcrm-for-woocommerce'), __('Reward Schemes', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-reward-schemes', array( &$this, 'render_reward_schemes_list_page' ) );
 			add_submenu_page( 'fav-crm', __('Gift Offers', 'favcrm-for-woocommerce'), __('Gift Offers', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-gift-offers', array( &$this, 'render_gift_offers_list_page' ) );
 			add_submenu_page( 'fav-crm', __('Billing', 'favcrm-for-woocommerce'), __('Billing', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-billing', array( &$this, 'render_billing_page' ) );
 			add_submenu_page( 'fav-crm', __('Settings', 'favcrm-for-woocommerce'), __('Settings', 'favcrm-for-woocommerce'), 'manage_options', 'fav-crm-settings', array( &$this, 'render_settings_page' ) );

@@ -39,6 +39,20 @@ export default function QuotaUsageWidget({ title, value }) {
             </div>
           </div>
           <div>
+            <div>{__('VIP Tiers', 'favcrm-for-woocommerce')}</div>
+            <div className="flex items-center">
+              <span className="font-bold"><AnimatedValueCell value={value?.rewardSchemeCount} /></span>
+              <span className="px-1">/</span>
+              <span>
+                {
+                  value?.membershipTierLimit == 0 ? __('Unlimited', 'favcrm-for-woocommerce') : (
+                    <AnimatedValueCell value={value?.membershipTierLimit} />
+                  )
+                }
+              </span>
+            </div>
+          </div>
+          <div>
             <div>{__('Reward Schemes', 'favcrm-for-woocommerce')}</div>
             <div className="flex items-center">
               <span className="font-bold"><AnimatedValueCell value={value?.rewardSchemeCount} /></span>

@@ -8,6 +8,7 @@ import UpdateNotice from './components/update-notice';
 import DashboardWidget from './components/dashboard-widget';
 import QuotaUsageWidget from './components/quota-usage-widget';
 import DashboardList from './components/dashboard-list';
+import ThingsToDoNext from './components/things-to-do-next';
 
 const { __ } = wp.i18n;
 
@@ -34,6 +35,7 @@ export default function Dashboard({ nonce }) {
         </div>
         <div>
           <div className="mb-6">
+            <ThingsToDoNext />
             <ul className="bg-[#f0f0f0] grid grid-cols-3 gap-6">
               <DashboardWidget
                 title="Total Sales"
