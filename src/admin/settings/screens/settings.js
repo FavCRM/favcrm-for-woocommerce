@@ -9,6 +9,15 @@ const { __ } = wp.i18n;
 
 export default function Settings({ nonce }) {
   const { isLoading: permissionsCheckLoading, userCan } = useUserCan(nonce);
+  const [activeTab, setActiveTab] = useState('');
+
+  useEffect(() => {
+    const params = new Proxy(new URLSearchParams(window.location.search), {
+      get: (searchParams, prop) => searchParams.get(prop),
+    });
+    const currTab = params.tab || 'settings';
+    setActiveTab(() => currTab)
+  }, []);
 
   const { data, isLoading, error } = useQuery({
     queryKey: ['settings'], queryFn: async () => {
@@ -36,16 +45,78 @@ export default function Settings({ nonce }) {
   }
 
   return (
-    <SettingsContent
-      nonce={nonce}
-      settings={data}
-      userCan={userCan}
-    >
-      <AclForm
-        nonce={nonce}
-        userCan={userCan}
-      />
-    </SettingsContent>
+    <>
+      {/* Begin of tabbar */}
+      <h2 className="nav-tab-wrapper">
+        <div
+          id="settings"
+          className={`nav-tab cursor-pointer ${activeTab === 'settings' ? 'nav-tab-active' : ''}`}
+          onClick={(e) => {
+            setActiveTab(() => e.target.id)
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', e.target.id);
+            window.history.pushState({ path: url.href }, '', url.href);
+          }}
+        >
+          Settings
+        </div>
+        <div
+          id="accessControl"
+          className={`nav-tab cursor-pointer ${activeTab === 'accessControl' ? 'nav-tab-active' : ''}`}
+          onClick={(e) => {
+            setActiveTab(() => e.target.id)
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', e.target.id);
+            window.history.pushState({ path: url.href }, '', url.href);
+          }}
+        >
+          Access Control
+        </div>
+        <div
+          id="cardSettings"
+          className={`nav-tab cursor-pointer ${activeTab === 'cardSettings' ? 'nav-tab-active' : ''}`}
+          onClick={(e) => {
+            setActiveTab(() => e.target.id)
+            const url = new URL(window.location.href);
+            url.searchParams.set('tab', e.target.id);
+            window.history.pushState({ path: url.href }, '', url.href);
+          }}
+        >
+          Card Settings
+        </div>
+      </h2>
+      {/* End of tabbar */}
+
+      {/* Begin of tab content */}
+      <div
+        id="settings"
+        className={`${activeTab === 'settings' ? '' : 'hidden'}`}
+      >
+        <SettingsContent
+          nonce={nonce}
+          settings={data}
+          userCan={userCan}
+        />
+      </div >
+
+      <div
+        id="accessControl"
+        className={`${activeTab === 'accessControl' ? '' : 'hidden'}`}
+      >
+        <AclForm
+          nonce={nonce}
+          userCan={userCan}
+        />
+      </div>
+
+      <div
+        id="cardSettings"
+        className={`${activeTab === 'cardSettings' ? '' : 'hidden'}`}
+      >
+        <h1>Card Setting</h1>
+      </div>
+      {/* End of tab content */}
+    </>
   )
 }
 
@@ -98,10 +169,10 @@ function SettingsContent({ children, nonce, settings, userCan }) {
 
   useEffect(() => {
     jQuery('.woocommerce-help-tip').tipTip({
-        'attribute': 'data-tip',
-        'fadeIn': 50,
-        'fadeOut': 50,
-        'delay': 200,
+      'attribute': 'data-tip',
+      'fadeIn': 50,
+      'fadeOut': 50,
+      'delay': 200,
     });
   });
 
